@@ -7,6 +7,7 @@ var config = require("../config.js");
 var path = require('path');
 var rollbar = require('rollbar');
 var punycode = require("punycode");
+var Promise = require('promise');
 
 function createTrackFromTitle(title) {
 
@@ -132,22 +133,26 @@ function cacheData(key, value, lifetime) {
 }
 
 function getCacheData(key, callback) {
-  if (config.enableCache && key !== null && global.memcacheClient !== null) {
-    global.memcacheClient.get(key, function(err, value) {
+  return new Promise(function(fulfill, reject) {
 
-      if (value === "0") {
-        value = undefined;
-      }
+    if (config.enableCache && key !== null && global.memcacheClient !== null) {
 
-      if (err) {
-        log(err);
-      } else {
-        return callback(null, value);
-      }
-    });
-  } else {
-    return callback(null, undefined);
-  }
+      global.memcacheClient.get(key, function(err, value) {
+
+        if (value === "0") {
+          value = undefined;
+        }
+
+        if (err) {
+          throw err;
+        } else {
+          return fulfill(null, value);
+        }
+      });
+    } else {
+      return fulfill(undefined);
+    }
+  });
 }
 
 function getColorForImage(url, callback) {

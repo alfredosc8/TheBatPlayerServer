@@ -69,19 +69,19 @@ app.use(function(req, res, next) {
 
 
 // error handler
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-
-  if (req.timedout) {
-    handleTimeout(err, req, res);
-    return;
-  }
-
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
+// app.use(function(err, req, res, next) {
+//   res.status(err.status || 500);
+//
+//   if (req.timedout) {
+//     handleTimeout(err, req, res);
+//     return;
+//   }
+//
+//   res.render('error', {
+//     message: err.message,
+//     error: {}
+//   });
+// });
 
 function handleTimeout(err, req, res) {
   res.status(200);

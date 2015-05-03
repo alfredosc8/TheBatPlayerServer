@@ -9,216 +9,286 @@ var album = require("./getAlbum.js");
 var md5 = require('MD5');
 var config = require("../config.js");
 var charmed = require('charmed');
+var Promise = require('promise');
 
 var S = require('string');
 S.extendPrototype();
 var validUrl = require('valid-url');
 
 
-function fetchMetadataForUrl(url, req, mainCallback) {
+function fetchMetadataForUrl(url) {
 
   if (!validUrl.isUri(url)) {
     var error = {};
     error.message = "The URL " + url + " does not appear to be a valid URL.  Please verify it's a properly encoded URL.";
     error.status = 406;
     error.batserver = config.useragent;
-    return mainCallback(error, null);
+    return error;
   }
 
-  var track = null;
-  var fetchMethodCacheTime = Math.floor(Date.now() / 1000) + (config.cachetime * 60);
-  var streamCacheKey = ("cache-stream-" + url).slugify();
+  var track = undefined;
+  var metadataSource = undefined;
+  var finalFulfillPromise = undefined;
 
+  var streamCacheKey = ("cache-stream-" + url).slugify();
   var sourceStreamCacheKey = ("cache-source-stream-" + url).slugify();
-  var metadataSource;
   var streamFetchMethodCacheKey = ("cache-stream-fetchmethod" + url).slugify();
 
-  if (url.endsWith("/;")) {
-    url = url + "/;";
+  function getTrackFromCache(streamCacheKey) {
+    return utils.getCacheData(streamCacheKey);
   }
 
-  utils.getCacheData(streamFetchMethodCacheKey, function(error, result) {
-    metadataSource = result;
+  function getTrackFromShoutcast(url, version, metadataSource) {
+    var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
+    return shoutcasttitle[method](url);
+  }
 
+  function getTrackFromStream(url) {
+    console.log("---- get track from stream-----");
 
-    async.series([
-
-        // Check for a cached version
-        function(callback) {
-          utils.getCacheData(streamCacheKey, function(error, result) {
-            if (!error && result) {
-              track = result;
-              return mainCallback(error, track);
-            } else {
-              return callback();
-            }
-          });
-        },
-
-        // Get the title from Shoutcast v1 metadata
-        function(callback) {
-          if (track === null && (metadataSource != "SHOUTCAST_V2" && metadataSource != "STREAM")) {
-            shoutcasttitle.getV1Title(url, function(data) {
-              if (data) {
-                track = utils.createTrackFromTitle(data.title);
-                track.station = data;
-                if (!metadataSource) {
-                  utils.cacheData(streamFetchMethodCacheKey, "SHOUTCAST_V1", fetchMethodCacheTime);
-                }
-              }
-              return callback();
-            });
-          } else {
-            return callback();
-          }
-        },
-
-        // Get the title from Shoutcast v2 metadata
-        function(callback) {
-          if (track === null && (metadataSource != "SHOUTCAST_V1" && metadataSource != "STREAM")) {
-            shoutcasttitle.getV2Title(url, function(data) {
-              if (data) {
-                track = utils.createTrackFromTitle(data.title);
-                track.station = data;
-                if (!metadataSource) {
-                  utils.cacheData(streamFetchMethodCacheKey, "SHOUTCAST_V2", fetchMethodCacheTime);
-                }
-              }
-              return callback();
-            });
-          } else {
-            return callback();
-          }
-
-        },
-
-        // Get the title from the station stream
-        function(callback) {
-          if (track === null) {
-            streamtitle.getTitle(url, function(error, title) {
-              if (title) {
-                track = utils.createTrackFromTitle(title);
-                track.station = {};
-                track.station.fetchsource = "STREAM";
-                utils.cacheData(streamFetchMethodCacheKey, "STREAM", fetchMethodCacheTime);
-              }
-              return callback();
-            });
-          } else {
-            return callback();
-          }
-        },
-
-        function(asyncCallback) {
-          if (track) {
-            async.parallel([
-                function(callback) {
-                  async.series([ //Begin Artist / Color series
-
-                    // Get artist
-                    function(callback) {
-                      getArtistDetails(track, callback);
-                    },
-
-                    // Get color based on above artist image
-                    function(callback) {
-                      getColor(track, function() {
-                        if (track.image.url) {
-                          var file = encodeURIComponent(track.image.url);
-                          track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-                          track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-                        }
-                        return callback();
-                      });
-                    }
-
-                  ], function(err, results) {
-                    return callback();
-                  }); // End Artist / Color series
-                },
-
-                // Get track Details
-                function(callback) {
-                  if (track.song && track.artist) {
-                    getTrackDetails(track, callback);
-                  } else {
-                    return callback();
-                  }
-
-                },
-
-                // Get Album for track
-                function(callback) {
-                  if (track.artist && track.song) {
-                    getAlbumDetails(track, function(error, albumObject) {
-                      track.album = albumObject;
-                      return callback();
-                    });
-                  } else {
-                    track.album = null;
-                    return callback();
-                  }
-                }
-
-
-              ],
-              function(err, results) {
-                return asyncCallback(); // Track and Album details complete
-              });
-          } else {
-            return asyncCallback(); // No track exists so track and album details could not take place
-          }
-        }
-      ],
-      function(err) {
-        // If no track was able to be created it's an error
-        if (!track) {
-          var error = {};
-          error.message = "No data was able to be fetched for your requested radio stream: " + decodeURIComponent(url) + ". Make sure your stream url is valid and encoded properly.  It's also possible the server just doesn't supply any metadata for us to provide you.";
-          error.status = 400;
-          error.batserver = config.useragent;
-          return mainCallback(error, null);
-        }
-
-        utils.cacheData(streamCacheKey, track, config.cachetime);
-
-        return mainCallback(null, track);
+    return new Promise(function(fulfill, reject) {
+      streamtitle.getTitle(url).then(function(title) {
+        var streamTrack = utils.createTrackFromTitle(title);
+        streamTrack.station = {};
+        streamTrack.station.fetchsource = "STREAM";
+        return fulfill(streamTrack);
       });
-  });
-
-}
-
-function getArtistDetails(track, callback) {
-  lastfm.getArtistDetails(utils.sanitize(track.artist), function(error, artistDetails) {
-    populateTrackObjectWithArtist(track, artistDetails);
-    return callback();
-  });
-}
-
-function getTrackDetails(track, callback) {
-  lastfm.getTrackDetails(utils.sanitize(track.artist), utils.sanitize(track.song), function(error, trackDetails) {
-    populateTrackObjectWithTrack(track, trackDetails);
-    return callback();
-  });
-}
-
-function getAlbumDetails(track, callback) {
-  album.fetchAlbumForArtistAndTrack(track.artist, track.song, callback);
-}
-
-function getColor(track, callback) {
-  if (track.image.url) {
-    utils.getColorForImage(track.image.url, function(color) {
-      if (color) {
-        track.image.color = color;
-      }
-      return callback();
     });
-  } else {
-    return callback();
   }
 
+  function finalCallback(result) {
+
+    if (track) {
+      return;
+    }
+
+    console.log("---- Final callback fired-----");
+
+    // Cache how we fetched the track info from the station
+    // if (!metadataSource) {
+    //   utils.cacheData(streamFetchMethodCacheKey, track.fetchsource, fetchMethodCacheTime);
+    // }
+
+    track = result;
+    return finalFulfillPromise(track);
+  }
+
+  //Logic starts here
+  return new Promise(function(fulfill, reject) {
+
+    finalFulfillPromise = fulfill;
+
+    getTrackFromCache(streamCacheKey).then(function(cachedTrack) {
+
+      if (cachedTrack) {
+        return finalFulfillPromise(cachedTrack);
+      }
+
+      // In order of preference
+      var promises = [
+        getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource),
+        getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource),
+        getTrackFromStream(url)
+      ];
+
+      Promise.all(promises).then(function(results) {
+        var validResults = results.filter(function(result, index, array) {
+          return result.title !== undefined;
+        });
+        // There should only be at most two available options left.
+        // Given the option we should select the shoutcast option.
+        if (validResults.length > 0) {
+          finalCallback(validResults[0]);
+        } else {
+          // No data was able to be fetched from the station
+        }
+      });
+    });
+
+  });
 }
+
+
+//
+//
+//     async.series([
+//
+//         // Check for a cached version
+//         function(callback) {
+//           utils.getCacheData(streamCacheKey, function(error, result) {
+//             if (!error && result) {
+//               track = result;
+//               return mainCallback(error, track);
+//             } else {
+//               return callback();
+//             }
+//           });
+//         },
+//
+//         // Get the title from Shoutcast v1 metadata
+//         function(callback) {
+//           if (track === null && (metadataSource != "SHOUTCAST_V2" && metadataSource != "STREAM")) {
+//             shoutcasttitle.getV1Title(url, function(data) {
+//               if (data) {
+//                 track = utils.createTrackFromTitle(data.title);
+//                 track.station = data;
+//                 if (!metadataSource) {
+//                   utils.cacheData(streamFetchMethodCacheKey, "SHOUTCAST_V1", fetchMethodCacheTime);
+//                 }
+//               }
+//               return callback();
+//             });
+//           } else {
+//             return callback();
+//           }
+//         },
+//
+//         // Get the title from Shoutcast v2 metadata
+//         function(callback) {
+//           if (track === null && (metadataSource != "SHOUTCAST_V1" && metadataSource != "STREAM")) {
+//             shoutcasttitle.getV2Title(url, function(data) {
+//               if (data) {
+//                 track = utils.createTrackFromTitle(data.title);
+//                 track.station = data;
+//                 if (!metadataSource) {
+//                   utils.cacheData(streamFetchMethodCacheKey, "SHOUTCAST_V2", fetchMethodCacheTime);
+//                 }
+//               }
+//               return callback();
+//             });
+//           } else {
+//             return callback();
+//           }
+//
+//         },
+//
+//         // Get the title from the station stream
+//         function(callback) {
+//           if (track === null) {
+//             streamtitle.getTitle(url, function(error, title) {
+//               if (title) {
+//                 track = utils.createTrackFromTitle(title);
+//                 track.station = {};
+//                 track.station.fetchsource = "STREAM";
+//                 utils.cacheData(streamFetchMethodCacheKey, "STREAM", fetchMethodCacheTime);
+//               }
+//               return callback();
+//             });
+//           } else {
+//             return callback();
+//           }
+//         },
+//
+//         function(asyncCallback) {
+//           if (track) {
+//             async.parallel([
+//                 function(callback) {
+//                   async.series([ //Begin Artist / Color series
+//
+//                     // Get artist
+//                     function(callback) {
+//                       getArtistDetails(track, callback);
+//                     },
+//
+//                     // Get color based on above artist image
+//                     function(callback) {
+//                       getColor(track, function() {
+//                         if (track.image.url) {
+//                           var file = encodeURIComponent(track.image.url);
+//                           track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+//                           track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+//                         }
+//                         return callback();
+//                       });
+//                     }
+//
+//                   ], function(err, results) {
+//                     return callback();
+//                   }); // End Artist / Color series
+//                 },
+//
+//                 // Get track Details
+//                 function(callback) {
+//                   if (track.song && track.artist) {
+//                     getTrackDetails(track, callback);
+//                   } else {
+//                     return callback();
+//                   }
+//
+//                 },
+//
+//                 // Get Album for track
+//                 function(callback) {
+//                   if (track.artist && track.song) {
+//                     getAlbumDetails(track, function(error, albumObject) {
+//                       track.album = albumObject;
+//                       return callback();
+//                     });
+//                   } else {
+//                     track.album = null;
+//                     return callback();
+//                   }
+//                 }
+//
+//
+//               ],
+//               function(err, results) {
+//                 return asyncCallback(); // Track and Album details complete
+//               });
+//           } else {
+//             return asyncCallback(); // No track exists so track and album details could not take place
+//           }
+//         }
+//       ],
+//       function(err) {
+//         // If no track was able to be created it's an error
+//         if (!track) {
+//           var error = {};
+//           error.message = "No data was able to be fetched for your requested radio stream: " + decodeURIComponent(url) + ". Make sure your stream url is valid and encoded properly.  It's also possible the server just doesn't supply any metadata for us to provide you.";
+//           error.status = 400;
+//           error.batserver = config.useragent;
+//           return mainCallback(error, null);
+//         }
+//
+//         utils.cacheData(streamCacheKey, track, config.cachetime);
+//
+//         return mainCallback(null, track);
+//       });
+//   });
+//
+// }
+//
+// function getArtistDetails(track, callback) {
+//   lastfm.getArtistDetails(utils.sanitize(track.artist), function(error, artistDetails) {
+//     populateTrackObjectWithArtist(track, artistDetails);
+//     return callback();
+//   });
+// }
+//
+// function getTrackDetails(track, callback) {
+//   lastfm.getTrackDetails(utils.sanitize(track.artist), utils.sanitize(track.song), function(error, trackDetails) {
+//     populateTrackObjectWithTrack(track, trackDetails);
+//     return callback();
+//   });
+// }
+//
+// function getAlbumDetails(track, callback) {
+//   album.fetchAlbumForArtistAndTrack(track.artist, track.song, callback);
+// }
+//
+// function getColor(track, callback) {
+//   if (track.image.url) {
+//     utils.getColorForImage(track.image.url, function(color) {
+//       if (color) {
+//         track.image.color = color;
+//       }
+//       return callback();
+//     });
+//   } else {
+//     return callback();
+//   }
+//
+// }
 
 function createEmptyTrack() {
   var track = {};
