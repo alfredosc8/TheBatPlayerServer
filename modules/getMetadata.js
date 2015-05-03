@@ -43,6 +43,56 @@ function fetchMetadataForUrl(url) {
     return shoutcasttitle[method](url);
   }
 
+  function getArtistDetails(track) {
+    console.log(track.artist);
+    return new Promise(function(fulfill, reject) {
+      lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
+        populateTrackObjectWithArtist(track, artistDetails);
+        return fulfill(track);
+      });
+    });
+  }
+
+  // Get color based on above artist image
+  function getColorDetails(track) {
+    return new Promise(function(fulfill, reject) {
+
+      getColor(track).then(function() {
+        if (track.image.url) {
+          var file = encodeURIComponent(track.image.url);
+          track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+          track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+        }
+        return fulfill(track);
+      });
+    });
+  }
+
+  function getTrackDetails(track) {
+    return new Promise(function(fulfill, reject) {
+      lastfm.getTrackDetails(utils.sanitize(track.artist), utils.sanitize(track.song)).then(function(trackDetails) {
+        populateTrackObjectWithTrack(track, trackDetails);
+      });
+    });
+  }
+
+
+  function getColor(track) {
+    return new Promise(function(fulfill, reject) {
+      if (track.image.url) {
+        utils.getColorForImage(track.image.url).then(function(color) {
+          if (color) {
+            track.image.color = color;
+          }
+          return fulfill(track);
+        });
+      } else {
+        return fulfill(track);
+      }
+    });
+
+  }
+
   function getTrackFromStream(url) {
     console.log("---- get track from stream-----");
 
@@ -58,11 +108,12 @@ function fetchMetadataForUrl(url) {
 
   function finalCallback(result) {
 
-    if (track) {
-      return;
-    }
-
     console.log("---- Final callback fired-----");
+    //
+    // if (track) {
+    //   return;
+    // }
+
 
     // Cache how we fetched the track info from the station
     // if (!metadataSource) {
@@ -73,111 +124,57 @@ function fetchMetadataForUrl(url) {
     return finalFulfillPromise(track);
   }
 
+  function getNowPlayingTrack() {
+    return new Promise(function(fulfill, reject) {
+
+      getTrackFromCache(streamCacheKey).then(function(cachedTrack) {
+
+        if (cachedTrack) {
+          return finalFulfillPromise(cachedTrack);
+        }
+
+        // In order of preference
+        var promises = [
+          getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource),
+          getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource),
+          getTrackFromStream(url)
+        ];
+
+        Promise.all(promises).then(function(results) {
+          var validResults = results.filter(function(result, index, array) {
+            return result.title !== undefined;
+          });
+
+          // There should only be at most two available options left.
+          // Given the option we should select the shoutcast option.
+          if (validResults.length > 0) {
+            var finalResult = validResults[0];
+            track = utils.createTrackFromTitle(finalResult.title)
+            track.station = finalResult
+            return fulfill(track);
+          } else {
+            // No data was able to be fetched from the station
+
+          }
+        });
+      });
+
+    });
+  }
+
   //Logic starts here
   return new Promise(function(fulfill, reject) {
-
     finalFulfillPromise = fulfill;
-
-    getTrackFromCache(streamCacheKey).then(function(cachedTrack) {
-
-      if (cachedTrack) {
-        return finalFulfillPromise(cachedTrack);
-      }
-
-      // In order of preference
-      var promises = [
-        getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource),
-        getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource),
-        getTrackFromStream(url)
-      ];
-
-      Promise.all(promises).then(function(results) {
-        var validResults = results.filter(function(result, index, array) {
-          return result.title !== undefined;
-        });
-        // There should only be at most two available options left.
-        // Given the option we should select the shoutcast option.
-        if (validResults.length > 0) {
-          finalCallback(validResults[0]);
-        } else {
-          // No data was able to be fetched from the station
-        }
-      });
-    });
-
+    getNowPlayingTrack().then(getArtistDetails).then(finalCallback);
   });
+
+
+
+
 }
 
 
-//
-//
-//     async.series([
-//
-//         // Check for a cached version
-//         function(callback) {
-//           utils.getCacheData(streamCacheKey, function(error, result) {
-//             if (!error && result) {
-//               track = result;
-//               return mainCallback(error, track);
-//             } else {
-//               return callback();
-//             }
-//           });
-//         },
-//
-//         // Get the title from Shoutcast v1 metadata
-//         function(callback) {
-//           if (track === null && (metadataSource != "SHOUTCAST_V2" && metadataSource != "STREAM")) {
-//             shoutcasttitle.getV1Title(url, function(data) {
-//               if (data) {
-//                 track = utils.createTrackFromTitle(data.title);
-//                 track.station = data;
-//                 if (!metadataSource) {
-//                   utils.cacheData(streamFetchMethodCacheKey, "SHOUTCAST_V1", fetchMethodCacheTime);
-//                 }
-//               }
-//               return callback();
-//             });
-//           } else {
-//             return callback();
-//           }
-//         },
-//
-//         // Get the title from Shoutcast v2 metadata
-//         function(callback) {
-//           if (track === null && (metadataSource != "SHOUTCAST_V1" && metadataSource != "STREAM")) {
-//             shoutcasttitle.getV2Title(url, function(data) {
-//               if (data) {
-//                 track = utils.createTrackFromTitle(data.title);
-//                 track.station = data;
-//                 if (!metadataSource) {
-//                   utils.cacheData(streamFetchMethodCacheKey, "SHOUTCAST_V2", fetchMethodCacheTime);
-//                 }
-//               }
-//               return callback();
-//             });
-//           } else {
-//             return callback();
-//           }
-//
-//         },
-//
-//         // Get the title from the station stream
-//         function(callback) {
-//           if (track === null) {
-//             streamtitle.getTitle(url, function(error, title) {
-//               if (title) {
-//                 track = utils.createTrackFromTitle(title);
-//                 track.station = {};
-//                 track.station.fetchsource = "STREAM";
-//                 utils.cacheData(streamFetchMethodCacheKey, "STREAM", fetchMethodCacheTime);
-//               }
-//               return callback();
-//             });
-//           } else {
-//             return callback();
-//           }
-//         },
+
 //
 //         function(asyncCallback) {
 //           if (track) {
@@ -190,17 +187,6 @@ function fetchMetadataForUrl(url) {
 //                       getArtistDetails(track, callback);
 //                     },
 //
-//                     // Get color based on above artist image
-//                     function(callback) {
-//                       getColor(track, function() {
-//                         if (track.image.url) {
-//                           var file = encodeURIComponent(track.image.url);
-//                           track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-//                           track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-//                         }
-//                         return callback();
-//                       });
-//                     }
 //
 //                   ], function(err, results) {
 //                     return callback();
@@ -258,37 +244,11 @@ function fetchMetadataForUrl(url) {
 //
 // }
 //
-// function getArtistDetails(track, callback) {
-//   lastfm.getArtistDetails(utils.sanitize(track.artist), function(error, artistDetails) {
-//     populateTrackObjectWithArtist(track, artistDetails);
-//     return callback();
-//   });
-// }
+
 //
-// function getTrackDetails(track, callback) {
-//   lastfm.getTrackDetails(utils.sanitize(track.artist), utils.sanitize(track.song), function(error, trackDetails) {
-//     populateTrackObjectWithTrack(track, trackDetails);
-//     return callback();
-//   });
-// }
 //
-// function getAlbumDetails(track, callback) {
-//   album.fetchAlbumForArtistAndTrack(track.artist, track.song, callback);
-// }
 //
-// function getColor(track, callback) {
-//   if (track.image.url) {
-//     utils.getColorForImage(track.image.url, function(color) {
-//       if (color) {
-//         track.image.color = color;
-//       }
-//       return callback();
-//     });
-//   } else {
-//     return callback();
-//   }
-//
-// }
+
 
 function createEmptyTrack() {
   var track = {};

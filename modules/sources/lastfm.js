@@ -3,6 +3,7 @@ var config = require("../../config.js");
 var log = utils.log;
 var albumSorting = require("../albumSorting.js");
 var moment = require("moment");
+var Promise = require('promise');
 
 var LastfmAPI = require('lastfmapi');
 var lastfm = new LastfmAPI({
@@ -104,21 +105,25 @@ function getTrackDetails(artistName, trackName, callback) {
   });
 }
 
-function getArtistDetails(artistName, callback) {
-  var artistCacheKey = ("cache-artist-" + artistName).slugify();
+function getArtistDetails(artistName) {
 
-  utils.getCacheData(artistCacheKey, function(error, result) {
-    if (!error && result !== undefined && config.enableCache) {
-      return callback(error, result);
-    } else {
+  return new Promise(function(fulfill, reject) {
+    var artistCacheKey = ("cache-artist-" + artistName).slugify();
+
+    utils.getCacheData(artistCacheKey).then(function(result) {
+      if (result) {
+        return fulfill(result);
+      }
+
       lastfm.artist.getInfo({
         artist: artistName,
         autocorrect: 1
       }, function(err, artistDetails) {
         utils.cacheData(artistCacheKey, artistDetails, 0);
-        return callback(err, artistDetails);
+        return fulfill(artistDetails);
       });
-    }
+    });
+
   });
 
 }
