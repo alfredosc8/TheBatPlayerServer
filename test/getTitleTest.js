@@ -2,6 +2,8 @@ var getStreamTitle = require("../modules/streamTitle.js");
 var chai = require("chai");
 var expect = chai.expect;
 var assert = chai.assert;
+var Promise = require('promise');
+
 chai.should();
 chai.config.includeStack = false;
 
@@ -12,7 +14,7 @@ var stream = streams[i];
 
 describe("streamTitle", function() {
   it("Should return a title from " + stream, function(done) {
-    getStreamTitle.getTitle(stream, function(error, title) {
+    getStreamTitle.getTitle(stream).then(function(title) {
       check(done, function() {
         expect(title).to.not.be.null();
         expect(title).to.be.a('string');

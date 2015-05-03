@@ -42,7 +42,7 @@ async.each(tracks, function(singleTrack, callback) {
   describe("fetchAlbumForArtistAndTrack", function() {
 
     it("Should return an album for use in metadata using " + singleTrack.artist + " - " + singleTrack.track, function(done) {
-      album.fetchAlbumForArtistAndTrack(singleTrack.artist, singleTrack.track, function(error, albumObject) {
+      album.fetchAlbumForArtistAndTrack(singleTrack.artist, singleTrack.track).then(function(albumObject) {
         check(done, function() {
           expect(albumObject).to.exist;
           expect(albumObject).to.have.property('name');
