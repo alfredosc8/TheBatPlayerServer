@@ -53,21 +53,6 @@ function fetchMetadataForUrl(url) {
     });
   }
 
-  // Get color based on above artist image
-  function getColorDetails(track) {
-    return new Promise(function(fulfill, reject) {
-
-      getColor(track).then(function() {
-        if (track.image.url) {
-          var file = encodeURIComponent(track.image.url);
-          track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-          track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-        }
-        return fulfill(track);
-      });
-    });
-  }
-
   function getTrackDetails(track) {
     return new Promise(function(fulfill, reject) {
       lastfm.getTrackDetails(utils.sanitize(track.artist), utils.sanitize(track.song)).then(function(trackDetails) {
@@ -77,12 +62,15 @@ function fetchMetadataForUrl(url) {
   }
 
 
-  function getColor(track) {
+  function getColor() {
     return new Promise(function(fulfill, reject) {
       if (track.image.url) {
         utils.getColorForImage(track.image.url).then(function(color) {
           if (color) {
             track.image.color = color;
+            var file = encodeURIComponent(track.image.url);
+            track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+            track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
           }
           return fulfill(track);
         });
@@ -120,7 +108,7 @@ function fetchMetadataForUrl(url) {
     //   utils.cacheData(streamFetchMethodCacheKey, track.fetchsource, fetchMethodCacheTime);
     // }
 
-    track = result;
+    // track = result;
     return finalFulfillPromise(track);
   }
 
@@ -165,7 +153,20 @@ function fetchMetadataForUrl(url) {
   //Logic starts here
   return new Promise(function(fulfill, reject) {
     finalFulfillPromise = fulfill;
-    getNowPlayingTrack().then(getArtistDetails).then(finalCallback);
+
+    // Get the currently playing track and find artist details
+    getNowPlayingTrack().then(getArtistDetails).then(function(track) {
+
+      // Get color information about the artist image and album details
+      var promises = [
+        getColor()
+      ];
+
+      Promise.all(promises).then(finalCallback);
+    });
+
+
+
   });
 
 

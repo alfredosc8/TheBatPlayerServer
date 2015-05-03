@@ -155,23 +155,26 @@ function getCacheData(key, callback) {
   });
 }
 
-function getColorForImage(url, callback) {
-  if (url) {
-    var colorCacheKey = ("cache-color-" + md5(url)).slugify();
+function getColorForImage(url) {
+  return new Promise(function(fulfill, reject) {
+    if (url) {
+      var colorCacheKey = ("cache-color-" + md5(url)).slugify();
 
-    getCacheData(colorCacheKey, function(error, result) {
-      if (!error && result !== undefined) {
-        return callback(result);
-      } else {
-        imageColor.getColorForUrl(url, function(color) {
-          cacheData(colorCacheKey, color, 0);
-          callback(color);
-        });
-      }
-    });
-  } else {
-    return callback(null);
-  }
+      getCacheData(colorCacheKey).then(function(result) {
+        if (result) {
+          return fulfill(result);
+        } else {
+          imageColor.getColorForUrl(url).then(function(color) {
+            cacheData(colorCacheKey, color, 0);
+            return fulfill(color);
+          });
+        }
+      });
+    } else {
+      return fulfill(null);
+    }
+
+  });
 }
 
 function getCacheFilepathForUrl(url, type) {

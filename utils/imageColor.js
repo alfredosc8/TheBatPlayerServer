@@ -2,37 +2,40 @@ var utils = require('./utils.js');
 var fs = require('fs');
 var md5 = require('MD5');
 var C = require('c0lor');
-var FlatColors = require("flatcolors");
 var log = utils.log;
+var Promise = require('promise');
 
 var imagecolors = require('imagecolors');
 var colormatch = require('colormatch');
 
 var ColorSpace = C.space.rgb['CIE-RGB'];
 
-function getColorForUrl(url, callback) {
-  var i = Math.floor(Math.random() * 100);
+function getColorForUrl(url) {
+  return new Promise(function(fulfill, reject) {
+    var i = Math.floor(Math.random() * 100);
 
-  var path = utils.getCacheFilepathForUrl(url, "original");
+    var path = utils.getCacheFilepathForUrl(url, "original");
 
-  utils.download(url, path, function() {
+    utils.download(url, path, function() {
 
-    try {
-      imagecolors.extract(path, 7, function(err, colors) {
+      try {
+        imagecolors.extract(path, 7, function(err, colors) {
 
-        if (!err && colors.length > 0) {
-          var colorObject = buildColorObjectFromColors(colors);
-          return callback(colorObject);
-        } else {
-          return callback(null);
-        }
-      });
+          if (!err && colors.length > 0) {
+            var colorObject = buildColorObjectFromColors(colors);
+            return fulfill(colorObject);
+          } else {
+            return fulfill(null);
+          }
+        });
 
-    } catch (e) {
-      console.log(e);
-      return callback(null);
-    }
+      } catch (e) {
+        console.log(e);
+        return fulfill(null);
+      }
 
+
+    });
 
   });
 }
