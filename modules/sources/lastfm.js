@@ -40,8 +40,8 @@ function albumUsingLastFM(artist, track, callback) {
 
 function getAlbumArt(albumName, artistName, mbid, callback) {
   var cacheKey = ("cache-lastfmart-" + albumName + "-" + artistName).slugify();
-  utils.getCacheData(cacheKey, function(error, result) {
-    if (!error && result !== undefined) {
+  utils.getCacheData(cacheKey).then(function(result) {
+    if (result !== undefined) {
       return callback(error, result);
     } else {
       lastfm.album.getInfo({
@@ -66,8 +66,8 @@ function getAlbumArt(albumName, artistName, mbid, callback) {
 function getAlbumDetails(artistName, albumName, mbid, callback) {
   var cacheKey = ("cache-album-" + albumName + "-" + artistName).slugify();
 
-  utils.getCacheData(cacheKey, function(error, result) {
-    if (!error && result !== undefined) {
+  utils.getCacheData(cacheKey).then(function(result) {
+    if (result) {
       return callback(error, result);
     } else {
       lastfm.album.getInfo({
@@ -87,8 +87,8 @@ function getAlbumDetails(artistName, albumName, mbid, callback) {
 function getTrackDetails(artistName, trackName, callback) {
   var cacheKey = ("cache-track-" + trackName + "-" + artistName).slugify();
 
-  utils.getCacheData(cacheKey, function(error, result) {
-    if (!error && result !== undefined) {
+  utils.getCacheData(cacheKey).then(function(result) {
+    if (result) {
       return callback(error, result);
     } else {
       lastfm.track.getInfo({

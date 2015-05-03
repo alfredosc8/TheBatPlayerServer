@@ -3,6 +3,7 @@ var config = require("../../config.js");
 var NC = require('nodecogs');
 var utils = require("../../utils/utils.js");
 var albumSorting = require("../albumSorting.js");
+var Promise = require('promise');
 
 var discogs = new NC({
   userAgent: config.useragent,

@@ -32,11 +32,7 @@ function fetchMetadataForUrl(url) {
 
   var streamCacheKey = ("cache-stream-" + url).slugify();
   var sourceStreamCacheKey = ("cache-source-stream-" + url).slugify();
-  var streamFetchMethodCacheKey = ("cache-stream-fetchmethod" + url).slugify();
-
-  function getTrackFromCache(streamCacheKey) {
-    return utils.getCacheData(streamCacheKey);
-  }
+  // var streamFetchMethodCacheKey = ("cache-stream-fetchmethod" + url).slugify();
 
   function getTrackFromShoutcast(url, version, metadataSource) {
     var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
@@ -44,7 +40,6 @@ function fetchMetadataForUrl(url) {
   }
 
   function getArtistDetails(track) {
-    console.log(track.artist);
     return new Promise(function(fulfill, reject) {
       lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
         populateTrackObjectWithArtist(track, artistDetails);
@@ -82,8 +77,6 @@ function fetchMetadataForUrl(url) {
   }
 
   function getTrackFromStream(url) {
-    console.log("---- get track from stream-----");
-
     return new Promise(function(fulfill, reject) {
       streamtitle.getTitle(url).then(function(title) {
         var streamTrack = utils.createTrackFromTitle(title);
@@ -94,57 +87,60 @@ function fetchMetadataForUrl(url) {
     });
   }
 
-  function finalCallback(result) {
+  function finalCallback(result, cached) {
 
-    console.log("---- Final callback fired-----");
-    //
-    // if (track) {
-    //   return;
-    // }
-
-
-    // Cache how we fetched the track info from the station
-    // if (!metadataSource) {
-    //   utils.cacheData(streamFetchMethodCacheKey, track.fetchsource, fetchMethodCacheTime);
-    // }
-
-    // track = result;
+    if (!cached) {
+      utils.cacheData(streamCacheKey, track, config.cachetime);
+    }
     return finalFulfillPromise(track);
   }
 
   function getNowPlayingTrack() {
     return new Promise(function(fulfill, reject) {
 
-      getTrackFromCache(streamCacheKey).then(function(cachedTrack) {
-
+      utils.getCacheData(streamCacheKey).then(function(cachedTrack) {
         if (cachedTrack) {
-          return finalFulfillPromise(cachedTrack);
+          return finalFulfillPromise(cachedTrack, true);
         }
 
-        // In order of preference
-        var promises = [
-          getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource),
-          getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource),
-          getTrackFromStream(url)
-        ];
+        utils.getCacheData(sourceStreamCacheKey).then(function(cachedSource) {
+          var promises;
 
-        Promise.all(promises).then(function(results) {
-          var validResults = results.filter(function(result, index, array) {
-            return result.title !== undefined;
+          if (!cachedSource) {
+            // In order of preference
+            promises = [
+              getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource),
+              getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource),
+              getTrackFromStream(url)
+            ];
+          } else if (cachedSource == "STREAM") {
+            promises = [getTrackFromStream(url)];
+          } else {
+            promises = [getTrackFromShoutcast(url, cachedSource, metadataSource)];
+          }
+
+          Promise.all(promises).then(function(results) {
+            var validResults = results.filter(function(result, index, array) {
+              return result.title !== undefined;
+            });
+
+            // There should only be at most two available options left.
+            // Given the option we should select the shoutcast option.
+            if (validResults.length > 0) {
+              var finalResult = validResults[0];
+              track = utils.createTrackFromTitle(finalResult.title)
+              track.station = finalResult
+              if (!cachedSource) {
+                utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
+              }
+              return fulfill(track);
+            } else {
+              // No data was able to be fetched from the station
+
+            }
           });
 
-          // There should only be at most two available options left.
-          // Given the option we should select the shoutcast option.
-          if (validResults.length > 0) {
-            var finalResult = validResults[0];
-            track = utils.createTrackFromTitle(finalResult.title)
-            track.station = finalResult
-            return fulfill(track);
-          } else {
-            // No data was able to be fetched from the station
-
-          }
-        });
+        })
       });
 
     });
@@ -159,102 +155,20 @@ function fetchMetadataForUrl(url) {
 
       // Get color information about the artist image and album details
       var promises = [
-        getColor()
+        getColor(),
+        album.fetchAlbumForArtistAndTrack(track.artist, track.song)
       ];
 
-      Promise.all(promises).then(finalCallback);
+      Promise.all(promises).then(function(results) {
+        var album = results[1];
+        track.album = album;
+        return track;
+      }).then(finalCallback);
     });
-
-
-
   });
 
-
-
-
 }
 
-
-
-//
-//         function(asyncCallback) {
-//           if (track) {
-//             async.parallel([
-//                 function(callback) {
-//                   async.series([ //Begin Artist / Color series
-//
-//                     // Get artist
-//                     function(callback) {
-//                       getArtistDetails(track, callback);
-//                     },
-//
-//
-//                   ], function(err, results) {
-//                     return callback();
-//                   }); // End Artist / Color series
-//                 },
-//
-//                 // Get track Details
-//                 function(callback) {
-//                   if (track.song && track.artist) {
-//                     getTrackDetails(track, callback);
-//                   } else {
-//                     return callback();
-//                   }
-//
-//                 },
-//
-//                 // Get Album for track
-//                 function(callback) {
-//                   if (track.artist && track.song) {
-//                     getAlbumDetails(track, function(error, albumObject) {
-//                       track.album = albumObject;
-//                       return callback();
-//                     });
-//                   } else {
-//                     track.album = null;
-//                     return callback();
-//                   }
-//                 }
-//
-//
-//               ],
-//               function(err, results) {
-//                 return asyncCallback(); // Track and Album details complete
-//               });
-//           } else {
-//             return asyncCallback(); // No track exists so track and album details could not take place
-//           }
-//         }
-//       ],
-//       function(err) {
-//         // If no track was able to be created it's an error
-//         if (!track) {
-//           var error = {};
-//           error.message = "No data was able to be fetched for your requested radio stream: " + decodeURIComponent(url) + ". Make sure your stream url is valid and encoded properly.  It's also possible the server just doesn't supply any metadata for us to provide you.";
-//           error.status = 400;
-//           error.batserver = config.useragent;
-//           return mainCallback(error, null);
-//         }
-//
-//         utils.cacheData(streamCacheKey, track, config.cachetime);
-//
-//         return mainCallback(null, track);
-//       });
-//   });
-//
-// }
-//
-
-//
-//
-//
-
-
-function createEmptyTrack() {
-  var track = {};
-  return track;
-}
 
 function populateTrackObjectWithArtist(track, apiData) {
 

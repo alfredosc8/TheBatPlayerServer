@@ -28,7 +28,7 @@ setupMemcache();
 
 
 // view engine setup
-app.use(timeout('10s', {
+app.use(timeout('14s', {
   respond: true
 }));
 
@@ -49,7 +49,7 @@ app.use("/images/resize", resizeImage);
 app.use("/images/header", headerImage);
 
 if (env === "production") {
-  app.use(rollbar.errorHandler('41d47860da4546f89ca78845565ee85c'));
+  //app.use(rollbar.errorHandler('41d47860da4546f89ca78845565ee85c'));
 }
 
 function setupMemcache() {
@@ -69,19 +69,19 @@ app.use(function(req, res, next) {
 
 
 // error handler
-// app.use(function(err, req, res, next) {
-//   res.status(err.status || 500);
-//
-//   if (req.timedout) {
-//     handleTimeout(err, req, res);
-//     return;
-//   }
-//
-//   res.render('error', {
-//     message: err.message,
-//     error: {}
-//   });
-// });
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+
+  if (req.timedout) {
+    handleTimeout(err, req, res);
+    return;
+  }
+
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
 
 function handleTimeout(err, req, res) {
   res.status(200);

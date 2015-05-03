@@ -11,85 +11,88 @@ var S = require('string');
 var log = utils.log;
 var async = require("async");
 var _ = require('lodash');
+var Promise = require('promise');
 
 S.extendPrototype();
 
-function fetchAlbumForArtistAndTrack(artist, track, mainCallback) {
-  var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track).slugify();
-  var album = null;
+function fetchAlbumForArtistAndTrack(artist, track) {
+  return new Promise(function(fulfill, reject) {
+    var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track).slugify();
+    var album = null;
 
-  async.parallel([
+    async.parallel([
 
-    // Try the cache
-    function(callback) {
-      utils.getCacheData(albumObjectCacheKey, function(error, albumObject) {
-        if (!error && albumObject !== undefined && config.enableCache) {
-          album = albumObject;
-          return mainCallback(null, albumObject);
+      // Try the cache
+      function(callback) {
+        utils.getCacheData(albumObjectCacheKey).then(function(albumObject) {
+          if (albumObject) {
+            album = albumObject;
+            return fulfill(albumObject);
+          } else {
+            return callback(null, null);
+          }
+        });
+
+      },
+
+      // Try Discogs
+      function(callback) {
+        if (!album) {
+          discogs.getAlbum(artist, track, callback);
         } else {
           return callback(null, null);
         }
+      },
+      //
+      // // // // Try musicbrainz
+      // function(callback) {
+      //   if (!album) {
+      //     musicbrainz.getAlbum(artist, track, callback);
+      //   } else {
+      //     return callback(null, null);
+      //   }
+      // },
+
+      // // Try Last.FM
+      function(callback) {
+        if (!album) {
+          lastfm.getAlbum(artist, track, callback);
+        } else {
+          return callback(null, null);
+        }
+      }
+
+    ], function(error, albums) {
+      async.filter(albums, function(singleAlbum, callback) {
+        return callback((singleAlbum !== null && singleAlbum.name !== null));
+      }, function(albums) {
+        var album = albums[0];
+
+        if (album !== undefined) {
+          album.artist = artist;
+          if (!album.image) {
+            getAlbumArtForAlbum(album, function(error, finalAlbum) {
+              utils.cacheData(albumObjectCacheKey, finalAlbum, 0);
+              return fulfill(finalAlbum);
+            });
+          } else {
+            utils.cacheData(albumObjectCacheKey, album, 0);
+            return fulfill(album);
+          }
+
+        } else {
+          // No album found
+          var isRetrying = retrySanitized(artist, track, fulfill);
+          if (!isRetrying) {
+            utils.cacheData(albumObjectCacheKey, null, 60);
+            return fulfill(null);
+          }
+        }
       });
 
-    },
-
-    // Try Discogs
-    function(callback) {
-      if (!album) {
-        discogs.getAlbum(artist, track, callback);
-      } else {
-        return callback(null, null);
-      }
-    },
-
-    // Try musicbrainz
-    function(callback) {
-      if (!album) {
-        musicbrainz.getAlbum(artist, track, callback);
-      } else {
-        return callback(null, null);
-      }
-    },
-
-    // Try Last.FM
-    function(callback) {
-      if (!album) {
-        lastfm.getAlbum(artist, track, callback);
-      } else {
-        return callback(null, null);
-      }
-    }
-
-  ], function(error, albums) {
-    async.filter(albums, function(singleAlbum, callback) {
-      return callback((singleAlbum !== null && singleAlbum.name !== null));
-    }, function(albums) {
-      var album = albums[0];
-
-      if (album !== undefined) {
-        album.artist = artist;
-
-        if (!album.image) {
-          getAlbumArtForAlbum(album, function(error, finalAlbum) {
-            utils.cacheData(albumObjectCacheKey, finalAlbum, 0);
-            return mainCallback(error, finalAlbum);
-          });
-        } else {
-          utils.cacheData(albumObjectCacheKey, album, 0);
-          return mainCallback(error, album);
-        }
-
-      } else {
-        // No album found
-        var isRetrying = retrySanitized(artist, track, mainCallback);
-        if (!isRetrying) {
-          utils.cacheData(albumObjectCacheKey, null, 60);
-          return mainCallback(null, null);
-        }
-      }
     });
-
   });
+
 }
 
 function getAlbumArtForAlbum(album, mainCallback) {
@@ -141,13 +144,13 @@ function getAlbumArtForAlbum(album, mainCallback) {
   });
 }
 
-function retrySanitized(artistName, trackName, callback) {
+function retrySanitized(artistName, trackName, fulfill) {
   var updatedArtist = utils.sanitize(artistName);
   var updatedTrack = utils.sanitize(trackName);
 
   if (updatedArtist != artistName || updatedTrack != trackName) {
     log("No album. Attempting retry.");
-    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack, callback);
+    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack).then(fulfill);
     return true;
   } else {
     return false;

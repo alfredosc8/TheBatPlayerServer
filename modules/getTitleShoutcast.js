@@ -10,8 +10,6 @@ S.extendPrototype();
 function getV1Title(url) {
 
   return new Promise(function(fulfill, reject) {
-    console.log("---- get track from shoutcast 1 -----");
-
     url = url + "/7.html";
     var maxSize = 1000;
     var size = 0;
@@ -63,8 +61,6 @@ function getV1Title(url) {
 function getV2Title(url) {
 
   return new Promise(function(fulfill, reject) {
-    console.log("---- get track from shoutcast 2 -----");
-
     var parseString = require('xml2js').parseString;
 
     url = urlparse.parse(url);

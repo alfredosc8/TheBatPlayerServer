@@ -117,26 +117,30 @@ function sanitize(string) {
 }
 
 function cacheData(key, value, lifetime) {
+  return new Promise(function(fulfill, reject) {
+    if (value === null || value === undefined) {
+      value = "0";
+    }
 
-  if (value === null || value === undefined) {
-    value = "0";
-  }
+    if (config.enableCache && key && value && global.memcacheClient !== null) {
+      console.log("Caching: " + key);
+      global.memcacheClient.set(key, value, lifetime, function(err) {
+        if (err) {
+          log(err);
+        }
+        fulfill();
+      });
+    } else {
+      fulfill();
+    }
 
-  if (config.enableCache && key && value && global.memcacheClient !== null) {
-    log("Caching: " + key);
-    global.memcacheClient.set(key, value, lifetime, function(err) {
-      if (err) {
-        log(err);
-      }
-    });
-  }
+  });
 }
 
-function getCacheData(key, callback) {
+function getCacheData(key) {
   return new Promise(function(fulfill, reject) {
 
     if (config.enableCache && key !== null && global.memcacheClient !== null) {
-
       global.memcacheClient.get(key, function(err, value) {
 
         if (value === "0") {
@@ -146,7 +150,7 @@ function getCacheData(key, callback) {
         if (err) {
           throw err;
         } else {
-          return fulfill(null, value);
+          return fulfill(value);
         }
       });
     } else {
