@@ -10,9 +10,9 @@ var StreamTitle = function() {};
 StreamTitle.prototype.getTitle = function(url) {
   return new Promise(function(fulfill, reject) {
 
-    if (!url.endsWith("/;")) {
-      url = url + "/;";
-    }
+    // if (!url.endsWith("/;")) {
+    //   url = url + "/;";
+    // }
 
     var completed = false;
 

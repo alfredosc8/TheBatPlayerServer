@@ -96,7 +96,6 @@ function getTrackDetails(artistName, trackName, callback) {
         track: trackName,
         autocorrect: 1
       }, function(err, trackDetails) {
-        log("Fetched track from lastfm");
         utils.cacheData(cacheKey, trackDetails, 0);
         return callback(null, trackDetails);
       });

@@ -85,7 +85,7 @@ function fetchAlbumForArtistAndTrack(artist, track) {
           var isRetrying = retrySanitized(artist, track, fulfill);
           if (!isRetrying) {
             utils.cacheData(albumObjectCacheKey, null, 60);
-            return fulfill(null);
+            return fulfill(undefined);
           }
         }
       });

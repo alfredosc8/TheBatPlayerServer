@@ -88,7 +88,6 @@ function fetchMetadataForUrl(url) {
   }
 
   function finalCallback(result, cached) {
-
     if (!cached) {
       utils.cacheData(streamCacheKey, track, config.cachetime);
     }
@@ -118,7 +117,6 @@ function fetchMetadataForUrl(url) {
           } else {
             promises = [getTrackFromShoutcast(url, cachedSource, metadataSource)];
           }
-
           Promise.all(promises).then(function(results) {
             var validResults = results.filter(function(result, index, array) {
               return result.title !== undefined;
