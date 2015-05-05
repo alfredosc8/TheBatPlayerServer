@@ -30,7 +30,8 @@
     "colormatch": "0.0.4",
     "lodash": "^3.1.0",
     "compression": "^1.4.0",
-    "promise": "^7.0.1"
+    "promise": "^7.0.1",
+    "nodetime": "^0.8.15"
   },
   "devDependencies": {
     "mocha-clean": "^0.4.0",
