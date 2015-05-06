@@ -11,12 +11,12 @@ function getV1Title(url) {
 
   return new Promise(function(fulfill, reject) {
     url = url + "/7.html";
-    var maxSize = 1000;
+    var maxSize = 500;
     var size = 0;
 
     var options = {
       url: url,
-      timeout: 2000,
+      timeout: 1000,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13'
       }
@@ -54,6 +54,12 @@ function getV1Title(url) {
       }
     });
 
+    res.on('error', function(error) {
+      console.log("SCv1 error " + error);
+      return fulfill(undefined);
+      throw error;
+    });
+
   });
 
 }
@@ -77,6 +83,7 @@ function getV2Title(url) {
 
     var options = {
       url: statsUrl,
+      timeout: 500,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13'
       }
@@ -111,6 +118,14 @@ function getV2Title(url) {
         return fulfill(undefined);
       }
     });
+
+    res.on('error', function(error) {
+      console.log("SCv2 error " + error);
+      return fulfill(undefined);
+      process.exit(1);
+      return fulfill(undefined);
+    });
+
 
   });
 

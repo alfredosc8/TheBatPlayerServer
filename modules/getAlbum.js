@@ -45,13 +45,13 @@ function fetchAlbumForArtistAndTrack(artist, track) {
       },
       //
       // // // // Try musicbrainz
-      // function(callback) {
-      //   if (!album) {
-      //     musicbrainz.getAlbum(artist, track, callback);
-      //   } else {
-      //     return callback(null, null);
-      //   }
-      // },
+      function(callback) {
+        if (!album) {
+          musicbrainz.getAlbum(artist, track, callback);
+        } else {
+          return callback(null, null);
+        }
+      },
 
       // // Try Last.FM
       function(callback) {

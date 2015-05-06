@@ -20,7 +20,8 @@ function getAlbum(artistName, trackName, callback) {
       var albumObject = albumSorting.createAlbumObject(albumResult.name, albumResult.image.last()['#text'], releaseDate, albumResult.mbid);
       return callback(error, albumObject);
     } else {
-      return callback(error, null);
+      throw error;
+      //return callback(error, null);
     }
   });
 }
@@ -32,6 +33,7 @@ function albumUsingLastFM(artist, track, callback) {
         return callback(error, albumResult);
       });
     } else {
+      throw error;
       return callback(error, null);
     }
 
@@ -56,7 +58,8 @@ function getAlbumArt(albumName, artistName, mbid, callback) {
           var url = image["#text"];
           return callback(error, url);
         } else {
-          return callback(error, null);
+          throw error;
+          // return callback(error, null);
         }
       });
     }
@@ -75,10 +78,13 @@ function getAlbumDetails(artistName, albumName, mbid, callback) {
         album: albumName,
         mbid: mbid,
         autocorrect: 1
-      }, function(err, albumDetails) {
+      }, function(error, albumDetails) {
         log("Fetched album from lastfm");
+        if (error) {
+          throw error;
+        }
         utils.cacheData(cacheKey, albumDetails, 0);
-        return callback(err, albumDetails);
+        return callback(error, albumDetails);
       });
     }
   });
@@ -95,7 +101,10 @@ function getTrackDetails(artistName, trackName, callback) {
         artist: artistName,
         track: trackName,
         autocorrect: 1
-      }, function(err, trackDetails) {
+      }, function(error, trackDetails) {
+        if (error) {
+          throw error;
+        }
         utils.cacheData(cacheKey, trackDetails, 0);
         return callback(null, trackDetails);
       });

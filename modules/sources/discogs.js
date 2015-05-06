@@ -18,17 +18,19 @@ var ca = new CA({
 });
 
 function getAlbumArtWithMBID(mbid, callback) {
-  ca.release(mbid, {}, function(err, response) {
-    if (!err) {
+  ca.release(mbid, {}, function(error, response) {
+    if (!error) {
       if (response && response.images.length > 0) {
         var imageObject = response.images[0];
         var url = imageObject.thumbnails.small;
-        return callback(err, url);
+        return callback(error, url);
       } else {
-        return callback(err, null);
+        throw error;
+        return callback(error, null);
       }
     } else {
-      return callback(err, null);
+      throw error;
+      return callback(error, null);
     }
   });
 }
@@ -42,7 +44,7 @@ function getAlbum(artistName, trackName, callback) {
     format: "album",
     page: 0,
     per_page: 10
-  }, function(err, response) {
+  }, function(error, response) {
     if (!err) {
       if (response.results.length > 0) {
 
@@ -60,13 +62,15 @@ function getAlbum(artistName, trackName, callback) {
         albumSorting.filterAlbums(filteringObject, function(album) {
           var albumObject = albumSorting.createAlbumObject(album.name, null, album.date, null);
           albumObject.source = "Discogs";
-          callback(err, albumObject);
+          callback(error, albumObject);
         });
       } else {
-        callback(err, null);
+        throw error;
+        callback(error, null);
       }
     } else {
-      callback(err, null);
+      throw error;
+      callback(error, null);
     }
   });
 }

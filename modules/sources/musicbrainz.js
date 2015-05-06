@@ -12,12 +12,17 @@ function getAlbum(artistName, trackName, callback) {
 
   var options = {
     url: url,
+    timeout: 500,
     headers: {
       'User-Agent': config.useragent
     }
   };
 
   request(options, function(error, response, body) {
+    if (error) {
+      return callback(null, null);
+      throw error;
+    }
 
     if (!error && response.statusCode == 200) {
       var jsonObject = JSON.parse(body);

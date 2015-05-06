@@ -94,6 +94,22 @@ function fetchMetadataForUrl(url) {
     return finalFulfillPromise(track);
   }
 
+  function titleFetched(station) {
+    if (!station || track) {
+      return;
+    }
+
+
+    return new Promise(function(fulfill, reject) {
+      track = utils.createTrackFromTitle(station.title);
+      track.station = station;
+
+      utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
+
+      fulfill(track);
+    });
+  }
+
   function getNowPlayingTrack() {
     return new Promise(function(fulfill, reject) {
 
@@ -102,43 +118,9 @@ function fetchMetadataForUrl(url) {
           return finalFulfillPromise(cachedTrack, true);
         }
 
-        utils.getCacheData(sourceStreamCacheKey).then(function(cachedSource) {
-          var promises;
-
-          if (!cachedSource) {
-            // In order of preference
-            promises = [
-              getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource),
-              getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource),
-              getTrackFromStream(url)
-            ];
-          } else if (cachedSource == "STREAM") {
-            promises = [getTrackFromStream(url)];
-          } else {
-            promises = [getTrackFromShoutcast(url, cachedSource, metadataSource)];
-          }
-          Promise.all(promises).then(function(results) {
-            var validResults = results.filter(function(result, index, array) {
-              return result.title !== undefined;
-            });
-
-            // There should only be at most two available options left.
-            // Given the option we should select the shoutcast option.
-            if (validResults.length > 0) {
-              var finalResult = validResults[0];
-              track = utils.createTrackFromTitle(finalResult.title)
-              track.station = finalResult
-              if (!cachedSource) {
-                utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
-              }
-              return fulfill(track);
-            } else {
-              // No data was able to be fetched from the station
-
-            }
-          });
-
-        })
+        getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill);
+        getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill);
+        getTrackFromStream(url).then(titleFetched).then(fulfill);
       });
 
     });
