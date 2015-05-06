@@ -16,7 +16,7 @@ function getV1Title(url) {
 
     var options = {
       url: url,
-      timeout: 1000,
+      timeout: 500,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13'
       }
@@ -46,18 +46,9 @@ function getV1Title(url) {
       }
     });
 
-    res.on('data', function(data) {
-      size += data.length;
-      if (size > maxSize) {
-        res.abort();
-        return fulfill(undefined);
-      }
-    });
-
     res.on('error', function(error) {
       console.log("SCv1 error " + error);
       return fulfill(undefined);
-      throw error;
     });
 
   });
@@ -91,30 +82,19 @@ function getV2Title(url) {
     var res = request(options, function(error, response, body) {
       if (body && response.statusCode === 200) {
         // Parse XML body
-        try {
-          parseString(body, function(err, result) {
+        parseString(body, function(error, result) {
+          if (!error && result.SONGTITLE) {
             var station = {};
             station.listeners = result.CURRENTLISTENERS;
             station.bitrate = result.BITRATE;
             station.title = result.SONGTITLE;
             station.fetchsource = "SHOUTCAST_V2";
-            fulfill(station);
-          });
-        } catch (e) {
-
-        } finally {
-          return fulfill(undefined);
-        }
-
+            return fulfill(station);
+          } else {
+            return fulfill(undefined);
+          }
+        });
       } else {
-        return fulfill(undefined);
-      }
-    });
-
-    res.on('data', function(data) {
-      size += data.length;
-      if (size > maxSize) {
-        res.abort();
         return fulfill(undefined);
       }
     });
@@ -122,8 +102,7 @@ function getV2Title(url) {
     res.on('error', function(error) {
       console.log("SCv2 error " + error);
       return fulfill(undefined);
-      process.exit(1);
-      return fulfill(undefined);
+      throw error;
     });
 
 

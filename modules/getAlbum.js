@@ -43,8 +43,8 @@ function fetchAlbumForArtistAndTrack(artist, track) {
           return callback(null, null);
         }
       },
-      //
-      // // // // Try musicbrainz
+
+      // Try musicbrainz
       function(callback) {
         if (!album) {
           musicbrainz.getAlbum(artist, track, callback);
@@ -53,7 +53,7 @@ function fetchAlbumForArtistAndTrack(artist, track) {
         }
       },
 
-      // // Try Last.FM
+      // Try Last.FM
       function(callback) {
         if (!album) {
           lastfm.getAlbum(artist, track, callback);

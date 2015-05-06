@@ -45,7 +45,7 @@ function getAlbum(artistName, trackName, callback) {
     page: 0,
     per_page: 10
   }, function(error, response) {
-    if (!err) {
+    if (!error) {
       if (response.results.length > 0) {
 
         // Create an object that can be used for filtering
@@ -65,12 +65,10 @@ function getAlbum(artistName, trackName, callback) {
           callback(error, albumObject);
         });
       } else {
-        throw error;
-        callback(error, null);
+        return callback(error, null);
       }
     } else {
-      throw error;
-      callback(error, null);
+      return callback(error, null);
     }
   });
 }

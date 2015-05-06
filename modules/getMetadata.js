@@ -95,18 +95,18 @@ function fetchMetadataForUrl(url) {
   }
 
   function titleFetched(station) {
-    if (!station || track) {
-      return;
-    }
-
 
     return new Promise(function(fulfill, reject) {
+      if (!station || !station.title || track) {
+        return reject(undefined);
+      }
+
       track = utils.createTrackFromTitle(station.title);
       track.station = station;
 
       utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
 
-      fulfill(track);
+      return fulfill(track);
     });
   }
 
@@ -114,13 +114,30 @@ function fetchMetadataForUrl(url) {
     return new Promise(function(fulfill, reject) {
 
       utils.getCacheData(streamCacheKey).then(function(cachedTrack) {
+
+        // The entire object is cached, so return it.
         if (cachedTrack) {
           return finalFulfillPromise(cachedTrack, true);
         }
 
-        getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill);
-        getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill);
-        getTrackFromStream(url).then(titleFetched).then(fulfill);
+        utils.getCacheData(sourceStreamCacheKey).then(function(source) {
+
+          if (source) {
+            if (source == "SHOUTCAST_V1") {
+              getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill);
+            } else if (source == "SHOUTCAST_V2") {
+              getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill);
+            } else {
+              getTrackFromStream(url).then(titleFetched).then(fulfill);
+            }
+
+          } else {
+            getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill);
+            getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill);
+            getTrackFromStream(url).then(titleFetched).then(fulfill);
+          }
+        });
+
       });
 
     });
@@ -129,7 +146,6 @@ function fetchMetadataForUrl(url) {
   //Logic starts here
   return new Promise(function(fulfill, reject) {
     finalFulfillPromise = fulfill;
-
     // Get the currently playing track and find artist details
     getNowPlayingTrack().then(getArtistDetails).then(function(track) {
 

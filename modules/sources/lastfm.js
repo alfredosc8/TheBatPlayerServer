@@ -33,7 +33,6 @@ function albumUsingLastFM(artist, track, callback) {
         return callback(error, albumResult);
       });
     } else {
-      throw error;
       return callback(error, null);
     }
 
@@ -58,8 +57,7 @@ function getAlbumArt(albumName, artistName, mbid, callback) {
           var url = image["#text"];
           return callback(error, url);
         } else {
-          throw error;
-          // return callback(error, null);
+          return callback(error, null);
         }
       });
     }
@@ -81,7 +79,7 @@ function getAlbumDetails(artistName, albumName, mbid, callback) {
       }, function(error, albumDetails) {
         log("Fetched album from lastfm");
         if (error) {
-          throw error;
+          return callback(error, null);
         }
         utils.cacheData(cacheKey, albumDetails, 0);
         return callback(error, albumDetails);

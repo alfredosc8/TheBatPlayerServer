@@ -15,7 +15,9 @@ function getColorForUrl(url) {
     var i = Math.floor(Math.random() * 100);
 
     var path = utils.getCacheFilepathForUrl(url, "original");
-
+    if (!path) {
+      return fulfill(null);
+    }
     utils.download(url, path, function() {
 
       try {
