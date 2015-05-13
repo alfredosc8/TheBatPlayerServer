@@ -26,13 +26,17 @@ function filterAlbums(albumsArray, mainCallback) {
     return mainCallback(albumsArray[0]);
   }
 
+  albumsArray = _.filter(albumsArray, function(album) {
+    return (album.name.toLowerCase().indexOf('live') == -1);
+  });
+
   albumsArray.sort(function(a, b) {
 
     // Turn your strings into dates, and then subtract them
     // to get a value that is either negative, positive, or zero.
     if (a.date && b.date) {
 
-      if (a.date < b.date) {
+      if (a.date > b.date) {
         return 1;
       } else {
         return -1
@@ -81,6 +85,8 @@ function filterAlbums(albumsArray, mainCallback) {
     return 0;
 
   });
+
+  console.log(albumsArray);
 
   async.filter(albumsArray, function(singleAlbum, callback) {
       var valid = validReleasetype(singleAlbum);
