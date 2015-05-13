@@ -20,8 +20,7 @@ function getAlbum(artistName, trackName, callback) {
       var albumObject = albumSorting.createAlbumObject(albumResult.name, albumResult.image.last()['#text'], releaseDate, albumResult.mbid);
       return callback(error, albumObject);
     } else {
-      throw error;
-      //return callback(error, null);
+      return callback(error, null);
     }
   });
 }
