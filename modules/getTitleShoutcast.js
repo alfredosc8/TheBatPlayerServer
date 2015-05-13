@@ -8,7 +8,6 @@ var Promise = require('promise');
 S.extendPrototype();
 
 function getV1Title(url) {
-
   return new Promise(function(fulfill, reject) {
     url = url + "/7.html";
     var maxSize = 500;
@@ -47,7 +46,7 @@ function getV1Title(url) {
     });
 
     res.on('error', function(error) {
-      console.log("SCv1 error " + error);
+      console.log("SCv1 error " + error + " : " + url);
       return fulfill(undefined);
     });
 
@@ -56,7 +55,6 @@ function getV1Title(url) {
 }
 
 function getV2Title(url) {
-
   return new Promise(function(fulfill, reject) {
     var parseString = require('xml2js').parseString;
 
@@ -100,7 +98,7 @@ function getV2Title(url) {
     });
 
     res.on('error', function(error) {
-      console.log("SCv2 error " + error);
+      console.log("SCv2 error " + error + " : " + url);
       return fulfill(undefined);
       throw error;
     });

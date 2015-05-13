@@ -7,7 +7,7 @@ var Promise = require('promise');
 chai.should();
 chai.config.includeStack = false;
 
-var streams = ["http://prem1.di.fm:80/futuresynthpop?77dfa163f86db61477fe5d21", 'http://205.164.41.34:6699/', 'http://23.81.90.249:8010/', 'http://uwstream1.somafm.com/', "http://ice31.securenetsystems.net/CAFECODY?type=.aac"];
+var streams = ["http://prem1.di.fm:80/futuresynthpop?77dfa163f86db61477fe5d21", 'http://23.27.51.2:6699/', 'http://stream.getmyip.com:80/', 'http://uwstream1.somafm.com/', "http://ice31.securenetsystems.net/CAFECODY?type=.aac"];
 var i = Math.floor(Math.random() * streams.length);
 
 var stream = streams[i];
