@@ -5,6 +5,7 @@ var utils = require("../utils/utils.js");
 var lastfm = require("./sources/lastfm.js");
 var musicbrainz = require("./sources/musicbrainz.js")
 var discogs = require("./sources/discogs.js")
+var gracenote = require("./sources/gracenote.js");
 
 var config = require("../config.js");
 var S = require('string');
@@ -18,7 +19,7 @@ S.extendPrototype();
 function fetchAlbumForArtistAndTrack(artist, track) {
   return new Promise(function(fulfill, reject) {
     var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track).slugify();
-    var album = null;
+    var album = undefined;
 
     async.parallel([
 
@@ -27,7 +28,7 @@ function fetchAlbumForArtistAndTrack(artist, track) {
         utils.getCacheData(albumObjectCacheKey).then(function(albumObject) {
           if (albumObject) {
             album = albumObject;
-            return fulfill(albumObject);
+            return fulfill(album);
           } else {
             return callback(null, null);
           }
@@ -36,18 +37,27 @@ function fetchAlbumForArtistAndTrack(artist, track) {
       },
 
       // Try Discogs
+      // function(callback) {
+      //   if (!album) {
+      //     discogs.getAlbum(artist, track, callback);
+      //   } else {
+      //     return callback(null, null);
+      //   }
+      // },
+      //
+      // // Try musicbrainz
       function(callback) {
         if (!album) {
-          discogs.getAlbum(artist, track, callback);
+          musicbrainz.getAlbum(artist, track, callback);
         } else {
           return callback(null, null);
         }
       },
 
-      // Try musicbrainz
+      // Try Gracenote
       function(callback) {
         if (!album) {
-          musicbrainz.getAlbum(artist, track, callback);
+          gracenote.getAlbum(artist, track, callback);
         } else {
           return callback(null, null);
         }
@@ -64,11 +74,10 @@ function fetchAlbumForArtistAndTrack(artist, track) {
 
     ], function(error, albums) {
       async.filter(albums, function(singleAlbum, callback) {
-        return callback((singleAlbum !== null && singleAlbum.name !== null));
+        return callback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
       }, function(albums) {
         var album = albums[0];
-
-        if (album !== undefined) {
+        if (album) {
           album.artist = artist;
           if (!album.image) {
             getAlbumArtForAlbum(album, function(error, finalAlbum) {
@@ -117,7 +126,6 @@ function getAlbumArtForAlbum(album, mainCallback) {
     // Get album art from Discogs
     function(callback) {
       if (album.mbid !== null && !album.image) {
-
         discogs.getAlbumArtWithMBID(album.mbid, function(error, result) {
           if (!error && result) {
             album.image = result;

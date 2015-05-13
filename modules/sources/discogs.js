@@ -43,7 +43,7 @@ function getAlbum(artistName, trackName, callback) {
     track: trackName,
     format: "album",
     page: 0,
-    per_page: 10
+    per_page: 5
   }, function(error, response) {
     if (!error) {
       if (response.results.length > 0) {

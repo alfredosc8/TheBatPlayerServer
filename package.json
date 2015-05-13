@@ -32,7 +32,8 @@
     "compression": "^1.4.0",
     "promise": "^7.0.1",
     "nodetime": "^0.8.15",
-    "c0lor": "^0.1.0"
+    "c0lor": "^0.1.0",
+    "node-gracenote": "git://github.com/ddanninger/node-gracenote"
   },
   "devDependencies": {
     "mocha-clean": "^0.4.0",

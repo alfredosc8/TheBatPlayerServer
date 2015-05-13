@@ -54,6 +54,7 @@ function filterAlbums(albumsArray, mainCallback) {
     }
   });
 
+
   albumsArray.sort(function(a, b) {
     // If it has a secondary album type then demote it
     if (a.type.length === 1 && b.type.length > 1) {
@@ -81,7 +82,6 @@ function filterAlbums(albumsArray, mainCallback) {
 
   });
 
-
   async.filter(albumsArray, function(singleAlbum, callback) {
       var valid = validReleasetype(singleAlbum);
       return callback(valid);
@@ -100,6 +100,10 @@ function filterAlbums(albumsArray, mainCallback) {
 }
 
 function validReleasetype(singleAlbumFilterObject) {
+  if (singleAlbumFilterObject.type.length === 0) {
+    return true;
+  }
+
   var validStrings = ["official", "release", "album", "single", "ep"];
 
   var validTypes = _.intersection(singleAlbumFilterObject.type, validStrings);
