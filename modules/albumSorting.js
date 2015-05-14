@@ -27,7 +27,15 @@ function filterAlbums(albumsArray, mainCallback) {
   }
 
   albumsArray = _.filter(albumsArray, function(album) {
-    return (album.name.toLowerCase().indexOf('live') == -1);
+    var badNames = ["live", "greatest hits", "single", "[", "]"];
+
+    if (badNames.some(function(v) {
+        return album.name.toLowerCase().indexOf(v) >= 0;
+      })) {
+      return false;
+    } else {
+      return true;
+    }
   });
 
   albumsArray.sort(function(a, b) {
@@ -85,8 +93,6 @@ function filterAlbums(albumsArray, mainCallback) {
     return 0;
 
   });
-
-  console.log(albumsArray);
 
   async.filter(albumsArray, function(singleAlbum, callback) {
       var valid = validReleasetype(singleAlbum);

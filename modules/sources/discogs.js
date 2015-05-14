@@ -25,11 +25,9 @@ function getAlbumArtWithMBID(mbid, callback) {
         var url = imageObject.thumbnails.small;
         return callback(error, url);
       } else {
-        throw error;
         return callback(error, null);
       }
     } else {
-      throw error;
       return callback(error, null);
     }
   });

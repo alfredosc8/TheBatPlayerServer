@@ -9,6 +9,11 @@ function getAlbum(artistName, trackName, callback) {
   api.searchTrack(artistName, null, trackName, function(error, results) {
     if (results.length > 0 && !error) {
       var filteringObject = _.map(results, function(result) {
+
+        if (result.album_artist_name != artistName) {
+          return null;
+        }
+
         var newObject = {};
         newObject.name = result.album_title;
         newObject.date = parseInt(result.album_year);
@@ -31,7 +36,7 @@ function getAlbum(artistName, trackName, callback) {
       });
 
     }
-  }, Gracenote.ALL_RESULTS);
+  }, Gracenote.BEST_MATCH);
 
 }
 

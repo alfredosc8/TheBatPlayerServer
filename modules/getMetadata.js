@@ -32,7 +32,6 @@ function fetchMetadataForUrl(url) {
 
   var streamCacheKey = ("cache-stream-" + url).slugify();
   var sourceStreamCacheKey = ("cache-source-stream-" + url).slugify();
-  // var streamFetchMethodCacheKey = ("cache-stream-fetchmethod" + url).slugify();
 
   function getTrackFromShoutcast(url, version, metadataSource) {
     var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
@@ -79,10 +78,10 @@ function fetchMetadataForUrl(url) {
   function getTrackFromStream(url) {
     return new Promise(function(fulfill, reject) {
       streamtitle.getTitle(url).then(function(title) {
-        var streamTrack = utils.createTrackFromTitle(title);
-        streamTrack.station = {};
-        streamTrack.station.fetchsource = "STREAM";
-        return fulfill(streamTrack);
+        var station = {}
+        station.title = title;
+        station.fetchsource = "STREAM";
+        return fulfill(station);
       });
     });
   }
@@ -95,7 +94,6 @@ function fetchMetadataForUrl(url) {
   }
 
   function titleFetched(station) {
-
     return new Promise(function(fulfill, reject) {
       if (!station || !station.title || track) {
         return reject(undefined);
