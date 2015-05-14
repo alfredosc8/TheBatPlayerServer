@@ -96,7 +96,6 @@ function fetchMetadataForUrl(url) {
   }
 
   function titleFetched(station) {
-
     return new Promise(function(fulfill, reject) {
       if (!station || !station.title || track) {
         return reject(undefined);
