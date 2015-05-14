@@ -65,7 +65,7 @@ StreamTitle.prototype.getTitle = function(url) {
       if (!completed) {
         completed = true;
         client.destroy()
-        return fulfill(undefined);
+        return reject(undefined);
       }
 
     }

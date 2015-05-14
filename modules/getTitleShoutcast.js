@@ -24,7 +24,7 @@ function getV1Title(url) {
     var res = request(options, function(error, response, body) {
       if (error || body === undefined) {
         log(error);
-        return fulfill(undefined);
+        return reject(undefined);
       }
 
       var csv = body.stripTags();
@@ -41,7 +41,7 @@ function getV1Title(url) {
 
         return fulfill(station);
       } else {
-        return fulfill(undefined);
+        return reject(undefined);
       }
     });
 
@@ -89,11 +89,11 @@ function getV2Title(url) {
             station.fetchsource = "SHOUTCAST_V2";
             return fulfill(station);
           } else {
-            return fulfill(undefined);
+            return reject(undefined);
           }
         });
       } else {
-        return fulfill(undefined);
+        return reject(undefined);
       }
     });
 

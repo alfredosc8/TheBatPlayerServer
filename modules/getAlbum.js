@@ -45,7 +45,8 @@ function fetchAlbumForArtistAndTrack(artist, track) {
       //   }
       // },
       //
-      // // Try musicbrainz
+
+      // Try musicbrainz
       function(callback) {
         if (!album) {
           musicbrainz.getAlbum(artist, track, callback);
@@ -73,9 +74,21 @@ function fetchAlbumForArtistAndTrack(artist, track) {
       }
 
     ], function(error, albums) {
+
+      if (albums.length == 0) {
+        console.log("No album found");
+        return fulfill(undefined);
+      }
+
       async.filter(albums, function(singleAlbum, callback) {
         return callback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
       }, function(albums) {
+
+        if (albums.length == 0) {
+          console.log("No album found");
+          return fulfill(undefined);
+        }
+
         var album = albums[0];
         if (album) {
           album.artist = artist;
@@ -93,6 +106,7 @@ function fetchAlbumForArtistAndTrack(artist, track) {
           // No album found
           var isRetrying = retrySanitized(artist, track, fulfill);
           if (!isRetrying) {
+            console.log("No album found");
             utils.cacheData(albumObjectCacheKey, null, 60);
             return fulfill(undefined);
           }

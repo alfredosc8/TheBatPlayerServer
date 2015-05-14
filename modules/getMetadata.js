@@ -18,6 +18,8 @@ var validUrl = require('valid-url');
 
 function fetchMetadataForUrl(url) {
 
+  var sourceFetchCounter = 0;
+
   if (!validUrl.isUri(url)) {
     var error = {};
     error.message = "The URL " + url + " does not appear to be a valid URL.  Please verify it's a properly encoded URL.";
@@ -32,7 +34,6 @@ function fetchMetadataForUrl(url) {
 
   var streamCacheKey = ("cache-stream-" + url).slugify();
   var sourceStreamCacheKey = ("cache-source-stream-" + url).slugify();
-  // var streamFetchMethodCacheKey = ("cache-stream-fetchmethod" + url).slugify();
 
   function getTrackFromShoutcast(url, version, metadataSource) {
     var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
@@ -79,10 +80,10 @@ function fetchMetadataForUrl(url) {
   function getTrackFromStream(url) {
     return new Promise(function(fulfill, reject) {
       streamtitle.getTitle(url).then(function(title) {
-        var streamTrack = utils.createTrackFromTitle(title);
-        streamTrack.station = {};
-        streamTrack.station.fetchsource = "STREAM";
-        return fulfill(streamTrack);
+        var station = {}
+        station.title = title;
+        station.fetchsource = "STREAM";
+        return fulfill(station);
       });
     });
   }
@@ -101,13 +102,23 @@ function fetchMetadataForUrl(url) {
         return reject(undefined);
       }
 
+
       track = utils.createTrackFromTitle(station.title);
       track.station = station;
-
       utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
 
       return fulfill(track);
     });
+  }
+
+  // Keep track of failures finding the current track title.
+  function getTrackFailure() {
+    sourceFetchCounter--;
+
+    if (sourceFetchCounter == 0) {
+      console.log("Unable to find out what is playing on this station.");
+      return finalFulfillPromise(null, false);
+    }
   }
 
   function getNowPlayingTrack() {
@@ -123,18 +134,20 @@ function fetchMetadataForUrl(url) {
         utils.getCacheData(sourceStreamCacheKey).then(function(source) {
 
           if (source) {
+            sourceFetchCounter = 1;
             if (source == "SHOUTCAST_V1") {
-              getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill);
+              getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
             } else if (source == "SHOUTCAST_V2") {
-              getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill);
+              getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
             } else {
-              getTrackFromStream(url).then(titleFetched).then(fulfill);
+              getTrackFromStream(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
             }
 
           } else {
-            getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill);
-            getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill);
-            getTrackFromStream(url).then(titleFetched).then(fulfill);
+            sourceFetchCounter = 3;
+            getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+            getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+            getTrackFromStream(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
           }
         });
 
@@ -159,7 +172,16 @@ function fetchMetadataForUrl(url) {
         var album = results[1];
         track.album = album;
         return track;
-      }).then(finalCallback);
+      }).then(finalCallback).catch(function(error) {
+        throw error;
+        finalCallback(track, false);
+      });
+
+    }).catch(function(error) {
+      throw error;
+      // Return barebones track object due to error
+      console.log("Failure in getting artist details.")
+      finalCallback(track, false);
     });
   });
 
