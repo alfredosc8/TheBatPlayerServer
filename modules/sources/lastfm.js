@@ -100,7 +100,7 @@ function getTrackDetails(artistName, trackName, callback) {
         autocorrect: 1
       }, function(error, trackDetails) {
         if (error) {
-          throw error;
+          return callback(error, null);
         }
         utils.cacheData(cacheKey, trackDetails, 0);
         return callback(null, trackDetails);
