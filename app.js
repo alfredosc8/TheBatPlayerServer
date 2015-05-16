@@ -89,12 +89,13 @@ app.use(function(err, req, res, next) {
 });
 
 function handleTimeout(err, req, res) {
-  res.status(200);
 
   var error = {};
   error.message = "This request has timed out.";
   error.status = 503;
   error.batserver = config.useragent;
+
+  res.status(error.status);
 
   res.json({
     error: error
