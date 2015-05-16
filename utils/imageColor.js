@@ -123,7 +123,7 @@ function getColorFromColorArray(colors) {
     index++;
 
     if (index > colors.length) {
-      selectedColor = colors[3]; //Fallback
+      selectedColor = colors[0]; //Fallback
     }
   }
 
