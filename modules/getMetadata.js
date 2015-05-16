@@ -121,7 +121,15 @@ function fetchMetadataForUrl(url) {
 
     if (sourceFetchCounter == 0) {
       console.log("Unable to find out what is playing on this station.");
-      return finalFulfillPromise(null, false);
+
+      if (!sourceStreamCacheKey) {
+        return finalFulfillPromise(null, false);
+      } else {
+        // Failed using the single method.  Try again.
+        console.log("Trying again.");
+        utils.cacheData(sourceStreamCacheKey, 0, 43200);
+        fetchMetadataForUrl(url);
+      }
     }
   }
 
