@@ -30,6 +30,10 @@ function getAlbum(artistName, trackName, callback) {
 
 
       albumSorting.filterAlbums(filteringObject, function(album) {
+        if (album == null) {
+          return callback(null, null);
+        }
+
         var albumObject = albumSorting.createAlbumObject(album.name, album.image, album.date, null);
         albumObject.source = "Gracenote";
         return callback(null, albumObject);

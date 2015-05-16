@@ -22,7 +22,7 @@ function createAlbumObject(title, imageUrl, releaseDate, mbid) {
 
 function filterAlbums(albumsArray, mainCallback) {
   // If there's only one then don't go through the below work.
-  if (albumsArray.length === 1) {
+  if (albumsArray.length === 1 && albumsArray[0] != null) {
     return mainCallback(albumsArray[0]);
   }
 

@@ -107,7 +107,6 @@ function fetchMetadataForUrl(url) {
         return reject(undefined);
       }
 
-
       track = utils.createTrackFromTitle(station.title);
       track.station = station;
       utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
