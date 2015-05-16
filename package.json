@@ -33,7 +33,7 @@
     "promise": "^7.0.1",
     "nodetime": "^0.8.15",
     "c0lor": "^0.1.0",
-    "node-gracenote": "git://github.com/ddanninger/node-gracenote"
+    "node-gracenote": "git://github.com/gabek/node-gracenote.git"
   },
   "devDependencies": {
     "mocha-clean": "^0.4.0",
