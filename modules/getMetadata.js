@@ -207,9 +207,11 @@ function populateTrackObjectWithArtist(track, apiData) {
       track.image.url = apiData.image.last()["#text"];
       track.isOnTour = parseInt(apiData.ontour);
       track.bio.published = bioDate.year();
-      track.tags = apiData.tags.tag.map(function(tagObject) {
-        return tagObject.name;
-      });
+      if (apiData.tags.length > 0) {
+        track.tags = apiData.tags.tag.map(function(tagObject) {
+          return tagObject.name;
+        });
+      }
 
       // If on tour then add it as the first tag
       if (track.isOnTour) {
