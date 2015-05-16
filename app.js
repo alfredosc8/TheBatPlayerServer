@@ -1,5 +1,6 @@
 var env = process.env.NODE_ENV;
 var config = require("./config.js");
+var rollbar = require("rollbar");
 
 if (env === "prodution" && config.enableAnalytics) {
 
@@ -8,7 +9,6 @@ if (env === "prodution" && config.enableAnalytics) {
     appName: 'Node.js Application'
   });
 
-  var rollbar = require("rollbar");
   rollbar.handleUncaughtExceptions(config.rollbarKey);
   require('newrelic');
 }
