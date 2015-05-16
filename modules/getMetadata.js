@@ -19,6 +19,7 @@ var validUrl = require('valid-url');
 function fetchMetadataForUrl(url) {
 
   var sourceFetchCounter = 0;
+  var cacheFetchSource = false;
 
   if (!validUrl.isUri(url)) {
     var error = {};
@@ -109,7 +110,9 @@ function fetchMetadataForUrl(url) {
 
       track = utils.createTrackFromTitle(station.title);
       track.station = station;
-      utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
+      if (cacheFetchSource) {
+        utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
+      }
 
       return fulfill(track);
     });
@@ -156,6 +159,7 @@ function fetchMetadataForUrl(url) {
             }
 
           } else {
+            cacheFetchSource = true;
             sourceFetchCounter = 3;
             getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
             getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
