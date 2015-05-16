@@ -1,17 +1,15 @@
 var env = process.env.NODE_ENV;
 var config = require("./config.js");
 
-require('nodetime').profile({
-  accountKey: '6aff0fdbd2472e31e4ce70f0831801ab31c55e75',
-  appName: 'Node.js Application'
-});
+if (env === "prodution" && config.enableAnalytics) {
 
-if (env === "prodution") {
-
-
+  require('nodetime').profile({
+    accountKey: config.nodetimeKey,
+    appName: 'Node.js Application'
+  });
 
   var rollbar = require("rollbar");
-  rollbar.handleUncaughtExceptions('41d47860da4546f89ca78845565ee85c');
+  rollbar.handleUncaughtExceptions(config.rollbarKey);
   require('newrelic');
 }
 
@@ -55,8 +53,8 @@ app.use("/images/artist", artistImage);
 app.use("/images/resize", resizeImage);
 app.use("/images/header", headerImage);
 
-if (env === "production") {
-  //app.use(rollbar.errorHandler('41d47860da4546f89ca78845565ee85c'));
+if (env === "production" && config.enableAnalytics) {
+  app.use(rollbar.errorHandler(config.rollbarKey));
 }
 
 function setupMemcache() {
