@@ -127,7 +127,7 @@ function fetchMetadataForUrl(url) {
       } else {
         // Failed using the single method.  Try again.
         console.log("Trying again.");
-        utils.cacheData(sourceStreamCacheKey, 0, 43200);
+        utils.cacheData(sourceStreamCacheKey, null, 43200);
         fetchMetadataForUrl(url);
       }
     }
