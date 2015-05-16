@@ -27,6 +27,10 @@ function filterAlbums(albumsArray, mainCallback) {
   }
 
   albumsArray = _.filter(albumsArray, function(album) {
+    if (album == null) {
+      return null;
+    }
+
     var badNames = ["live", "greatest hits", "single", "[", "]"];
 
     if (badNames.some(function(v) {
