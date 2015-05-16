@@ -2,7 +2,7 @@ var env = process.env.NODE_ENV;
 var config = require("./config.js");
 var rollbar = require("rollbar");
 
-if (env === "prodution" && config.enableAnalytics) {
+if (env === "production" && config.enableAnalytics) {
 
   require('nodetime').profile({
     accountKey: config.nodetimeKey,
