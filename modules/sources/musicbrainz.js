@@ -8,7 +8,7 @@ function getAlbum(artistName, trackName, callback) {
   var encodedArtist = escape(encodeURI(artistName.trim()));
   var encodedTrack = escape(encodeURI(trackName.trim()));
 
-  var url = "http://musicbrainz.org/ws/2/recording/?query=%22" + encodedTrack + "%22+AND+artist:%22" + encodedArtist + "%22+AND+status:%22official%22&fmt=json&limit=10";
+  var url = "http://musicbrainz.org/ws/2/recording/?query=%22" + encodedTrack + "%22+AND+artist:%22" + encodedArtist + "%22+AND+status:%22official%22&fmt=json&limit=5";
 
   var options = {
     url: url,
@@ -21,7 +21,6 @@ function getAlbum(artistName, trackName, callback) {
   request(options, function(error, response, body) {
     if (error) {
       return callback(null, null);
-      throw error;
     }
 
     if (!error && response.statusCode == 200) {
@@ -29,18 +28,26 @@ function getAlbum(artistName, trackName, callback) {
 
       if (jsonObject.recordings.length > 0) {
 
-        var albums = jsonObject.recordings[0].releases;
-        var filteringObject = _.map(albums, function(result) {
+        var albums = jsonObject.recordings;
+        var filteringObject = _.map(albums, function(recording) {
+          var album = recording.releases[0];
           var newObject = {};
-          newObject.name = result.title;
-          newObject.status = result.status;
-          if (result.date) {
-            newObject.date = parseInt(moment(new Date(result.date)).year());
+          newObject.name = album.title;
+          newObject.status = album.status;
+          if (album.date) {
+            newObject.date = parseInt(moment(new Date(album.date)).year());
           }
 
-          newObject.type = [result['release-group']['primary-type'], result['release-group']['secondary-types']];
-          newObject.artists = [artistName];
-          newObject.mbid = result.id;
+          newObject.type = [album['release-group']['primary-type'], album['release-group']['secondary-types']];
+          newObject.type = _.map(newObject.type, function(singleType) {
+            return _.isString(singleType) ? singleType.toLowerCase() : singleType;
+          });
+
+          // Make all types lowercase for filtering later
+          newObject.artists = _.map(recording['artist-credit'], function(artist) {
+            return artist.artist.name;
+          });
+          newObject.mbid = album.id;
           return newObject;
         });
 
