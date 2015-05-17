@@ -124,9 +124,23 @@ function fetchMetadataForUrl(url) {
 
     if (sourceFetchCounter == 0) {
       console.log("Unable to find out what is playing on this station.");
-      return finalFulfillPromise(track, false);
+
+      if (!sourceStreamCacheKey) {
+        return finalFulfillPromise(null, false);
+      } else {
+        // Failed using the single method.  Try again.
+        retryWithStream();
+      }
     }
   }
+
+  function retryWithStream() {
+    console.log("Trying again with stream.");
+    sourceStreamCacheKey = undefined;
+    sourceFetchCounter = 1;
+    getTrackFromStream(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
+  }
+
 
   function getNowPlayingTrack() {
     return new Promise(function(fulfill, reject) {
