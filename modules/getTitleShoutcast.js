@@ -10,12 +10,10 @@ S.extendPrototype();
 function getV1Title(url) {
   return new Promise(function(fulfill, reject) {
     url = url + "/7.html";
-    var maxSize = 500;
-    var size = 0;
 
     var options = {
       url: url,
-      timeout: 500,
+      timeout: 1200,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13'
       }
@@ -64,15 +62,12 @@ function getV2Title(url) {
       port = url.port;
     }
 
-    var maxSize = 1000;
-    var size = 0;
-
     var statsUrl = "http://" + url.hostname + ":" + port + "/stats?sid=1";
     log("Fetching " + statsUrl);
 
     var options = {
       url: statsUrl,
-      timeout: 500,
+      timeout: 1200,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13'
       }
