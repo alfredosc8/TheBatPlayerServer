@@ -20,6 +20,7 @@ function fetchMetadataForUrl(url) {
 
   var sourceFetchCounter = 0;
   var cacheFetchSource = false;
+  var getTrackPromiseFulfill = undefined;
 
   if (!validUrl.isUri(url)) {
     var error = {};
@@ -138,12 +139,13 @@ function fetchMetadataForUrl(url) {
     console.log("Trying again with stream.");
     sourceStreamCacheKey = undefined;
     sourceFetchCounter = 1;
-    getTrackFromStream(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
+    getTrackFromStream(url).then(titleFetched).then(getTrackPromiseFulfill).catch(getTrackFailure);
   }
 
 
   function getNowPlayingTrack() {
     return new Promise(function(fulfill, reject) {
+      getTrackPromiseFulfill = fulfill;
 
       utils.getCacheData(streamCacheKey).then(function(cachedTrack) {
 
