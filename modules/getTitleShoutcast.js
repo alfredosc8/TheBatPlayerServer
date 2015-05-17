@@ -10,6 +10,8 @@ S.extendPrototype();
 function getV1Title(url) {
   return new Promise(function(fulfill, reject) {
     url = url + "/7.html";
+    var maxSize = 1000;
+    var size = 0;
 
     var options = {
       url: url,
@@ -45,7 +47,16 @@ function getV1Title(url) {
 
     res.on('error', function(error) {
       console.log("SCv1 error " + error + " : " + url);
-      //return fulfill(undefined);
+      res.abort();
+      return fulfill(undefined);
+    });
+
+    res.on('data', function(data) {
+      size += data.length;
+      if (size > maxSize) {
+        res.abort();
+        return fulfill(undefined);
+      }
     });
 
   });
