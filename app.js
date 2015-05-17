@@ -62,6 +62,14 @@ function setupMemcache() {
     app.memcacheClient = new Memcached();
     app.memcacheClient.connect("127.0.0.1:11211", function() {});
     global.memcacheClient = app.memcacheClient;
+
+    global.memcacheClient.on('failure', function(details) {
+      sys.error("Memcache Server " + details.server + "went down due to: " + details.messages.join(''))
+    });
+    global.memcacheClient.on('reconnecting', function(details) {
+      sys.debug("Total downtime caused by memcache server " + details.server + " :" + details.totalDownTime + "ms")
+    });
+
   }
 }
 
