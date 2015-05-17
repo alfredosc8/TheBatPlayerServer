@@ -16,7 +16,7 @@
     "MD5": "^1.2.1",
     "string": "^3.0.0",
     "async": "^0.9.0",
-    "memcached": "^2.0.0",
+    "memcached": "^2.1.0",
     "xml2js": "^0.4.4",
     "moment": "^2.8.4",
     "newrelic": "^1.14.5",
