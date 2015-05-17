@@ -45,7 +45,7 @@ function getV1Title(url) {
 
     res.on('error', function(error) {
       console.log("SCv1 error " + error + " : " + url);
-      return fulfill(undefined);
+      //return fulfill(undefined);
     });
 
   });
