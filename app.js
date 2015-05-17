@@ -33,7 +33,7 @@ setupMemcache();
 
 
 // view engine setup
-app.use(timeout('10s', {
+app.use(timeout('7s', {
   respond: true
 }));
 
