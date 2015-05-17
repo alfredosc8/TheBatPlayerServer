@@ -6,6 +6,11 @@ module.exports = (function() {
   var router = express.Router();
 
   router.get("/:imageurl/:red/:green/:blue", function(req, res) {
+    res.setHeader('Cache-Control', 'public, max-age=31557600'); // one year
+    res.writeHead(200, {
+      'Content-Type': 'image/png'
+    });
+
     var url = req.params.imageurl;
     var colorObject = {
       red: req.params.red,
@@ -16,10 +21,6 @@ module.exports = (function() {
     image.createArtistImage(url, colorObject, function(error, path) {
       if (path) {
         fs.readFile(path, function(err, data) {
-          res.setHeader('Cache-Control', 'public, max-age=31557600'); // one year
-          res.writeHead(200, {
-            'Content-Type': 'image/png'
-          });
           res.end(data);
         });
       } else if (error) {
