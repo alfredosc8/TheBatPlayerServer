@@ -41,21 +41,21 @@ function getV1Title(url) {
 
         return fulfill(station);
       } else {
-        return reject(undefined);
+        return reject(null);
       }
     });
 
     res.on('error', function(error) {
       console.log("SCv1 error " + error + " : " + url);
       res.abort();
-      return fulfill(undefined);
+      return fulfill(null);
     });
 
     res.on('data', function(data) {
       size += data.length;
       if (size > maxSize) {
         res.abort();
-        return fulfill(undefined);
+        return fulfill(null);
       }
     });
 
