@@ -12,6 +12,7 @@ var lastfm = new LastfmAPI({
 
 function getAlbum(artistName, trackName, callback) {
   albumUsingLastFM(artistName, trackName, function(error, albumResult) {
+
     if (!error && albumResult) {
       var releaseDate = null;
       if (albumResult.releasedate) {
@@ -92,7 +93,7 @@ function getTrackDetails(artistName, trackName, callback) {
 
   utils.getCacheData(cacheKey).then(function(result) {
     if (result) {
-      return callback(error, result);
+      return callback(null, result);
     } else {
       lastfm.track.getInfo({
         artist: artistName,
