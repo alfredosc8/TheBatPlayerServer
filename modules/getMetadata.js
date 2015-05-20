@@ -16,6 +16,16 @@ S.extendPrototype();
 var validUrl = require('valid-url');
 
 
+function getArtistDetails(track) {
+  return new Promise(function(fulfill, reject) {
+    lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
+      populateTrackObjectWithArtist(track, artistDetails);
+      return fulfill(track);
+    });
+  });
+}
+
+
 function fetchMetadataForUrl(url) {
 
   var sourceFetchCounter = 0;
@@ -40,23 +50,6 @@ function fetchMetadataForUrl(url) {
   function getTrackFromShoutcast(url, version, metadataSource) {
     var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
     return shoutcasttitle[method](url);
-  }
-
-  function getArtistDetails(track) {
-    return new Promise(function(fulfill, reject) {
-      lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
-        populateTrackObjectWithArtist(track, artistDetails);
-        return fulfill(track);
-      });
-    });
-  }
-
-  function getTrackDetails(track) {
-    return new Promise(function(fulfill, reject) {
-      lastfm.getTrackDetails(utils.sanitize(track.artist), utils.sanitize(track.song)).then(function(trackDetails) {
-        populateTrackObjectWithTrack(track, trackDetails);
-      });
-    });
   }
 
 
@@ -269,3 +262,4 @@ if (!Array.prototype.last) {
 
 
 module.exports.fetchMetadataForUrl = fetchMetadataForUrl;
+module.exports.getArtistDetails = getArtistDetails;

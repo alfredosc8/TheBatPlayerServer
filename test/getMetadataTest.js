@@ -1,41 +1,34 @@
 var expect = require("chai").expect;
 
-var Memcached = require('memcached');
 var metadata = require("../modules/getMetadata.js");
+var Promise = require('promise');
+var utils = require("../utils/utils.js");
+var album = require("../modules/getAlbum.js");
 
-var req = {};
-req.app = {};
-req.app.memcacheClient = new Memcached();
-req.app.memcacheClient.connect("127.0.0.1:11211", function() {});
-
-var streams = ["http://prem1.di.fm:80/futuresynthpop?77dfa163f86db61477fe5d21", "http://205.164.41.34:6699", "http://23.81.90.249:8010", "http://uwstream1.somafm.com/", "http://ice31.securenetsystems.net/CAFECODY?type=.aac"];
-var i = Math.floor(Math.random() * streams.length);
-var stream = streams[i];
-
+var title = "Decoded Feedback - Passion Of Flesh";
 
 describe("getMetadata", function() {
-  it("Should return an object", function() {
-    metadata.fetchMetadataForUrl(stream).then(function(result) {
+  var track = utils.createTrackFromTitle(title);
+
+  it("Should create a track object from title", function(done) {
+    expect(track).to.be.a("Object");
+    expect(track.artist).to.not.be.empty();
+    expect(track.song).to.not.be.empty();
+    done();
+  });
+
+  it("Should have artist details", function(done) {
+    metadata.getArtistDetails(track).then(function(result) {
       expect(result).to.be.a("Object");
-
-
-      it("Should have required properties", function(done) {
-        expect(result).to.have.property('song');
-        expect(result).to.have.property('artist');
-        expect(result.song).to.not.be.empty();
-        expect(result.artist).to.not.be.empty();
-        expect(result).to.have.property('album');
-        done();
-      });
-
-      it("Should have image objects", function(done) {
-        expect(result.image).to.have.property('url');
-        expect(result.image).to.have.property('backgroundurl');
-        expect(result.image).to.have.property('color');
-        done();
-      });
-
-      // done();
+      done();
     });
   });
-});
+
+  it("Should have album details", function(done) {
+    album.fetchAlbumForArtistAndTrack(track.artist, track.song).then(function(result) {
+      expect(result.name).to.not.be.empty();
+      expect(result.image).to.not.be.empty();
+      done();
+    });
+  });
+})
