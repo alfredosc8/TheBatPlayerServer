@@ -186,12 +186,15 @@ function fetchMetadataForUrl(url) {
       ];
 
       Promise.all(promises).then(function(results) {
-        var album = results[1];
-        track.album = album;
+        if (results.length == 2) {
+          var album = results[1];
+          track.album = album;
+        }
+
         return track;
       }).then(finalCallback).catch(function(error) {
         throw error;
-        finalCallback(track, false);
+        return finalCallback(track, false);
       });
 
     }).catch(function(error) {
