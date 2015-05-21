@@ -148,7 +148,7 @@ function getCacheData(key) {
         }
 
         if (err) {
-          throw err;
+          return fulfill(undefind);
         } else {
           return fulfill(value);
         }
