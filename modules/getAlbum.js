@@ -62,35 +62,33 @@ function fetchAlbumForArtistAndTrack(artist, track) {
         } else {
           return callback(null, null);
         }
-      },
+      }
 
       // Try Last.FM
-      function(callback) {
-        if (!album) {
-          lastfm.getAlbum(artist, track, callback);
-        } else {
-          return callback(null, null);
-        }
-      }
+      // function(callback) {
+      //   if (!album) {
+      //     lastfm.getAlbum(artist, track, callback);
+      //   } else {
+      //     return callback(null, null);
+      //   }
+      // }
 
     ], function(error, albums) {
+      // if (albums.length == 0 || error) {
+      //   console.log("No album found");
+      //   return fulfill(undefined);
+      // }
 
-      if (albums.length == 0) {
-        console.log("No album found");
-        return fulfill(undefined);
-      }
-
-      async.filter(albums, function(singleAlbum, callback) {
-        return callback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
+      async.filter(albums, function(singleAlbum, filterCallback) {
+        return filterCallback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
       }, function(albums) {
+        if (albums.length > 0) {
+          var album = albums[0];
+          if (!album || album == null) {
+            console.log("No albums returned.")
+            return fulfill(undefined);
+          }
 
-        if (albums.length == 0) {
-          console.log("No album found");
-          return fulfill(undefined);
-        }
-
-        var album = albums[0];
-        if (album) {
           album.artist = artist;
           if (!album.image) {
             getAlbumArtForAlbum(album, function(error, finalAlbum) {
@@ -106,16 +104,15 @@ function fetchAlbumForArtistAndTrack(artist, track) {
           // No album found
           var isRetrying = retrySanitized(artist, track, fulfill);
           if (!isRetrying) {
-            console.log("No album found");
+            console.log("No album found and will not retry.");
             utils.cacheData(albumObjectCacheKey, null, 60);
-            return fulfill(undefined);
+            return fulfill(null);
           }
         }
       });
 
     });
   });
-
 }
 
 function getAlbumArtForAlbum(album, mainCallback) {
@@ -167,14 +164,18 @@ function getAlbumArtForAlbum(album, mainCallback) {
 }
 
 function retrySanitized(artistName, trackName, fulfill) {
+  if (!artistName || !trackName) {
+    return false;
+  }
   var updatedArtist = utils.sanitize(artistName);
   var updatedTrack = utils.sanitize(trackName);
 
   if (updatedArtist != artistName || updatedTrack != trackName) {
-    log("No album. Attempting retry.");
+    console.log("No album. Attempting retry.");
     fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack).then(fulfill);
     return true;
   } else {
+    console.log("Not attempting retry");
     return false;
   }
 

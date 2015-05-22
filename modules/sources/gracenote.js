@@ -5,8 +5,14 @@ var Gracenote = require("node-gracenote");
 var api = new Gracenote(config.gracenoteClientId, config.gracenoteClientTag, config.gracenoteUserId);
 
 function getAlbum(artistName, trackName, callback) {
+  var hasReturnedResults = false;
 
   api.searchTrack(artistName, null, trackName, function(error, results) {
+    if (hasReturnedResults) {
+      return;
+    }
+    hasReturnedResults = true;
+
     if (results.length > 0 && !error) {
       var filteringObject = _.map(results, function(result) {
 
@@ -30,6 +36,7 @@ function getAlbum(artistName, trackName, callback) {
 
 
       albumSorting.filterAlbums(filteringObject, function(album) {
+
         if (album == null) {
           return callback(null, null);
         }

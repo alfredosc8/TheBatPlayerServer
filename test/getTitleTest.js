@@ -18,7 +18,6 @@ describe("streamTitle", function() {
       check(done, function() {
         expect(title).to.not.be.null();
         expect(title).to.be.a('string');
-        expect(title).to.contain(' - ');
       });
     });
 

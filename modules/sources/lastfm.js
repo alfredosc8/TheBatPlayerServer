@@ -11,7 +11,7 @@ var lastfm = new LastfmAPI({
 });
 
 function getAlbum(artistName, trackName, callback) {
-  albumUsingLastFM(artistName, trackName, function(error, albumResult) {
+  albumUsingLastFM(artistName, trackName).then(function(error, albumResult) {
 
     if (!error && albumResult) {
       var releaseDate = null;
@@ -19,23 +19,25 @@ function getAlbum(artistName, trackName, callback) {
         releaseDate = moment(new Date(albumResult.releasedate.trim())).year();
       }
       var albumObject = albumSorting.createAlbumObject(albumResult.name, albumResult.image.last()['#text'], releaseDate, albumResult.mbid);
-      return callback(error, albumObject);
+      return callback(null, albumObject);
     } else {
       return callback(error, null);
     }
   });
 }
 
-function albumUsingLastFM(artist, track, callback) {
-  getTrackDetails(artist, track, function(error, trackObject) {
-    if (!error && trackObject && trackObject.album) {
-      getAlbumDetails(artist, trackObject.album.title, trackObject.album.title.mbid, function(error, albumResult) {
-        return callback(error, albumResult);
-      });
-    } else {
-      return callback(error, null);
-    }
+function albumUsingLastFM(artist, track) {
+  return new Promise(function(fulfill, reject) {
 
+    getTrackDetails(artist, track, function(error, trackObject) {
+      if (!error && trackObject && trackObject.album) {
+        getAlbumDetails(artist, trackObject.album.title, trackObject.album.title.mbid, function(error, albumResult) {
+          return fulfill(albumResult);
+        });
+      } else {
+        return fulfill(null);
+      }
+    });
   });
 }
 
