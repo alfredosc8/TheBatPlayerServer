@@ -21,96 +21,89 @@ function fetchAlbumForArtistAndTrack(artist, track) {
     var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track).slugify();
     var album = undefined;
 
-    async.parallel([
+    utils.getCacheData(albumObjectCacheKey).then(function(albumObject) {
+      if (albumObject) {
+        album = albumObject;
+        return fulfill(album);
+      } else {
+        async.parallel([
 
-      // Try the cache
-      function(callback) {
-        utils.getCacheData(albumObjectCacheKey).then(function(albumObject) {
-          if (albumObject) {
-            album = albumObject;
-            return fulfill(album);
-          } else {
-            return callback(null, null);
+          // Try Discogs
+          // function(callback) {
+          //   if (!album) {
+          //     discogs.getAlbum(artist, track, callback);
+          //   } else {
+          //     return callback(null, null);
+          //   }
+          // },
+          //
+
+          // Try musicbrainz
+          // function(callback) {
+          //   if (!album) {
+          //     musicbrainz.getAlbum(artist, track, callback);
+          //   } else {
+          //     return callback(null, null);
+          //   }
+          // },
+
+          // Try Gracenote
+          function(callback) {
+            if (!album) {
+              gracenote.getAlbum(artist, track, callback);
+            } else {
+              return callback(null, null);
+            }
           }
+
+          // Try Last.FM
+          // function(callback) {
+          //   if (!album) {
+          //     lastfm.getAlbum(artist, track, callback);
+          //   } else {
+          //     return callback(null, null);
+          //   }
+          // }
+
+        ], function(error, albums) {
+          // if (albums.length == 0 || error) {
+          //   console.log("No album found");
+          //   return fulfill(undefined);
+          // }
+          async.filter(albums, function(singleAlbum, filterCallback) {
+            return filterCallback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
+          }, function(albums) {
+            if (albums.length > 0) {
+              var album = albums[0];
+              if (!album || album == null) {
+                console.log("No albums returned.")
+                return fulfill(undefined);
+              }
+
+              album.artist = artist;
+              if (!album.image) {
+                getAlbumArtForAlbum(album, function(error, finalAlbum) {
+                  utils.cacheData(albumObjectCacheKey, finalAlbum, 0);
+                  return fulfill(finalAlbum);
+                });
+              } else {
+                utils.cacheData(albumObjectCacheKey, album, 0);
+                return fulfill(album);
+              }
+
+            } else {
+              // No album found
+              var isRetrying = retrySanitized(artist, track, fulfill);
+              if (!isRetrying) {
+                console.log("No album found and will not retry.");
+                utils.cacheData(albumObjectCacheKey, null, 60);
+                return fulfill(null);
+              }
+            }
+          });
+
         });
-
-      },
-
-      // Try Discogs
-      // function(callback) {
-      //   if (!album) {
-      //     discogs.getAlbum(artist, track, callback);
-      //   } else {
-      //     return callback(null, null);
-      //   }
-      // },
-      //
-
-      // Try musicbrainz
-      // function(callback) {
-      //   if (!album) {
-      //     musicbrainz.getAlbum(artist, track, callback);
-      //   } else {
-      //     return callback(null, null);
-      //   }
-      // },
-
-      // Try Gracenote
-      function(callback) {
-        if (!album) {
-          gracenote.getAlbum(artist, track, callback);
-        } else {
-          return callback(null, null);
-        }
       }
-
-      // Try Last.FM
-      // function(callback) {
-      //   if (!album) {
-      //     lastfm.getAlbum(artist, track, callback);
-      //   } else {
-      //     return callback(null, null);
-      //   }
-      // }
-
-    ], function(error, albums) {
-      // if (albums.length == 0 || error) {
-      //   console.log("No album found");
-      //   return fulfill(undefined);
-      // }
-
-      async.filter(albums, function(singleAlbum, filterCallback) {
-        return filterCallback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
-      }, function(albums) {
-        if (albums.length > 0) {
-          var album = albums[0];
-          if (!album || album == null) {
-            console.log("No albums returned.")
-            return fulfill(undefined);
-          }
-
-          album.artist = artist;
-          if (!album.image) {
-            getAlbumArtForAlbum(album, function(error, finalAlbum) {
-              utils.cacheData(albumObjectCacheKey, finalAlbum, 0);
-              return fulfill(finalAlbum);
-            });
-          } else {
-            utils.cacheData(albumObjectCacheKey, album, 0);
-            return fulfill(album);
-          }
-
-        } else {
-          // No album found
-          var isRetrying = retrySanitized(artist, track, fulfill);
-          if (!isRetrying) {
-            console.log("No album found and will not retry.");
-            utils.cacheData(albumObjectCacheKey, null, 60);
-            return fulfill(null);
-          }
-        }
-      });
-
     });
   });
 }
