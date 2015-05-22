@@ -91,7 +91,6 @@ function fetchMetadataForUrl(url) {
   }
 
   function titleFetched(station) {
-    console.log("Title: " + station.title);
     if (track) {
       return;
     }
@@ -186,6 +185,7 @@ function fetchMetadataForUrl(url) {
       ];
 
       Promise.all(promises).then(function(results) {
+        console.log("TEST!")
         if (results.length == 2) {
           var album = results[1];
           track.album = album;
