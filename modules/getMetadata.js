@@ -91,7 +91,7 @@ function fetchMetadataForUrl(url) {
   }
 
   function titleFetched(station) {
-
+    console.log("Title: " + station.title);
     if (track) {
       return;
     }
