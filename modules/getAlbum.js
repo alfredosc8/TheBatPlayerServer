@@ -182,7 +182,6 @@ function retrySanitized(artistName, trackName, fulfill) {
     });
     return true;
   } else {
-    console.log("Not attempting retry");
     return false;
   }
 
