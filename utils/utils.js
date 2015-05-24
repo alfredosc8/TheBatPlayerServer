@@ -55,7 +55,7 @@ function fixTrackTitle(trackString) {
     var titleSong = trackString.split(",")[1];
 
     // Fix the "The" issue
-    if (titleSong.indexOf("The - ") !== -1) {
+    if (trackString.indexOf(", The -") !== -1) {
       titleSong = trackString.split(",")[1].split(" - ")[1];
       titleArtist = "The " + titleArtist;
     }

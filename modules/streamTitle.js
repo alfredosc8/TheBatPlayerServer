@@ -48,6 +48,7 @@ StreamTitle.prototype.getTitle = function(url) {
         var endPosition = str.toString().indexOf(";", position);
         var titleString = str.substring(position, endPosition);
         title = titleString.substring(13, titleString.length - 1);
+        title = utils.fixTrackTitle(title);
 
         completed = true;
         return fulfill(title);
