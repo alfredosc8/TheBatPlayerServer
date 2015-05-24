@@ -11,9 +11,8 @@ var lastfm = new LastfmAPI({
 });
 
 function getAlbum(artistName, trackName, callback) {
-  albumUsingLastFM(artistName, trackName).then(function(error, albumResult) {
-
-    if (!error && albumResult) {
+  albumUsingLastFM(artistName, trackName).then(function(albumResult) {
+    if (albumResult) {
       var releaseDate = null;
       if (albumResult.releasedate) {
         releaseDate = moment(new Date(albumResult.releasedate.trim())).year();
@@ -21,7 +20,7 @@ function getAlbum(artistName, trackName, callback) {
       var albumObject = albumSorting.createAlbumObject(albumResult.name, albumResult.image.last()['#text'], releaseDate, albumResult.mbid);
       return callback(null, albumObject);
     } else {
-      return callback(error, null);
+      return callback(null, null);
     }
   });
 }
@@ -44,17 +43,12 @@ function albumUsingLastFM(artist, track) {
 function getAlbumArt(albumName, artistName, mbid, callback) {
   var cacheKey = ("cache-lastfmart-" + albumName + "-" + artistName).slugify();
   utils.getCacheData(cacheKey).then(function(result) {
-    if (result !== undefined) {
+    if (result) {
       return callback(error, result);
     } else {
-      lastfm.album.getInfo({
-        album: albumName,
-        artist: artistName,
-        mbid: mbid,
-        autocorrect: 1
-      }, function(error, albumDetails) {
+      getAlbumDetails(artistName, albumName, mbid, function(error, result) {
         if (!error) {
-          var images = albumDetails.image;
+          var images = result.image;
           var image = images[images.length - 2];
           var url = image["#text"];
           return callback(error, url);
@@ -68,10 +62,9 @@ function getAlbumArt(albumName, artistName, mbid, callback) {
 
 function getAlbumDetails(artistName, albumName, mbid, callback) {
   var cacheKey = ("cache-album-" + albumName + "-" + artistName).slugify();
-
   utils.getCacheData(cacheKey).then(function(result) {
     if (result) {
-      return callback(error, result);
+      return callback(null, result);
     } else {
       lastfm.album.getInfo({
         artist: artistName,
@@ -84,7 +77,7 @@ function getAlbumDetails(artistName, albumName, mbid, callback) {
           return callback(error, null);
         }
         utils.cacheData(cacheKey, albumDetails, 0);
-        return callback(error, albumDetails);
+        return callback(null, albumDetails);
       });
     }
   });

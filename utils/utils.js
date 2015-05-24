@@ -10,8 +10,14 @@ var punycode = require("punycode");
 var Promise = require('promise');
 
 function createTrackFromTitle(title) {
+  var titleArray;
 
-  titleArray = trackSplit(title, " - ", 1);
+  if (title.indexOf(" - ") === -1) {
+    titleArray[0] = title;
+    titleArray[1] = title;
+  } else {
+    titleArray = trackSplit(title, " - ", 1);
+  }
 
   var track = {
     artist: titleArray[0],
@@ -123,7 +129,7 @@ function cacheData(key, value, lifetime) {
     }
 
     if (config.enableCache && key && value && global.memcacheClient !== null) {
-      console.log("Caching: " + key);
+      log("Caching: " + key);
       global.memcacheClient.set(key, value, lifetime, function(err) {
         if (err) {
           log(err);
@@ -148,7 +154,7 @@ function getCacheData(key) {
         }
 
         if (err) {
-          return fulfill(undefind);
+          return fulfill(undefined);
         } else {
           return fulfill(value);
         }

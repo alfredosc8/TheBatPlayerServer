@@ -94,15 +94,14 @@ function fetchMetadataForUrl(url) {
     if (track) {
       return;
     }
-
     return new Promise(function(fulfill, reject) {
-
       if (!station || !station.title || track) {
         return reject(undefined);
       }
 
       track = utils.createTrackFromTitle(station.title);
       track.station = station;
+
       if (cacheFetchSource) {
         utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
       }
@@ -116,10 +115,9 @@ function fetchMetadataForUrl(url) {
     sourceFetchCounter--;
 
     if (sourceFetchCounter == 0) {
-      console.log("Unable to find out what is playing on this station.");
-
       if (!sourceStreamCacheKey) {
         return finalFulfillPromise(null, false);
+        console.log("Unable to find out what is playing on this station.");
       } else {
         // Failed using the single method.  Try again.
         retryWithStream();
@@ -128,7 +126,7 @@ function fetchMetadataForUrl(url) {
   }
 
   function retryWithStream() {
-    console.log("Trying again with stream.");
+    log("Trying again with stream.");
     sourceStreamCacheKey = undefined;
     sourceFetchCounter = 1;
     getTrackFromStream(url).then(titleFetched).then(getTrackPromiseFulfill).catch(getTrackFailure);
@@ -185,7 +183,6 @@ function fetchMetadataForUrl(url) {
       ];
 
       Promise.all(promises).then(function(results) {
-        console.log("TEST!")
         if (results.length == 2) {
           var album = results[1];
           track.album = album;
@@ -193,15 +190,15 @@ function fetchMetadataForUrl(url) {
 
         return track;
       }).then(finalCallback).catch(function(error) {
-        throw error;
+        console.log(error);
         return finalCallback(track, false);
       });
 
     }).catch(function(error) {
-      throw error;
+      log(error);
       // Return barebones track object due to error
-      console.log("Failure in getting artist details.")
-      finalCallback(track, false);
+      console.log("Failure in getting track details.")
+      return finalCallback(track, false);
     });
   });
 

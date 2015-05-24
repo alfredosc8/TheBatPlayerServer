@@ -21,8 +21,20 @@ function fetchAlbumForArtistAndTrack(artist, track) {
     var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track).slugify();
     var album = undefined;
 
+    // Both artist name and track names are required
+    if (!artist || !track) {
+      return fulfill(null);
+    }
+
+    // Check the cache first
     utils.getCacheData(albumObjectCacheKey).then(function(albumObject) {
       if (albumObject) {
+
+        // NOALBUM is a placeholder for cached no album.  Don't try again.
+        if (albumObject == "NOALBUM") {
+          return fulfill(null);
+        }
+
         album = albumObject;
         return fulfill(album);
       } else {
@@ -54,33 +66,33 @@ function fetchAlbumForArtistAndTrack(artist, track) {
             } else {
               return callback(null, null);
             }
-          }
+          },
 
           // Try Last.FM
-          // function(callback) {
-          //   if (!album) {
-          //     lastfm.getAlbum(artist, track, callback);
-          //   } else {
-          //     return callback(null, null);
-          //   }
-          // }
+          function(callback) {
+            if (!album) {
+              lastfm.getAlbum(artist, track, callback);
+            } else {
+              return callback(null, null);
+            }
+          }
 
         ], function(error, albums) {
-          // if (albums.length == 0 || error) {
-          //   console.log("No album found");
-          //   return fulfill(undefined);
-          // }
+
           async.filter(albums, function(singleAlbum, filterCallback) {
             return filterCallback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
           }, function(albums) {
             if (albums.length > 0) {
               var album = albums[0];
-              if (!album || album == null) {
+              if (!album || album === null) {
                 console.log("No albums returned.")
                 return fulfill(undefined);
               }
 
-              album.artist = artist;
+              if (!album.artist) {
+                album.artist = artist;
+              }
+
               if (!album.image) {
                 getAlbumArtForAlbum(album, function(error, finalAlbum) {
                   utils.cacheData(albumObjectCacheKey, finalAlbum, 0);
@@ -96,7 +108,7 @@ function fetchAlbumForArtistAndTrack(artist, track) {
               var isRetrying = retrySanitized(artist, track, fulfill);
               if (!isRetrying) {
                 console.log("No album found and will not retry.");
-                utils.cacheData(albumObjectCacheKey, null, 60);
+                utils.cacheData(albumObjectCacheKey, "NOALBUM", 300);
                 return fulfill(null);
               }
             }
@@ -165,7 +177,9 @@ function retrySanitized(artistName, trackName, fulfill) {
 
   if (updatedArtist != artistName || updatedTrack != trackName) {
     console.log("No album. Attempting retry.");
-    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack).then(fulfill);
+    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack).then(fulfill).catch(function() {
+      return fulfill(null);
+    });
     return true;
   } else {
     console.log("Not attempting retry");

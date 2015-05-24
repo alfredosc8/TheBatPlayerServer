@@ -58,7 +58,8 @@ StreamTitle.prototype.getTitle = function(url) {
     errorCallback = function(error) {
       completed = true;
       client.destroy();
-      throw error;
+      log(error);
+      return reject(undefined);
     };
 
     closeCallback = function() {
