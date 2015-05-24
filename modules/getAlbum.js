@@ -107,7 +107,7 @@ function fetchAlbumForArtistAndTrack(artist, track) {
               // No album found
               var isRetrying = retrySanitized(artist, track, fulfill);
               if (!isRetrying) {
-                console.log("No album found and will not retry.");
+                log("No album found and will not retry.");
                 utils.cacheData(albumObjectCacheKey, "NOALBUM", 300);
                 return fulfill(null);
               }
@@ -176,7 +176,7 @@ function retrySanitized(artistName, trackName, fulfill) {
   var updatedTrack = utils.sanitize(trackName);
 
   if (updatedArtist != artistName || updatedTrack != trackName) {
-    console.log("No album. Attempting retry.");
+    log("No album. Attempting retry.");
     fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack).then(fulfill).catch(function() {
       return fulfill(null);
     });
