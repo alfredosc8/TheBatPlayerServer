@@ -44,7 +44,7 @@ function getV1Title(url) {
 
         return fulfill(station);
       } else {
-        return fulfill(null);
+        return reject(null);
       }
     });
 
@@ -102,17 +102,17 @@ function getV2Title(url) {
             station.fetchsource = "SHOUTCAST_V2";
             return fulfill(station);
           } else {
-            return fulfill(undefined);
+            return reject(undefined);
           }
         });
       } else {
-        return fulfill(undefined);
+        return reject(undefined);
       }
     });
 
     res.on('error', function(error) {
       console.log("SCv2 error " + error + " : " + url);
-      return fulfill(undefined);
+      return reject(undefined);
       throw error;
     });
 

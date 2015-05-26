@@ -66,10 +66,10 @@ function setupMemcache() {
     global.memcacheClient = app.memcacheClient;
 
     global.memcacheClient.on('failure', function(details) {
-      sys.error("Memcache Server " + details.server + "went down due to: " + details.messages.join(''))
+      console.log("Memcache Server " + details.server + "went down due to: " + details.messages.join(''))
     });
     global.memcacheClient.on('reconnecting', function(details) {
-      sys.debug("Total downtime caused by memcache server " + details.server + " :" + details.totalDownTime + "ms")
+      console.log("Total downtime caused by memcache server " + details.server + " :" + details.totalDownTime + "ms")
     });
 
   }
