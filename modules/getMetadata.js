@@ -96,7 +96,7 @@ function fetchMetadataForUrl(url) {
     }
 
     if (!station) {
-      getTrackFailure();
+      return getTrackFailure();
     }
 
     return new Promise(function(fulfill, reject) {
