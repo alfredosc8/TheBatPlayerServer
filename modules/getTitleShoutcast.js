@@ -1,4 +1,4 @@
-var request = require('request');
+var request = require('requestretry');
 var urlparse = require('url');
 var utils = require("../utils/utils.js");
 var log = utils.log;
@@ -16,6 +16,9 @@ function getV1Title(url) {
     var options = {
       url: url,
       timeout: 1500,
+      maxAttempts: 3,
+      retryDelay: 2000,
+      retryStrategy: request.RetryStrategies.HTTPOrNetworkError,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13'
       }
@@ -79,6 +82,10 @@ function getV2Title(url) {
     var options = {
       url: statsUrl,
       timeout: 1500,
+      pool: {
+        maxSockets: 1000
+      },
+
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13'
       }
