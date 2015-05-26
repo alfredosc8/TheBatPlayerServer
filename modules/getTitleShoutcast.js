@@ -26,7 +26,7 @@ function getV1Title(url) {
 
     var res = request(options, function(error, response, body) {
       if (error || body === undefined) {
-        log(error);
+        console.log("SCv1 error " + error + " : " + url);
         return fulfill(undefined);
       }
 
@@ -48,19 +48,19 @@ function getV1Title(url) {
       }
     });
 
-    res.on('error', function(error) {
-      console.log("SCv1 error " + error + " : " + url);
-      res.abort();
-      return fulfill(null);
-    });
-
-    res.on('data', function(data) {
-      size += data.length;
-      if (size > maxSize) {
-        res.abort();
-        return fulfill(null);
-      }
-    });
+    // res.on('error', function(error) {
+    //   console.log("SCv1 error " + error + " : " + url);
+    //   res.abort();
+    //   return fulfill(null);
+    // });
+    //
+    // res.on('data', function(data) {
+    //   size += data.length;
+    //   if (size > maxSize) {
+    //     res.abort();
+    //     return fulfill(null);
+    //   }
+    // });
 
   });
 
