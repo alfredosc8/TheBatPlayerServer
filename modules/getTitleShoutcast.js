@@ -41,7 +41,7 @@ function getV1Title(url) {
 
         return fulfill(station);
       } else {
-        return reject(null);
+        return fulfill(null);
       }
     });
 
@@ -95,11 +95,11 @@ function getV2Title(url) {
             station.fetchsource = "SHOUTCAST_V2";
             return fulfill(station);
           } else {
-            return reject(undefined);
+            return fulfill(undefined);
           }
         });
       } else {
-        return reject(undefined);
+        return fulfill(undefined);
       }
     });
 
