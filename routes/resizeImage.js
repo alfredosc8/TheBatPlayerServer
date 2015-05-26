@@ -11,8 +11,6 @@ module.exports = (function() {
       'Content-Type': 'image/png'
     });
 
-    req.app.set('etag', 'weak');
-
     var url = req.params.imageurl;
     var width = req.params.width;
     var height = req.params.height;
