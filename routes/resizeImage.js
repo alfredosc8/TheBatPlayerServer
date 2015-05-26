@@ -6,7 +6,7 @@ module.exports = (function() {
   var router = express.Router();
 
   router.get("/:imageurl/:width/:height", function(req, res) {
-    res.setHeader('Cache-Control', 'public, max-age=31557600'); // one year
+    res.setHeader('Cache-Control', 'public, max-age=31556926'); // one year
     res.writeHead(200, {
       'Content-Type': 'image/png'
     });
