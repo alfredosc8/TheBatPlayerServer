@@ -94,6 +94,11 @@ function fetchMetadataForUrl(url) {
     if (track) {
       return;
     }
+
+    if (!station) {
+      getTrackFailure();
+    }
+
     return new Promise(function(fulfill, reject) {
       if (!station || !station.title || track) {
         return reject(undefined);
