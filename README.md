@@ -3,6 +3,45 @@ The Bat Server
 
 A NodeJS server-side application for providing metadata from a streaming internet radio source.  Currently used for [The Bat Player](https://github.com/gabek/TheBatPlayerRoku) Roku internet radio client.
 
+###**Example Output**
+```javascript
+{
+    "artist": "Phosgore",
+    "song": "Club Domination (Stahlfrequenz Remix)",
+    "album": {
+        "name": "Domination",
+        "image": "http://userserve-ak.last.fm/serve/300x300/35852607.jpg",
+        "released": 2009,
+    },
+    "bio": {
+        "text": "Founded in 2008, this one man project wants to bring electronic music where it belongs - to the dancefloor!   No romantic song texts, no multi - coloured - plastic - hair sporting singers, and no bats flying out of anyones ass... Just Industrial, Electro, and Hardstyle elements melted down into a substance which forces its consumers into a relentless dancing spree.        Read more about Phosgore on Last.fm.",
+        "published": 2009
+    },
+    "image": {
+        "url": "http://batserver.thebatplayer.fm/images/artist/http%3A%2F%2Fuserserve-ak.last.fm%2Fserve%2F500%2F29286573%2FPhosgore%2B2_1280.jpg/106/54/5",
+        "color": {
+            "rgb": {
+                "red": 106,
+                "green": 54,
+                "blue": 5
+            }
+        },
+        "backgroundurl": "http://batserver.thebatplayer.fm/images/background/http%3A%2F%2Fuserserve-ak.last.fm%2Fserve%2F500%2F29286573%2FPhosgore%2B2_1280.jpg/106/54/5"
+    },
+    "tags": [
+        "powernoise",
+        "industrial",
+        "ebm",
+        "hellectro",
+        "tbm"
+    ],
+    "station": {
+        "listeners": "71",
+        "bitrate": "128",
+    }
+}
+```
+
 ###**Goals**
 1. Centralize the logic required for taking an audio stream and determining the current song.
  * Shoutcast v1 csv metadata.
