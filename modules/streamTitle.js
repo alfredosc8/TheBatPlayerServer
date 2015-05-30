@@ -10,9 +10,15 @@ var StreamTitle = function() {};
 StreamTitle.prototype.getTitle = function(url) {
   return new Promise(function(fulfill, reject) {
 
-    // if (!url.endsWith("/;")) {
-    //   url = url + "/;";
-    // }
+    // Failure timer
+    var timeout = setTimeout(function() {
+      console.log("Stream title fetching timeout");
+      if (client != null) {
+        client.destroy()
+      }
+      return reject(undefined);
+    }, 5000);
+
 
     var completed = false;
 
@@ -58,16 +64,22 @@ StreamTitle.prototype.getTitle = function(url) {
 
     errorCallback = function(error) {
       completed = true;
-      client.destroy();
+      if (client != null) {
+        client.destroy()
+      }
       log(error);
       return reject(undefined);
     };
 
     closeCallback = function() {
+      clearTimeout(timeout);
+
       if (!completed) {
         completed = true;
-        client.destroy()
-        return reject(undefined);
+        if (client != null) {
+          client.destroy()
+        }
+        //return reject(undefined);
       }
 
     }
