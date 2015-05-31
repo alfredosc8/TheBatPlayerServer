@@ -218,10 +218,9 @@ function populateTrackObjectWithArtist(track, apiData) {
       var bioText = apiData.bio.summary.stripTags().trim().replace(/\n|\r/g, "");
 
       // Simplify unicode since Roku can't handle it
-      //track.artist = charmed.toSimple(track.artist);
-      //track.song = charmed.toSimple(track.song);
-      //track.bio.text = charmed.toSimple(bioText);
-      track.bio.text = bioText;
+      track.artist = charmed.toSimple(track.artist);
+      track.song = charmed.toSimple(track.song);
+      track.bio.text = charmed.toSimple(bioText);
 
       track.image.url = apiData.image.last()["#text"];
       track.isOnTour = parseInt(apiData.ontour);
