@@ -16,15 +16,6 @@ S.extendPrototype();
 var validUrl = require('valid-url');
 
 
-function getArtistDetails(track) {
-  return new Promise(function(fulfill, reject) {
-    lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
-      populateTrackObjectWithArtist(track, artistDetails);
-      return fulfill(track);
-    });
-  });
-}
-
 
 function fetchMetadataForUrl(url) {
 
@@ -47,41 +38,41 @@ function fetchMetadataForUrl(url) {
   var streamCacheKey = ("cache-stream-" + url).slugify();
   var sourceStreamCacheKey = ("cache-source-stream-" + url).slugify();
 
-  function getTrackFromShoutcast(url, version, metadataSource) {
-    var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
-    return shoutcasttitle[method](url);
-  }
 
+  //Logic starts here
+  return new Promise(function(fulfill, reject) {
+    finalFulfillPromise = fulfill;
+    // Get the currently playing track and find artist details
+    getNowPlayingTrack().then(getArtistDetails).then(function(track) {
 
-  function getColor() {
-    return new Promise(function(fulfill, reject) {
-      if (track.image.url) {
-        utils.getColorForImage(track.image.url).then(function(color) {
-          if (color) {
-            track.image.color = color;
-            var file = encodeURIComponent(track.image.url);
-            track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-            track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-          }
-          return fulfill(track);
-        });
-      } else {
-        return fulfill(track);
-      }
-    });
+      // Get color information about the artist image and album details
+      var promises = [
+        getColor(track),
+        album.fetchAlbumForArtistAndTrack(track.artist, track.song)
+      ];
 
-  }
+      Promise.all(promises).then(function(results) {
+        if (results.length == 2) {
+          var album = results[1];
+          track.album = album;
+        }
 
-  function getTrackFromStream(url) {
-    return new Promise(function(fulfill, reject) {
-      streamtitle.getTitle(url).then(function(title) {
-        var station = {}
-        station.title = title;
-        station.fetchsource = "STREAM";
-        return fulfill(station);
+        return track;
+      }).then(finalCallback).catch(function(error) {
+        console.log(error);
+        return finalCallback(track, false);
       });
+
+    }).catch(function(error) {
+      log(error);
+      // Return barebones track object due to error
+      console.log("Failure in getting track details.")
+      return finalCallback(track, false);
     });
-  }
+  });
+
+  /////////////////////
+
 
   function finalCallback(result, cached) {
     if (!cached) {
@@ -168,41 +159,50 @@ function fetchMetadataForUrl(url) {
 
     });
   }
-
-  //Logic starts here
-  return new Promise(function(fulfill, reject) {
-    finalFulfillPromise = fulfill;
-    // Get the currently playing track and find artist details
-    getNowPlayingTrack().then(getArtistDetails).then(function(track) {
-
-      // Get color information about the artist image and album details
-      var promises = [
-        getColor(),
-        album.fetchAlbumForArtistAndTrack(track.artist, track.song)
-      ];
-
-      Promise.all(promises).then(function(results) {
-        if (results.length == 2) {
-          var album = results[1];
-          track.album = album;
-        }
-
-        return track;
-      }).then(finalCallback).catch(function(error) {
-        console.log(error);
-        return finalCallback(track, false);
-      });
-
-    }).catch(function(error) {
-      log(error);
-      // Return barebones track object due to error
-      console.log("Failure in getting track details.")
-      return finalCallback(track, false);
-    });
-  });
-
 }
 
+function getTrackFromStream(url) {
+  return new Promise(function(fulfill, reject) {
+    streamtitle.getTitle(url).then(function(title) {
+      var station = {}
+      station.title = title;
+      station.fetchsource = "STREAM";
+      return fulfill(station);
+    });
+  });
+}
+
+function getArtistDetails(track) {
+  return new Promise(function(fulfill, reject) {
+    lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
+      populateTrackObjectWithArtist(track, artistDetails);
+      return fulfill(track);
+    });
+  });
+}
+
+function getTrackFromShoutcast(url, version, metadataSource) {
+  var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
+  return shoutcasttitle[method](url);
+}
+
+function getColor(track) {
+  return new Promise(function(fulfill, reject) {
+    if (track.image.url) {
+      utils.getColorForImage(track.image.url).then(function(color) {
+        if (color) {
+          track.image.color = color;
+          var file = encodeURIComponent(track.image.url);
+          track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+          track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+        }
+        return fulfill(track);
+      });
+    } else {
+      return fulfill(track);
+    }
+  });
+}
 
 function populateTrackObjectWithArtist(track, apiData) {
 
@@ -247,9 +247,7 @@ function populateTrackObjectWithTrack(track, apiData) {
     } catch (e) {
 
     } finally {}
-
   }
-
 }
 
 
