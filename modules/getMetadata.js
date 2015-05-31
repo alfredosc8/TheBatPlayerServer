@@ -221,6 +221,7 @@ function populateTrackObjectWithArtist(track, apiData) {
       //track.artist = charmed.toSimple(track.artist);
       //track.song = charmed.toSimple(track.song);
       //track.bio.text = charmed.toSimple(bioText);
+      track.bio.text = bioText;
 
       track.image.url = apiData.image.last()["#text"];
       track.isOnTour = parseInt(apiData.ontour);
