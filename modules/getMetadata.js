@@ -125,18 +125,12 @@ function fetchMetadataForUrl(url) {
         console.log("Unable to find out what is playing on this station.");
       } else {
         // Failed using the single method.  Try again.
-        retryWithStream();
+        sourceStreamCacheKey = undefined;
+        sourceFetchCounter = 1;
+        getTrackFromStream(url).then(titleFetched).then(getTrackPromiseFulfill).catch(getTrackFailure);
       }
     }
   }
-
-  function retryWithStream() {
-    log("Trying again with stream.");
-    sourceStreamCacheKey = undefined;
-    sourceFetchCounter = 1;
-    getTrackFromStream(url).then(titleFetched).then(getTrackPromiseFulfill).catch(getTrackFailure);
-  }
-
 
   function getNowPlayingTrack() {
     return new Promise(function(fulfill, reject) {
