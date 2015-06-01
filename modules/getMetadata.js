@@ -38,7 +38,7 @@ function fetchMetadataForUrl(url) {
   var streamCacheKey = ("cache-stream-" + url).slugify();
   var sourceStreamCacheKey = ("cache-source-stream-" + url).slugify();
 
-  dePremiumDigitallyImported(url);
+  url = dePremiumDigitallyImported(url);
 
   //Logic starts here
   return new Promise(function(fulfill, reject) {
@@ -262,6 +262,7 @@ function dePremiumDigitallyImported(url) {
 
     console.log("Converted DI station " + originalUrl + " to " + url);
   }
+  return url;
 }
 
 function populateTrackObjectWithTrack(track, apiData) {
