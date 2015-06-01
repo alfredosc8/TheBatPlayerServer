@@ -38,6 +38,7 @@ function fetchMetadataForUrl(url) {
   var streamCacheKey = ("cache-stream-" + url).slugify();
   var sourceStreamCacheKey = ("cache-source-stream-" + url).slugify();
 
+  dePremiumDigitallyImported(url);
 
   //Logic starts here
   return new Promise(function(fulfill, reject) {
@@ -234,6 +235,32 @@ function populateTrackObjectWithArtist(track, apiData) {
     } catch (e) {
       log(e);
     }
+  }
+}
+
+function dePremiumDigitallyImported(url) {
+  if (url.match(/prem.\.di\.fm/)) {
+    var originalUrl = url;
+
+    // Switch the server to a free one
+    url = url.replace(/prem.+\.di\.fm/, "pub7.di.fm");
+
+    // Find the station name
+    var sections = url.split('/');
+    var originalStation = sections[3];
+
+    var questionmark = originalStation.indexOf("?");
+    var delimiter = questionmark;
+
+    if (questionmark !== -1) {
+      if (originalStation.substr(questionmark - 3, 1) == "_") {
+        delimiter = questionmark - 3
+      }
+      var station = "di_" + originalStation.substring(0, delimiter);
+      url = url.replace(originalStation, station);
+    }
+
+    console.log("Converted DI station " + originalUrl + " to " + url);
   }
 }
 
