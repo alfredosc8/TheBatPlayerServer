@@ -53,7 +53,7 @@ app.use("/images/artist", artistImage);
 app.use("/images/resize", resizeImage);
 app.use("/images/header", headerImage);
 
-//app.set('etag', 'weak');
+app.set('etag', 'weak');
 
 if (env === "production" && config.enableAnalytics) {
   app.use(rollbar.errorHandler(config.rollbarKey));
