@@ -260,7 +260,7 @@ function dePremiumDigitallyImported(url) {
       url = url.replace(originalStation, station);
     }
 
-    console.log("Converted DI station " + originalUrl + " to " + url);
+    log("Converted DI station " + originalUrl + " to " + url);
   }
   return url;
 }
