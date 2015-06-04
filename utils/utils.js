@@ -221,6 +221,7 @@ function addResourceCachingHeaders(res) {
   res.setHeader('response-expires', expires);
   res.setHeader('Expires', expires);
   res.setHeader('Date', today);
+  res.setHeader('Last-Modified', today)
   res.setHeader('x-amz-acl', 'public-read');
 }
 
