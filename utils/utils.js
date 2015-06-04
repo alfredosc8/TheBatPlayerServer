@@ -220,8 +220,21 @@ function addResourceCachingHeaders(res) {
   res.setHeader('Cache-Control', 'maxage=31556926');
   res.setHeader('response-expires', expires);
   res.setHeader('Expires', expires);
-  res.setHeader('Last-Modified', today);
+  res.setHeader('Date', today);
   res.setHeader('x-amz-acl', 'public-read');
+}
+
+function handleModificationHeader(req, res) {
+  var ifModifiedHeader = req.headers["if-modified-since"];
+
+  if (!ifModifiedHeader) {
+    return false;
+  }
+
+  res.writeHead(304, {});
+  res.end();
+
+  return true;
 }
 
 module.exports.trackSplit = trackSplit;
@@ -235,3 +248,4 @@ module.exports.cacheData = cacheData;
 module.exports.fixTrackTitle = fixTrackTitle;
 module.exports.getCacheFilepathForUrl = getCacheFilepathForUrl;
 module.exports.addResourceCachingHeaders = addResourceCachingHeaders;
+module.exports.handleModificationHeader = handleModificationHeader;
