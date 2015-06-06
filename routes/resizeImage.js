@@ -17,7 +17,7 @@ module.exports = (function() {
     }
 
     res.writeHead(200, {
-      'Content-Type': 'image/png'
+      'Content-Type': 'image/jpeg'
     });
 
     var url = req.params.imageurl;
