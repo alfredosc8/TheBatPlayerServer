@@ -227,8 +227,9 @@ function addResourceCachingHeaders(res) {
 
 function handleModificationHeader(req, res) {
   var ifModifiedHeader = req.headers["if-modified-since"];
+  var ifMatchHeader = req.headers["if-match"];
 
-  if (!ifModifiedHeader) {
+  if (!ifModifiedHeader || !ifMatchHeader) {
     return false;
   }
 
