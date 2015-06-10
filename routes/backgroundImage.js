@@ -1,12 +1,20 @@
 var image = require("../image/background.js");
 var express = require('express');
 var fs = require('fs');
+var addResourceCachingHeaders = require("../utils/utils.js").addResourceCachingHeaders;
+var utils = require("../utils/utils.js");
 
 module.exports = (function() {
   var router = express.Router();
 
   router.get("/:imageurl/:red/:green/:blue", function(req, res) {
-    res.setHeader('Cache-Control', 'public, max-age=31556926'); // one year
+    addResourceCachingHeaders(res);
+
+    // If the cache is asking if this is modified, always say no.
+    if (utils.handleModificationHeader(req, res)) {
+      return;
+    }
+
     res.writeHead(200, {
       'Content-Type': 'image/jpeg'
     });

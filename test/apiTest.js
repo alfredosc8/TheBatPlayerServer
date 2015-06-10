@@ -84,8 +84,8 @@ describe('GET /images/resize', function() {
   it('respond with valid png image', function(done) {
     request(app)
       .get("/images/resize/https%3A%2F%2Fpbs.twimg.com%2Fprofile_images%2F1835478840%2F2012logo.jpg/266/150")
-      .set('Accept', 'image/png')
-      .expect('Content-Type', /png/)
+      .set('Accept', 'image/jpeg')
+      .expect('Content-Type', /jpeg/)
       .expect(200)
       .end(function(err, res) {
         if (err) throw err;
