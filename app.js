@@ -27,6 +27,7 @@ var backgroundImage = require("./routes/backgroundImage.js");
 var artistImage = require("./routes/artistImage.js");
 var resizeImage = require("./routes/resizeImage.js");
 var headerImage = require("./routes/headerImage.js");
+var nowplaying = require("./routes/nowplaying.js");
 
 var memcacheClient = null;
 setupMemcache();
@@ -48,6 +49,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use("/metadata", metadata);
+app.use("/nowplaying", nowplaying);
 app.use("/images/background", backgroundImage);
 app.use("/images/artist", artistImage);
 app.use("/images/resize", resizeImage);

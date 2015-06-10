@@ -288,3 +288,4 @@ if (!Array.prototype.last) {
 
 module.exports.fetchMetadataForUrl = fetchMetadataForUrl;
 module.exports.getArtistDetails = getArtistDetails;
+module.exports.getTrackFromStream = getTrackFromStream;
