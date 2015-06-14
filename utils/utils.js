@@ -10,7 +10,7 @@ var punycode = require("punycode");
 var Promise = require('promise');
 
 function createTrackFromTitle(title) {
-  var titleArray;
+  var titleArray = [];
 
   if (title.indexOf(" - ") === -1) {
     titleArray[0] = title;
