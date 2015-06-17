@@ -3,7 +3,7 @@ var config = require("./config.js");
 var rollbar = require("rollbar");
 
 if (env === "production" && config.enableAnalytics) {
-  // require('newrelic');
+  require('newrelic');
   //
   // require('nodetime').profile({
   //   accountKey: config.nodetimeKey,
