@@ -1,9 +1,10 @@
 var env = process.env.NODE_ENV;
 var config = require("./config.js");
-var rollbar = require("rollbar");
 
 if (env === "production" && config.enableAnalytics) {
   require('newrelic');
+  var rollbar = require("rollbar");
+
   //
   // require('nodetime').profile({
   //   accountKey: config.nodetimeKey,
@@ -58,6 +59,7 @@ app.use("/images/header", headerImage);
 app.set('etag', 'weak');
 
 if (env === "production" && config.enableAnalytics) {
+  var rollbar = require("rollbar");
   app.use(rollbar.errorHandler(config.rollbarKey));
 }
 
@@ -68,10 +70,10 @@ function setupMemcache() {
     global.memcacheClient = app.memcacheClient;
 
     global.memcacheClient.on('failure', function(details) {
-      console.log("Memcache Server " + details.server + "went down due to: " + details.messages.join(''))
+      console.log("Memcache Server " + details.server + "went down due to: " + details.messages.join(''));
     });
     global.memcacheClient.on('reconnecting', function(details) {
-      console.log("Total downtime caused by memcache server " + details.server + " :" + details.totalDownTime + "ms")
+      console.log("Total downtime caused by memcache server " + details.server + " :" + details.totalDownTime + "ms");
     });
 
   }
