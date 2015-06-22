@@ -134,10 +134,10 @@ function cacheData(key, value, lifetime) {
         if (err) {
           log(err);
         }
-        fulfill();
+        return fulfill();
       });
     } else {
-      fulfill();
+      return fulfill();
     }
 
   });
