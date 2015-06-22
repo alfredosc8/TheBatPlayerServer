@@ -78,54 +78,68 @@ function buildColorObjectFromColors(colors) {
   return colorObject;
 }
 
+function nearest(n, v) {
+  n = n / v;
+  n = (n < 0 ? Math.floor(n) : Math.ceil(n)) * v;
+  return n;
+}
+
 function getColorFromColorArray(colors) {
 
   colors.sort(function(a, b) {
 
-    if (a.score.dark > 40) {
-      // console.log("Too dark");
-      return -1;
+    var score = 0;
+
+    score += (a.score.dark * 0.01);
+    score -= (a.score.vivid * 0.01);
+    score -= (a.score.light * 0.01);
+    score -= Math.max((a.percent * 0.01), -1);
+
+    // For dark or brown color classes alter the score more since it can get too dark.
+    if (a.family === "dark" || a.family === "brown") {
+      score += (a.score.dark * 0.1);
+      score += (a.score.density * 0.1);
     }
 
-    if (a.family == "white") {
-      // console.log("Too white");
-      return -1;
+    // We want to discurage plain white
+    if (a.family === "white") {
+      score += 0.01;
     }
 
-    if (a.family == "black") {
-      // console.log("Too black");
-      return -1;
+    // We want to completely disallow plain black
+    if (a.family === "black") {
+      return 1;
     }
 
+    // We want to highly discurage skin tones
     var rgb = [a.rgb.r, a.rgb.g, a.rgb.b];
     var skin = [229, 160, 115];
     var isSkin = colormatch.quickMatch(rgb, skin);
     if (isSkin) {
-      // console.log("Looks like skin color");
-      return -1;
+      score += 0.5;
     }
 
-    if (a.percent < 5) {
-      // console.log("Not enough of this color.");
-      return -1;
-    }
-
-
+    score = Math.min(Math.max(nearest(score, 1), -1),1);
+    return score;
   });
-
 
   var index = 0;
   var selectedColor = colors[0];
 
-  // If per chance we selected something we don't want then remedy that.
-  while (selectedColor.family === "dark" || selectedColor.family === "black" || selectedColor.family === "white") {
+  // If per chance we selected something we don't want then remedy that by hoping for the best
+  // and select a color right in the middle of our sorted list.
+  while (selectedColor.family === "black" || (selectedColor.family === "dark" && selectedColor.score.density > 10) || (selectedColor.family === "neutral" && selectedColor.score.luminance < 20) ) {
     selectedColor = colors[index];
     index++;
 
     if (index > colors.length) {
-      selectedColor = colors[0]; //Fallback
+      console.log("Using middle color as fallback.");
+      selectedColor = colors[Math.floor(colors.length / 2)];
+      return selectedColor; //Fallback
     }
   }
+
+  //console.log(selectedColor);
 
   return selectedColor;
 }

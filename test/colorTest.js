@@ -22,6 +22,7 @@ urls.push("http://userserve-ak.last.fm/serve/500/478622/Orange+Sector.jpg"); // 
 urls.push("http://userserve-ak.last.fm/serve/500/22199291/Apoptygma+Berzerk+6.jpg"); //Should be white.  Comes out dark.
 urls.push("http://userserve-ak.last.fm/serve/_/69789864/VNV+Nation+693.png"); //Shouln't be white
 urls.push("http://userserve-ak.last.fm/serve/_/2245255/Lynyrd+Skynyrd.jpg"); // Try and get blue instead of flesh
+urls.push("http://userserve-ak.last.fm/serve/_/7583613/Covenant+6.jpg"); // Too dark
 var html = "";
 
 var singleUrl = urls[0];
