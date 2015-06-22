@@ -83,6 +83,12 @@ function fetchMetadataForUrl(url) {
   }
 
   function titleFetched(station) {
+    // Uncomment to force a artist - track for testing.
+    //station.title = "Hüsker Dü - Something I Learned Today";
+    //station.title = "Lynyrd Skynyrd - Free Bird";
+    //station.title = "††† - Bermuda Locket"
+    //station.title = "Bläck Fööss - Et jitt kei jrößer Leid"
+
     if (track) {
       return;
     }
@@ -113,8 +119,8 @@ function fetchMetadataForUrl(url) {
 
     if (sourceFetchCounter == 0) {
       if (!sourceStreamCacheKey) {
-        return finalFulfillPromise(null, false);
         console.log("Unable to find out what is playing on this station.");
+        return finalFulfillPromise(null, false);
       } else {
         // Failed using the single method.  Try again.
         sourceStreamCacheKey = undefined;
@@ -165,7 +171,7 @@ function fetchMetadataForUrl(url) {
 function getTrackFromStream(url) {
   return new Promise(function(fulfill, reject) {
     streamtitle.getTitle(url).then(function(title) {
-      var station = {}
+      var station = {};
       station.title = title;
       station.fetchsource = "STREAM";
       return fulfill(station);
@@ -213,9 +219,9 @@ function populateTrackObjectWithArtist(track, apiData) {
       var bioText = apiData.bio.summary.stripTags().trim().replace(/\n|\r/g, "");
 
       // Simplify unicode since Roku can't handle it
-      track.artist = charmed.toSimple(track.artist);
-      track.song = charmed.toSimple(track.song);
-      track.bio.text = charmed.toSimple(bioText);
+      track.artist = track.artist;
+      track.song = track.song;
+      track.bio.text = bioText;
 
       track.image.url = apiData.image.last()["#text"];
       track.isOnTour = parseInt(apiData.ontour);
@@ -254,7 +260,7 @@ function dePremiumDigitallyImported(url) {
 
     if (questionmark !== -1) {
       if (originalStation.substr(questionmark - 3, 1) == "_") {
-        delimiter = questionmark - 3
+        delimiter = questionmark - 3;
       }
       var station = "di_" + originalStation.substring(0, delimiter);
       url = url.replace(originalStation, station);
@@ -269,7 +275,7 @@ function populateTrackObjectWithTrack(track, apiData) {
 
   if (apiData) {
     try {
-      track.album.name = charmed.toSimple(apiData.album.title);
+      track.album.name = apiData.album.title;
       track.album.image = apiData.album.image.last()["#text"];
       track.metaDataFetched = true;
     } catch (e) {
