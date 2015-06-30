@@ -42,6 +42,14 @@ A NodeJS server-side application for providing metadata from a streaming interne
 }
 ```
 
+###**Running**
+1. Copy Config-example.js to Config.js and add your respective keys.
+2. _npm install_
+3. _make test_ to verify everything is working.
+4. Either install and run memcached or turn *enableCache* off in your Config.js.
+5. _make dev_ to run.
+6. Make a request such as http://localhost:3000/metadata/http%3A%2F%2F205.164.41.34%3A6699
+
 ###**Goals**
 1. Centralize the logic required for taking an audio stream and determining the current song.
  * Shoutcast v1 csv metadata.
@@ -66,14 +74,6 @@ A NodeJS server-side application for providing metadata from a streaming interne
 2. Finding the *correct* album for a artist/track combo is far more difficult than it sounds.  The more popular a song, the more versions of the song is available under the same name.  Live, remixes, karaoke, radio edit, extended version, compilations etc.  The correct answer is usually "The oldest release that's not a Live, Single, EP or compilation release."  But some albums don't have available release dates, either.
 3. Different metadata sources have different qualities and quantities of information.  The current approach is to query them all and then try and make some sense out of the results.
 
-###**Running**
-1. Copy Config-example.js to Config.js and add your respective keys.
-2. _npm install_
-3. _make test_ to verify everything is working.
-4. Either install and run memcached or turn *enableCache* off in your Config.js.
-5. _make dev_ to run.
-6. Make a request such as http://localhost:3000/metadata/http%3A%2F%2F205.164.41.34%3A6699
-
 ###**Tests**
 1. There are a handful of integration tests written.
   * Metadata fetching
@@ -89,3 +89,25 @@ A NodeJS server-side application for providing metadata from a streaming interne
 5. Check out [The Bat Player](https://github.com/gabek/TheBatPlayerRoku).
 
 [![Video](http://f.cl.ly/items/1O461y2v2N2D1k151Q0S/TheBatPlayerDemoGif.gif)](https://vimeo.com/112659447)
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Gabe Kangas
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
