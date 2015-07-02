@@ -8,7 +8,6 @@ var moment = require("moment");
 var album = require("./getAlbum.js");
 var md5 = require('MD5');
 var config = require("../config.js");
-var charmed = require('charmed');
 var Promise = require('promise');
 
 var S = require('string');
