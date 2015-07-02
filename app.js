@@ -4,13 +4,6 @@ var config = require("./config.js");
 if (env === "production" && config.enableAnalytics) {
   require('newrelic');
   var rollbar = require("rollbar");
-
-  //
-  // require('nodetime').profile({
-  //   accountKey: config.nodetimeKey,
-  //   appName: 'Node.js Application'
-  // });
-
   rollbar.handleUncaughtExceptions(config.rollbarKey);
 }
 
