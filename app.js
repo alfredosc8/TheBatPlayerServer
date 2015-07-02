@@ -7,6 +7,9 @@ if (env === "production" && config.enableAnalytics) {
   rollbar.handleUncaughtExceptions(config.rollbarKey);
 }
 
+if (env === "dev") {
+    require('look').start(3333);
+}
 var express = require('express');
 var app = express();
 var compress = require('compression');
