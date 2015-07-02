@@ -20,7 +20,6 @@ var compress = require('compression');
 var timeout = require('connect-timeout');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-var Memcached = require('memcached');
 
 var routes = require('./routes/index');
 var metadata = require("./routes/metadata.js");
@@ -65,8 +64,16 @@ if (env === "production" && config.enableAnalytics) {
 
 function setupMemcache() {
   if (memcacheClient === null) {
+
+    var Memcached = require('memcached');
+    Memcached.config.poolSize = 25;
+    Memcached.config.retries = 10;
+    Memcached.config.failures = 50;
+    Memcached.config.idle = 50000;
+    Memcached.config.timeout = 38000000;
+
     app.memcacheClient = new Memcached();
-    app.memcacheClient.connect("127.0.0.1:11211", function() {});
+    app.memcacheClient.connect(config.memcacheServer, function() {});
     global.memcacheClient = app.memcacheClient;
 
     global.memcacheClient.on('failure', function(details) {
