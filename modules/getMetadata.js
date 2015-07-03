@@ -289,7 +289,6 @@ function populateTrackObjectWithTrack(track, apiData) {
 function preCacheImages(track) {
   var precacheKey = track.artist.slugify() + "cached-images";
   utils.getCacheData(precacheKey).then(function(hasCached) {
-    console.log(hasCached);
 
     if (hasCached !== undefined) {
       return;
