@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "private": true,
   "scripts": {
-    "start": "node_modules/.bin/forever app.js"
+    "start": "node_modules/.bin/forever bin/www"
   },
   "dependencies": {
     "MD5": "^1.2.1",
