@@ -17,6 +17,8 @@ var timeout = require('connect-timeout');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
+setupLogger(app, env);
+
 var routes = require('./routes/index');
 var metadata = require("./routes/metadata.js");
 var backgroundImage = require("./routes/backgroundImage.js");
@@ -27,7 +29,6 @@ var nowplaying = require("./routes/nowplaying.js");
 
 var memcacheClient = null;
 setupMemcache();
-
 
 // view engine setup
 app.use(timeout('8s', {
@@ -82,6 +83,35 @@ function setupMemcache() {
   }
 }
 
+function setupLogger(app, env) {
+    if (env === "production") {
+        var winston = require('winston');
+        require('winston-papertrail').Papertrail;
+        var expressWinston = require('express-winston');
+        
+        app.use(expressWinston.logger({
+            transports: [
+                new winston.transports.Papertrail({
+                    host: "logs3.papertrailapp.com",
+                    port: 32693,
+                    json: false,
+                    colorize: true,
+                    inlineMeta: false,
+                })
+            ],
+            expressFormat: false,
+            statusLevels: true,
+            level: "debug",
+            meta: false,
+            msg: "{{req.method}} {{req.url}} {{res.responseTime}}ms {{req.headers['user-agent']}} {{res.statusCode}}",
+            colorStatus: true
+        }));
+
+        console.log("Configured Winston for logging.");
+    } else {
+        return;
+    }
+}
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
