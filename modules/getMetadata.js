@@ -9,6 +9,7 @@ var album = require("./getAlbum.js");
 var md5 = require('MD5');
 var config = require("../config.js");
 var Promise = require('promise');
+var request = require('request');
 
 var S = require('string');
 S.extendPrototype();
@@ -78,7 +79,9 @@ function fetchMetadataForUrl(url) {
     if (!cached) {
       utils.cacheData(streamCacheKey, track, config.cachetime);
     }
-    return finalFulfillPromise(track);
+    finalFulfillPromise(track);
+    preCacheImages(track);
+    return;
   }
 
   function titleFetched(station) {
@@ -283,6 +286,27 @@ function populateTrackObjectWithTrack(track, apiData) {
   }
 }
 
+function preCacheImages(track) {
+  var precacheKey = track.artist.slugify() + "cached-images";
+  utils.getCacheData(precacheKey).then(function(hasCached) {
+
+    if (hasCached !== undefined) {
+      return;
+    }
+
+    utils.cacheData(precacheKey, "cached", 0);
+    var artistImage = track.image.url;
+    var backgroundImage = track.image.backgroundUrl;
+    async.parallel([
+      function() {
+        request(artistImage, null);
+      },
+      function() {
+        request(backgroundImage, null);
+      }
+    ]);
+  });
+}
 
 if (!Array.prototype.last) {
   Array.prototype.last = function() {
