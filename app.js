@@ -9,6 +9,8 @@ if (env === "production" && config.enableAnalytics) {
 
 if (env === "dev") {
     require('look').start(3333);
+    var winston = require('winston');
+    winston.level = "info";
 }
 var express = require('express');
 var app = express();
@@ -88,16 +90,21 @@ function setupLogger(app, env) {
         var winston = require('winston');
         require('winston-papertrail').Papertrail;
         var expressWinston = require('express-winston');
-        
+
+        var paperTrailTransport =  new winston.transports.Papertrail({
+          host: "logs3.papertrailapp.com",
+          port: 32693,
+          json: false,
+          colorize: true,
+          inlineMeta: false,
+      });
+
+        winston.add(winston.transports.Console);
+        winston.add(paperTrailTransport);
+
         app.use(expressWinston.logger({
             transports: [
-                new winston.transports.Papertrail({
-                    host: "logs3.papertrailapp.com",
-                    port: 32693,
-                    json: false,
-                    colorize: true,
-                    inlineMeta: false,
-                })
+                paperTrailTransport
             ],
             expressFormat: false,
             statusLevels: true,

@@ -4,6 +4,7 @@ var imageColor = require("./imageColor.js");
 var md5 = require('MD5');
 var config = require("../config.js");
 var Promise = require('promise');
+var logger = require('winston');
 
 function createTrackFromTitle(title) {
   var titleArray = [];
@@ -185,7 +186,7 @@ function log(text) {
   var env = process.env.NODE_ENV;
 
   if (env === "production") {} else if (env === "development") {
-    console.log(text);
+    logger.info(text);
   }
 }
 
