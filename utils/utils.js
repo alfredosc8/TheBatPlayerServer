@@ -7,7 +7,6 @@ var path = require('path');
 var rollbar = require('rollbar');
 var punycode = require("punycode");
 var Promise = require('promise');
-var http = require('http');
 
 function createTrackFromTitle(title) {
   var titleArray = [];
@@ -68,32 +67,23 @@ function fixTrackTitle(trackString) {
 }
 
 function download(url, filename, callback) {
-  log(url + ' downloading to ' + filename);
-
   fs.exists(filename, function(exists) {
 
     if (exists && config.enableImageCache) {
       return callback();
     }
 
-      var file = fs.createWriteStream(filename);
-      var request = http.get(url, function(response) {
-        response.pipe(file);
-
-        if (response.statusCode === 200) {
-          file.on('finish', function() {
-            file.close(callback);
-          });
-        } else {
-          log("HTTP download error.");
-        }
-
-      }).on('error', function(err) {
-        log("Download error")
-        fs.unlink(filename);
+    log(url + ' downloading to ' + filename);
+    var file = fs.createWriteStream(filename);
+    request.get(url).pipe(file).on('finish', callback).on('error',function(error) {
+      console.log(error);
+      return callback();
+    }).on('response', function(response) {
+      if (response.statusCode != 200) {
         return callback();
-      });
-
+      }
+    });
+    
   });
 }
 
