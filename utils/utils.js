@@ -3,9 +3,6 @@ var fs = require('fs');
 var imageColor = require("./imageColor.js");
 var md5 = require('MD5');
 var config = require("../config.js");
-var path = require('path');
-var rollbar = require('rollbar');
-var punycode = require("punycode");
 var Promise = require('promise');
 
 function createTrackFromTitle(title) {
@@ -83,7 +80,7 @@ function download(url, filename, callback) {
         return callback();
       }
     });
-    
+
   });
 }
 
