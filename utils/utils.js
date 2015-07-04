@@ -2,12 +2,12 @@ var request = require('request');
 var fs = require('fs');
 var imageColor = require("./imageColor.js");
 var md5 = require('MD5');
-var child_process = require('child_process');
 var config = require("../config.js");
 var path = require('path');
 var rollbar = require('rollbar');
 var punycode = require("punycode");
 var Promise = require('promise');
+var http = require('http');
 
 function createTrackFromTitle(title) {
   var titleArray = [];
@@ -71,29 +71,29 @@ function download(url, filename, callback) {
   log(url + ' downloading to ' + filename);
 
   fs.exists(filename, function(exists) {
-    if (!exists) {
 
-      var tmpname = filename + "-tmp";
-      var wget = "wget -O " + tmpname + " " + url;
-
-      var child = child_process.exec(wget, null, function(err, stdout, stderr) {
-        if (err) {
-          throw err;
-        } else {
-          // Rename the file to the real filename
-          child_process.exec("mv " + tmpname + " " + filename, null, function(err, stdout, stderr) {
-            if (callback) {
-              return callback();
-            }
-
-          });
-        }
-      });
-    } else {
-      if (callback) {
-        return callback();
-      }
+    if (exists && config.enableImageCache) {
+      return callback();
     }
+
+      var file = fs.createWriteStream(filename);
+      var request = http.get(url, function(response) {
+        response.pipe(file);
+
+        if (response.statusCode === 200) {
+          file.on('finish', function() {
+            file.close(callback);
+          });
+        } else {
+          log("HTTP download error.");
+        }
+
+      }).on('error', function(err) {
+        log("Download error")
+        fs.unlink(filename);
+        return callback();
+      });
+
   });
 }
 
