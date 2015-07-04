@@ -91,17 +91,23 @@ function setupLogger(app, env) {
         require('winston-papertrail').Papertrail;
         var expressWinston = require('express-winston');
 
-        var paperTrailTransport = new winston.transports.Papertrail({
+        winston.add(new winston.transports.Papertrail({
           host: "logs3.papertrailapp.com",
           port: 32693,
           json: false,
           colorize: true,
           inlineMeta: false,
-      });
+      }));
 
         app.use(expressWinston.logger({
             transports: [
-                paperTrailTransport()
+              new winston.transports.Papertrail({
+                host: "logs3.papertrailapp.com",
+                port: 32693,
+                json: false,
+                colorize: true,
+                inlineMeta: false,
+              })
             ],
             expressFormat: false,
             statusLevels: true,
