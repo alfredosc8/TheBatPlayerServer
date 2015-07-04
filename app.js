@@ -99,7 +99,6 @@ function setupLogger(app, env) {
           inlineMeta: false,
       });
 
-        winston.add(winston.transports.Console);
         winston.add(paperTrailTransport);
 
         app.use(expressWinston.logger({
