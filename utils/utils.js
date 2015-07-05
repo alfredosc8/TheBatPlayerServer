@@ -65,15 +65,26 @@ function fixTrackTitle(trackString) {
 }
 
 function download(url, filename, callback) {
+  var originalFilename = filename;
+
   fs.exists(filename, function(exists) {
 
     if (exists && config.enableImageCache) {
       return callback();
     }
 
-    log(url + ' downloading to ' + filename);
-    var file = fs.createWriteStream(filename);
-    request.get(url).pipe(file).on('finish', callback).on('error',function(error) {
+    var tmpFilename = filename + "-tmp";
+
+    log(url + ' downloading to ' + tmpFilename);
+    var file = fs.createWriteStream(tmpFilename);
+    request.get(url).pipe(file).on('finish', function() {
+      file.close();
+
+      fs.rename(tmpFilename, originalFilename, function(error) {
+        return callback();
+      });
+
+    }).on('error',function(error) {
       console.log(error);
       return callback();
     }).on('response', function(response) {
