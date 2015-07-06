@@ -1,4 +1,4 @@
-var streamtitle = require("./streamTitle.js");
+//var streamtitle = require("./streamTitle.js");
 var shoutcasttitle = require("./getTitleShoutcast.js");
 var utils = require("../utils/utils.js");
 var log = utils.log;
@@ -10,6 +10,8 @@ var md5 = require('MD5');
 var config = require("../config.js");
 var Promise = require('promise');
 var request = require('request');
+
+var internetradio = require('node-internet-radio');
 
 var S = require('string');
 S.extendPrototype();
@@ -147,10 +149,10 @@ function fetchMetadataForUrl(url) {
 
           if (source) {
             sourceFetchCounter = 1;
-            if (source == "SHOUTCAST_V1") {
-              getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
-            } else if (source == "SHOUTCAST_V2") {
-              getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+            if (source === internetradio.StreamSource.SHOUTCAST_V1) {
+              getTrackFromShoutcast(url, internetradio.StreamSource.SHOUTCAST_V1, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+            } else if (source === internetradio.StreamSource.SHOUTCAST_V2) {
+              getTrackFromShoutcast(url, internetradio.StreamSource.SHOUTCAST_V2, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
             } else {
               getTrackFromStream(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
             }
@@ -158,8 +160,8 @@ function fetchMetadataForUrl(url) {
           } else {
             cacheFetchSource = true;
             sourceFetchCounter = 3;
-            getTrackFromShoutcast(url, "SHOUTCAST_V1", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
-            getTrackFromShoutcast(url, "SHOUTCAST_V2", metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+            getTrackFromShoutcast(url, internetradio.StreamSource.SHOUTCAST_V1, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+            getTrackFromShoutcast(url, internetradio.StreamSource.SHOUTCAST_V2, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
             getTrackFromStream(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
           }
         });
@@ -171,13 +173,13 @@ function fetchMetadataForUrl(url) {
 }
 
 function getTrackFromStream(url) {
+
   return new Promise(function(fulfill, reject) {
-    streamtitle.getTitle(url).then(function(title) {
-      var station = {};
-      station.title = title;
-      station.fetchsource = "STREAM";
-      return fulfill(station);
-    });
+    internetradio.getStationInfo(url, function(error, station) {
+      if (!error) {
+        return fulfill(station);
+      }
+    }, internetradio.StreamSource.STREAM);
   });
 }
 
@@ -191,7 +193,7 @@ function getArtistDetails(track) {
 }
 
 function getTrackFromShoutcast(url, version, metadataSource) {
-  var method = version === "SHOUTCAST_V1" ? 'getV1Title' : 'getV2Title';
+  var method = version === internetradio.StreamSource.SHOUTCAST_V1 ? 'getV1Title' : 'getV2Title';
   return shoutcasttitle[method](url);
 }
 
