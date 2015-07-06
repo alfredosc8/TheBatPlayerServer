@@ -29,7 +29,7 @@
     "nan": "^1.8.4",
     "newrelic": "^1.14.5",
     "node-gracenote": "git://github.com/gabek/node-gracenote.git",
-    "node-internet-radio": "0.0.2",
+    "node-internet-radio": "0.0.3",
     "nodecogs": "git://github.com/gabek/nodecogs.git",
     "promise": "^7.0.1",
     "request": "^2.51.0",
