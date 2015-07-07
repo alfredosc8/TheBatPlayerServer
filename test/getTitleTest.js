@@ -1,4 +1,4 @@
-var getStreamTitle = require("../modules/streamTitle.js");
+var internetradio = require("node-internet-radio");
 var chai = require("chai");
 var expect = chai.expect;
 var assert = chai.assert;
@@ -14,12 +14,12 @@ var stream = streams[i];
 
 describe("streamTitle", function() {
   it("Should return a title from " + stream, function(done) {
-    getStreamTitle.getTitle(stream).then(function(title) {
+    internetradio.getStationInfo(stream, function(error, station) {
       check(done, function() {
-        expect(title).to.not.be.null();
-        expect(title).to.be.a('string');
+        expect(station.title).to.not.be.null();
+        expect(station.title).to.be.a('string');
       });
-    });
+    }, internetradio.StreamSource.STREAM);
 
   });
 
