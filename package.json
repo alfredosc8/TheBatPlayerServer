@@ -36,7 +36,6 @@
     "requestretry": "^1.3.1",
     "rollbar": "^0.5.3",
     "string": "^3.0.0",
-    "supertest": "^1.0.1",
     "valid-url": "^1.0.9",
     "winston": "^1.0.1",
     "winston-papertrail": "^1.0.1",
