@@ -44,5 +44,11 @@
   },
   "devDependencies": {
     "supertest": "^0.15.0"
+  },
+  "eslintConfig": {
+      "env": {
+          "browser": true,
+          "node": true
+      }
   }
 }
