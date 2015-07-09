@@ -84,7 +84,7 @@ function download(url, filename, callback) {
         return callback();
       });
 
-    }).on('error',function(error) {
+    }).on('error', function(error) {
       console.log(error);
       return callback();
     }).on('response', function(response) {
@@ -196,7 +196,8 @@ function getCacheFilepathForUrl(url, type) {
 function log(text) {
   var env = process.env.NODE_ENV;
 
-  if (env === "production") {} else if (env === "development") {
+  if (env === "production") {
+  } else if (env === "development") {
     logger.info(text);
   }
 }
@@ -238,6 +239,33 @@ function handleModificationHeader(req, res) {
   return true;
 }
 
+function dePremiumDigitallyImported(url) {
+  if (url.match(/prem.\.di\.fm/)) {
+    var originalUrl = url;
+
+    // Switch the server to a free one
+    url = url.replace(/prem.+\.di\.fm/, "pub7.di.fm");
+
+    // Find the station name
+    var sections = url.split('/');
+    var originalStation = sections[3];
+
+    var questionmark = originalStation.indexOf("?");
+    var delimiter = questionmark;
+
+    if (questionmark !== -1) {
+      if (originalStation.substr(questionmark - 3, 1) == "_") {
+        delimiter = questionmark - 3;
+      }
+      var station = "di_" + originalStation.substring(0, delimiter);
+      url = url.replace(originalStation, station);
+    }
+
+    log("Converted DI station " + originalUrl + " to " + url);
+  }
+  return url;
+}
+
 module.exports.trackSplit = trackSplit;
 module.exports.getCacheData = getCacheData;
 module.exports.log = log;
@@ -250,3 +278,4 @@ module.exports.fixTrackTitle = fixTrackTitle;
 module.exports.getCacheFilepathForUrl = getCacheFilepathForUrl;
 module.exports.addResourceCachingHeaders = addResourceCachingHeaders;
 module.exports.handleModificationHeader = handleModificationHeader;
+module.exports.dePremiumDigitallyImported = dePremiumDigitallyImported;
