@@ -20,7 +20,11 @@ function resizeImage(url, width, height, callback) {
       var command = "convert " + cacheFile + " -resize " + width + "x!  -gravity Center -crop " + size + "+0+0 +repage -gravity SouthEast -append ./image/resources/smallbat.png -strip -quality 95 -composite jpg:" + path;
 
       var child = exec(command, null, function(err, stdout, stderr) {
-        log(stderr);
+        if (err || stderr) {
+          utils.logError(err);
+          utils.logError(stderr);
+        }
+
         callback(err, path);
       });
 

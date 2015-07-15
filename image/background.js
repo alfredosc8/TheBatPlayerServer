@@ -22,7 +22,8 @@ function createBackground(url, colorObject, callback) {
         if (!err && !stderr) {
           return callback(null, path);
         } else {
-          log("Error: " + stderr);
+          utils.logError(err);
+          utils.logError(stderr);
           return callback(stderr, cacheFile);
         }
 

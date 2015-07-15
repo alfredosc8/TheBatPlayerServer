@@ -24,6 +24,8 @@ function createArtistImage(url, colorObject, callback) {
         if (!err && !stderr) {
           callback(null, path);
         } else {
+          utils.logError(err);
+          utils.logError(stderr);
           callback(stderr, cacheFile);
         }
       });

@@ -18,6 +18,10 @@ function createHeader(text, width, callback) {
 
     var child = exec(command, null, function(err, stdout, stderr) {
       log(command);
+      if (err || stderr) {
+        utils.logError(err);
+        utils.logError(stderr);
+      }
       callback(err, path);
     });
 

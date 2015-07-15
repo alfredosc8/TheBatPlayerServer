@@ -197,11 +197,21 @@ function log(text) {
   var env = process.env.NODE_ENV;
 
   if (env === "production") {
-  } else if (env === "development") {
     logger.info(text);
+  } else if (env === "development") {
+    console.log(text);
   }
 }
 
+function logError(text) {
+  var env = process.env.NODE_ENV;
+
+  if (env === "production") {
+    logger.error(text);
+  } else if (env !== "development") {
+    console.log(text);
+  }
+}
 function trackSplit(str, separator, limit) {
   str = str.split(separator);
   if (str.length <= limit) return str;
