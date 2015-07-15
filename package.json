@@ -27,7 +27,7 @@
     "moment": "^2.8.4",
     "morgan": "^1.6.0",
     "nan": "^1.8.4",
-    "newrelic": "^1.14.5",
+    "newrelic": "^1.21.1",
     "node-gracenote": "git://github.com/gabek/node-gracenote.git",
     "node-internet-radio": "git://github.com/gabek/node-internet-radio.git",
     "nodecogs": "git://github.com/gabek/nodecogs.git",
@@ -46,9 +46,9 @@
     "supertest": "^0.15.0"
   },
   "eslintConfig": {
-      "env": {
-          "browser": true,
-          "node": true
-      }
+    "env": {
+      "browser": true,
+      "node": true
+    }
   }
 }
