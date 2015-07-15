@@ -8,9 +8,9 @@ if (env === "production" && config.enableAnalytics) {
 }
 
 if (env === "dev") {
-    require('look').start(3333);
-    var winston = require('winston');
-    winston.level = "info";
+  require('look').start(3333);
+  var winston = require('winston');
+  winston.level = "info";
 }
 var express = require('express');
 var app = express();
@@ -56,10 +56,10 @@ app.use("/images/header", headerImage);
 
 app.set('etag', 'weak');
 
-if (env === "production" && config.enableAnalytics) {
-  var rollbar = require("rollbar");
-  app.use(rollbar.errorHandler(config.rollbarKey));
-}
+// if (env === "production" && config.enableAnalytics) {
+//   var rollbar = require("rollbar");
+//   app.use(rollbar.errorHandler(config.rollbarKey));
+// }
 
 function setupMemcache() {
   if (memcacheClient === null) {
@@ -86,43 +86,43 @@ function setupMemcache() {
 }
 
 function setupLogger(app, env) {
-    if (env === "production") {
-        var winston = require('winston');
-        require('winston-papertrail').Papertrail;
-        var expressWinston = require('express-winston');
+  if (env === "production") {
+    var winston = require('winston');
+    require('winston-papertrail').Papertrail;
+    var expressWinston = require('express-winston');
 
-        // Add papertrail as central logging destinatin
-        winston.add(winston.transports.Papertrail, {
+    // Add papertrail as central logging destinatin
+    winston.add(winston.transports.Papertrail, {
+      host: "logs3.papertrailapp.com",
+      port: 32693,
+      json: false,
+      colorize: true,
+      inlineMeta: false,
+    });
+
+    // Add papertrail for Expressjs request logging
+    app.use(expressWinston.logger({
+      transports: [
+        new winston.transports.Papertrail({
           host: "logs3.papertrailapp.com",
           port: 32693,
           json: false,
           colorize: true,
           inlineMeta: false,
-        });
+        })
+      ],
+      expressFormat: false,
+      statusLevels: true,
+      level: "debug",
+      meta: false,
+      msg: "{{req.method}} {{req.url}} {{res.responseTime}}ms {{req.headers['user-agent']}} {{res.statusCode}}",
+      colorStatus: true
+    }));
 
-        // Add papertrail for Expressjs request logging
-        app.use(expressWinston.logger({
-            transports: [
-              new winston.transports.Papertrail({
-                host: "logs3.papertrailapp.com",
-                port: 32693,
-                json: false,
-                colorize: true,
-                inlineMeta: false,
-              })
-            ],
-            expressFormat: false,
-            statusLevels: true,
-            level: "debug",
-            meta: false,
-            msg: "{{req.method}} {{req.url}} {{res.responseTime}}ms {{req.headers['user-agent']}} {{res.statusCode}}",
-            colorStatus: true
-        }));
-
-        console.log("Configured Winston for logging.");
-    } else {
-        return;
-    }
+    console.log("Configured Winston for logging.");
+  } else {
+    return;
+  }
 }
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
