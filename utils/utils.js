@@ -206,7 +206,11 @@ function logError(text) {
 
   if (env === "production") {
     logger.error(text);
-  } else if (env !== "development") {
+    var rollbar = require('rollbar');
+    var config = require("../config.js");
+    rollbar.init(config.rollbarKey);
+    rollbar.handleError(e);
+  } else if (env === "development") {
     console.log(text);
   }
 }
