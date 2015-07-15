@@ -75,7 +75,6 @@ function download(url, filename, callback) {
 
     var tmpFilename = filename + "-tmp";
 
-    log(url + ' downloading to ' + tmpFilename);
     var file = fs.createWriteStream(tmpFilename);
     request.get(url).pipe(file).on('finish', function() {
       file.close();
@@ -85,7 +84,7 @@ function download(url, filename, callback) {
       });
 
     }).on('error', function(error) {
-      console.log(error);
+      logError(error);
       return callback();
     }).on('response', function(response) {
       if (response.statusCode != 200) {
