@@ -128,7 +128,6 @@ function cacheData(key, value, lifetime) {
     }
 
     if (config.enableCache && key && value && global.memcacheClient !== null) {
-      log("Caching: " + key);
       global.memcacheClient.set(key, value, lifetime, function(err) {
         if (err) {
           log(err);
