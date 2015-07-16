@@ -17,7 +17,7 @@ function resizeImage(url, width, height, callback) {
 
     utils.download(url, cacheFile, function() {
       var size = width + "x" + height;
-      var command = "convert " + cacheFile + " -resize " + width + "x!  -gravity Center -crop " + size + "+0+0 +repage -gravity SouthEast -append ./image/resources/smallbat.png -strip -quality 95 -composite jpg:" + path;
+      var command = "convert " + cacheFile + " -resize " + width + "x!  -gravity Center -crop " + size + "+0+0 +repage -gravity SouthEast -append " + +__dirname + "/resources/smallbat.png -strip -quality 95 -composite jpg:" + path;
 
       var child = exec(command, null, function(err, stdout, stderr) {
         if (err || stderr) {

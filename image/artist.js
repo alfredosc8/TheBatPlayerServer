@@ -17,7 +17,7 @@ function createArtistImage(url, colorObject, callback) {
 
     utils.download(url, cacheFile, function() {
       var rgb = "'rgb\(" + colorObject.red + "," + colorObject.green + "," + colorObject.blue + "\)'";
-      var command = "/bin/bash ./image/createArtistImage.sh " + cacheFile + " " + rgb + " " + path;
+      var command = "/bin/bash " + __dirname + "/createArtistImage.sh " + cacheFile + " " + rgb + " " + path;
       log(command);
 
       var child = exec(command, null, function(err, stdout, stderr) {
