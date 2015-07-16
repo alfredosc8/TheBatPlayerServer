@@ -210,7 +210,7 @@ function logError(text) {
     var rollbar = require('rollbar');
     var config = require("../config.js");
     rollbar.init(config.rollbarKey);
-    rollbar.handleError(e);
+    rollbar.handleError(text);
   } else if (env === "development") {
     console.log(text);
   }
