@@ -215,6 +215,7 @@ function logError(text) {
     console.log(text);
   }
 }
+
 function trackSplit(str, separator, limit) {
   str = str.split(separator);
   if (str.length <= limit) return str;
@@ -312,6 +313,7 @@ function getMemcacheServer(callback) {
 module.exports.trackSplit = trackSplit;
 module.exports.getCacheData = getCacheData;
 module.exports.log = log;
+module.exports.logError = logError;
 module.exports.getColorForImage = getColorForImage;
 module.exports.createTrackFromTitle = createTrackFromTitle;
 module.exports.download = download;
