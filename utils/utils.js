@@ -292,6 +292,12 @@ function getMemcacheServer(callback) {
     timeout: 10000
   });
   client.fetch(function(error, hosts) {
+    if (error) {
+      logError(error);
+    } else {
+      log("Elasticache nodes available: " + hosts);
+    }
+
     var node;
     if (!error && hosts > 0) {
       node = hosts[0];
