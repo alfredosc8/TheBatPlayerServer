@@ -299,7 +299,7 @@ function getMemcacheServer(callback) {
     }
 
     var node;
-    if (!error && hosts > 0) {
+    if (!error && hosts.length > 0) {
       node = hosts[0];
     } else {
       node = "127.0.0.1:11211";
