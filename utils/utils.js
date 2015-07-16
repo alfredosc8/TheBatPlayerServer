@@ -5,6 +5,7 @@ var md5 = require('MD5');
 var config = require("../config.js");
 var Promise = require('promise');
 var logger = require('winston');
+var Ecad = require('ecad');
 
 function createTrackFromTitle(title) {
   var titleArray = [];
@@ -278,6 +279,30 @@ function dePremiumDigitallyImported(url) {
   return url;
 }
 
+function getMemcacheServer(callback) {
+  var env = process.env.NODE_ENV;
+
+  if (env !== "production") {
+    return callback("127.0.0.1:11211");
+  }
+
+  var endpoints = [config.awsElasticacheConfigServer];
+  var client = new Ecad({
+    endpoints: endpoints,
+    timeout: 10000
+  });
+  client.fetch(function(error, hosts) {
+    var node;
+    if (!error && hosts > 0) {
+      node = hosts[0];
+    } else {
+      node = "127.0.0.1:11211";
+    }
+    return callback(node);
+
+  });
+}
+
 module.exports.trackSplit = trackSplit;
 module.exports.getCacheData = getCacheData;
 module.exports.log = log;
@@ -291,3 +316,4 @@ module.exports.getCacheFilepathForUrl = getCacheFilepathForUrl;
 module.exports.addResourceCachingHeaders = addResourceCachingHeaders;
 module.exports.handleModificationHeader = handleModificationHeader;
 module.exports.dePremiumDigitallyImported = dePremiumDigitallyImported;
+module.exports.getMemcacheServer = getMemcacheServer;

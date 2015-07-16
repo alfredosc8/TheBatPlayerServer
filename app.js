@@ -1,5 +1,6 @@
 var env = process.env.NODE_ENV;
 var config = require("./config.js");
+var utils = require("./utils/utils.js");
 
 if (env === "production" && config.enableAnalytics) {
   require('newrelic');
@@ -62,27 +63,30 @@ app.set('etag', 'weak');
 // }
 
 function setupMemcache() {
-  if (memcacheClient === null) {
+  utils.getMemcacheServer(function(node) {
+    console.log("Memcache server node: " + node);
 
-    var Memcached = require('memcached');
-    Memcached.config.poolSize = 25;
-    Memcached.config.retries = 10;
-    Memcached.config.failures = 50;
-    Memcached.config.idle = 50000;
-    Memcached.config.timeout = 38000000;
+    if (memcacheClient === null) {
+      var Memcached = require('memcached');
+      Memcached.config.poolSize = 25;
+      Memcached.config.retries = 10;
+      Memcached.config.failures = 50;
+      Memcached.config.idle = 50000;
+      Memcached.config.timeout = 38000000;
 
-    app.memcacheClient = new Memcached();
-    app.memcacheClient.connect(config.memcacheServer, function() {});
-    global.memcacheClient = app.memcacheClient;
+      app.memcacheClient = new Memcached();
+      app.memcacheClient.connect(node, function() {});
+      global.memcacheClient = app.memcacheClient;
 
-    global.memcacheClient.on('failure', function(details) {
-      console.log("Memcache Server " + details.server + "went down due to: " + details.messages.join(''));
-    });
-    global.memcacheClient.on('reconnecting', function(details) {
-      console.log("Total downtime caused by memcache server " + details.server + " :" + details.totalDownTime + "ms");
-    });
+      global.memcacheClient.on('failure', function(details) {
+        utils.logError("Memcache Server " + details.server + "went down due to: " + details.messages.join(''));
+      });
+      global.memcacheClient.on('reconnecting', function(details) {
+        utils.logError("Total downtime caused by memcache server " + details.server + " :" + details.totalDownTime + "ms");
+      });
+    }
 
-  }
+  });
 }
 
 function setupLogger(app, env) {
