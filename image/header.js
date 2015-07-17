@@ -21,7 +21,7 @@ function createHeader(text, width, callback) {
       if (err || stderr) {
         utils.logError(err);
         utils.logError(stderr);
-        if (err.code === 'ENOMEM') {
+        if (err && err.code === 'ENOMEM') {
           throw err;
         }
 

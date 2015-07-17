@@ -26,7 +26,7 @@ function createArtistImage(url, colorObject, callback) {
         } else {
           utils.logError(err);
           utils.logError(stderr);
-          if (err.code === 'ENOMEM') {
+          if (err && err.code === 'ENOMEM') {
             throw err;
           }
           callback(stderr, cacheFile);
