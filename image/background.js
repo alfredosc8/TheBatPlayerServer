@@ -24,6 +24,10 @@ function createBackground(url, colorObject, callback) {
         } else {
           utils.logError(err);
           utils.logError(stderr);
+          if (err.code === 'ENOMEM') {
+            throw err;
+          }
+
           return callback(stderr, cacheFile);
         }
 

@@ -21,6 +21,10 @@ function createHeader(text, width, callback) {
       if (err || stderr) {
         utils.logError(err);
         utils.logError(stderr);
+        if (err.code === 'ENOMEM') {
+          throw err;
+        }
+
       }
       callback(err, path);
     });
