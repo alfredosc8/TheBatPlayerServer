@@ -18,10 +18,9 @@ function createHeader(text, width, callback) {
 
     var child = exec(command, null, function(err, stdout, stderr) {
       log(command);
-      if (err || stderr) {
+      if (err) {
         utils.logError(err);
-        utils.logError(stderr);
-        if (err && err.code === 'ENOMEM') {
+        if (err) {
           throw err;
         }
 

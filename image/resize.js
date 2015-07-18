@@ -23,7 +23,7 @@ function resizeImage(url, width, height, callback) {
         if (err || stderr) {
           utils.logError(err);
           utils.logError(stderr);
-          if (err && err.code === 'ENOMEM') {
+          if (err) {
             throw err;
           }
 
