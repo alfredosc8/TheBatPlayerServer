@@ -9,6 +9,8 @@ module.exports = (function() {
   var router = express.Router();
 
   router.get("/:imageurl/:width/:height", function(req, res) {
+    global.metrics.increment("batserver.image.resize");
+
     addResourceCachingHeaders(res);
 
     // If the cache is asking if this is modified, always say no.

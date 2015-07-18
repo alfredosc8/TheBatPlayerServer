@@ -8,6 +8,8 @@ module.exports = (function() {
   var router = express.Router();
 
   router.get("/:imageurl/:red/:green/:blue", function(req, res) {
+    global.metrics.increment("batserver.image.create_artist");
+
     addResourceCachingHeaders(res);
 
     // If the cache is asking if this is modified, always say no.

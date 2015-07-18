@@ -1,6 +1,9 @@
 var env = process.env.NODE_ENV;
 var config = require("./config.js");
 var utils = require("./utils/utils.js");
+var metrics = require("./utils/metrics.js");
+metrics.init();
+global.metrics = metrics;
 
 if (env === "production" && config.enableAnalytics) {
   require('newrelic');

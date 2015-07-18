@@ -4,9 +4,12 @@ var config = require("../config.js");
 var Promise = require('promise');
 
 module.exports = (function() {
+
   var router = express.Router();
 
   router.get("/:streamurl", function(req, res, next) {
+    global.metrics.increment("batserver.metadata_fetch");
+
     var url = req.params.streamurl;
 
     metadata.fetchMetadataForUrl(url)

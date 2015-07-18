@@ -8,6 +8,8 @@ module.exports = (function() {
   var router = express.Router();
 
   router.get("/", function(req, res) {
+    global.metrics.increment("batserver.image.create_header");
+
     addResourceCachingHeaders(res);
 
     // If the cache is asking if this is modified, always say no.

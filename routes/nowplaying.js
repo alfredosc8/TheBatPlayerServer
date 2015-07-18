@@ -8,6 +8,8 @@ module.exports = (function() {
   var router = express.Router();
 
   router.get("/:streamurl", function(req, res, next) {
+    global.metrics.increment("batserver.nowplaying_fetch");
+
     var url = req.params.streamurl;
     url = utils.dePremiumDigitallyImported(url);
 
