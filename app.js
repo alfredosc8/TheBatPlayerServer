@@ -11,7 +11,7 @@ if (env === "production" && config.enableAnalytics) {
   rollbar.handleUncaughtExceptions(config.rollbarKey);
 }
 
-if (env === "dev") {
+if (env === "deveopment") {
   require('look').start(3333);
   var winston = require('winston');
   winston.level = "info";
@@ -37,7 +37,7 @@ var memcacheClient = null;
 setupMemcache();
 
 // view engine setup
-app.use(timeout('8s', {
+app.use(timeout('7s', {
   respond: true
 }));
 
