@@ -5,11 +5,14 @@ var metrics = require("./utils/metrics.js");
 metrics.init();
 global.metrics = metrics;
 
-if (env === "production" && config.enableAnalytics) {
-  require('newrelic');
-  var rollbar = require("rollbar");
-  rollbar.handleUncaughtExceptions(config.rollbarKey);
-}
+// if (env === "production" && config.enableAnalytics) {
+require('newrelic');
+var rollbar = require("rollbar");
+var options = {
+  exitOnUncaughtException: true
+};
+rollbar.handleUncaughtExceptions(config.rollbarKey, options);
+// }
 
 if (env === "deveopment") {
   require('look').start(3333);
@@ -60,10 +63,10 @@ app.use("/images/header", headerImage);
 
 app.set('etag', 'weak');
 
-// if (env === "production" && config.enableAnalytics) {
-//   var rollbar = require("rollbar");
-//   app.use(rollbar.errorHandler(config.rollbarKey));
-// }
+if (env === "production" && config.enableAnalytics) {
+  var rollbar = require("rollbar");
+  app.use(rollbar.errorHandler(config.rollbarKey));
+}
 
 function setupMemcache() {
   utils.getMemcacheServer(function(node) {
