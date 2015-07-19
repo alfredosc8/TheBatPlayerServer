@@ -16,7 +16,6 @@ test/tmp
 build/Release
 colorTest.html
 config.js
-newrelic.js
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
