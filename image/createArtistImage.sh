@@ -4,8 +4,9 @@
 convert $1 \
 -depth 8 \
 -strip \
--fill $2 -colorize 8% \
 -resize 500x330^ \
+-gravity Center -compose Over ./image/resources/grunge.png -composite \
+-fill $2 -colorize 9% \
 \( +clone -alpha extract -virtual-pixel black \
 -spread 50 -blur 0x3 -threshold 60% \) \
 -alpha off -compose Copy_Opacity \
