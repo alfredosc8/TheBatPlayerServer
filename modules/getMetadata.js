@@ -223,13 +223,11 @@ function getColor(track) {
 }
 
 function populateTrackObjectWithArtist(track, apiData) {
-
   if (apiData) {
     try {
       var bioDate = moment(new Date(apiData.bio.published));
       var bioText = apiData.bio.summary.stripTags().trim().replace(/\n|\r/g, "");
 
-      // Simplify unicode since Roku can't handle it
       track.artist = track.artist;
       track.song = track.song;
       track.bio.text = bioText;
@@ -248,7 +246,6 @@ function populateTrackObjectWithArtist(track, apiData) {
         track.tags.unshift("on tour");
       }
 
-      track.metaDataFetched = true;
     } catch (e) {
       log(e);
     }
@@ -256,7 +253,6 @@ function populateTrackObjectWithArtist(track, apiData) {
 }
 
 function populateTrackObjectWithTrack(track, apiData) {
-
   if (apiData) {
     try {
       track.album.name = apiData.album.title;
