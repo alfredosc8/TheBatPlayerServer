@@ -3,12 +3,15 @@ var express = require('express');
 var fs = require('fs');
 var addResourceCachingHeaders = require("../utils/utils.js").addResourceCachingHeaders;
 var utils = require("../utils/utils.js");
+var env = process.env.NODE_ENV;
 
 module.exports = (function() {
   var router = express.Router();
 
   router.get("/", function(req, res) {
-    global.metrics.increment("batserver.image.create_header");
+    if (env !== "test") {
+      global.metrics.increment("batserver.image.create_header");
+    }
 
     addResourceCachingHeaders(res);
 

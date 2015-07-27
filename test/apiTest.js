@@ -30,7 +30,8 @@ describe('GET /metadata', function() {
       .expect('Content-Type', /json/)
       .expect(200)
       .end(function(err, res) {
-        if (err) throw err;
+        if (err)
+          throw err;
         done();
       });
   });
@@ -58,7 +59,8 @@ describe('GET /images/background', function() {
       .expect('Content-Type', /jpeg/)
       .expect(200)
       .end(function(err, res) {
-        if (err) throw err;
+        if (err)
+          throw err;
         done();
       });
   });
@@ -73,7 +75,8 @@ describe('GET /images/artist', function() {
       .expect('Content-Type', /png/)
       .expect(200)
       .end(function(err, res) {
-        if (err) throw err;
+        if (err)
+          throw err;
         done();
       });
   });
@@ -88,7 +91,8 @@ describe('GET /images/resize', function() {
       .expect('Content-Type', /jpeg/)
       .expect(200)
       .end(function(err, res) {
-        if (err) throw err;
+        if (err)
+          throw err;
         done();
       });
   });
