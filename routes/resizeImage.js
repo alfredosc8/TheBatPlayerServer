@@ -2,7 +2,7 @@ var image = require("../image/resize.js");
 var express = require('express');
 var fs = require('fs');
 var utils = require("../utils/utils.js");
-var env = process.env.NODE_ENV;
+var config = require("../config.js");
 
 var addResourceCachingHeaders = require("../utils/utils.js").addResourceCachingHeaders;
 
@@ -11,7 +11,7 @@ module.exports = (function() {
 
   router.get("/:imageurl/:width/:height", function(req, res) {
 
-    if (env !== "test") {
+    if (config.enableAnalytics) {
       global.metrics.increment("batserver.image.resize");
     }
 

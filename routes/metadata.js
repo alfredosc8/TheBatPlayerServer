@@ -2,7 +2,6 @@ var express = require('express');
 var metadata = require("../modules/getMetadata.js");
 var config = require("../config.js");
 var Promise = require('promise');
-var env = process.env.NODE_ENV;
 
 module.exports = (function() {
 
@@ -10,7 +9,7 @@ module.exports = (function() {
 
   router.get("/:streamurl", function(req, res, next) {
 
-    if (env !== "test") {
+    if (config.enableAnalytics) {
       global.metrics.increment("batserver.metadata_fetch");
     }
 
