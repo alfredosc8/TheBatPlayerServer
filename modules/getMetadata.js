@@ -232,10 +232,6 @@ function populateTrackObjectWithArtist(track, apiData) {
       track.song = track.song;
       track.bio.text = bioText;
 
-      if (track.artist) {
-        track.metaDataFetched = true;
-      }
-
       track.image.url = apiData.image.last()["#text"];
       track.isOnTour = parseInt(apiData.ontour);
       track.bio.published = bioDate.year();
@@ -249,6 +245,13 @@ function populateTrackObjectWithArtist(track, apiData) {
       if (track.isOnTour) {
         track.tags.unshift("on tour");
       }
+
+      // Try to make a guess if we fetched metadata of a real artist by checking for
+      // real data.
+      if (bioText || track.tags || track.image) {
+        track.metaDataFetched = true;
+      }
+
 
     } catch (e) {
       log(e);
