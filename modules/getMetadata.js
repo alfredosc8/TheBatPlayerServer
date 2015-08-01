@@ -232,6 +232,10 @@ function populateTrackObjectWithArtist(track, apiData) {
       track.song = track.song;
       track.bio.text = bioText;
 
+      if (track.artist) {
+        track.metaDataFetched = true;
+      }
+
       track.image.url = apiData.image.last()["#text"];
       track.isOnTour = parseInt(apiData.ontour);
       track.bio.published = bioDate.year();
@@ -258,7 +262,7 @@ function populateTrackObjectWithTrack(track, apiData) {
       track.album.name = apiData.album.title;
       track.album.image = apiData.album.image.last()["#text"];
       track.metaDataFetched = true;
-    } catch (e) {} finally {}
+    } catch (e) {}
   }
 }
 
