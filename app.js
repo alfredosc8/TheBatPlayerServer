@@ -55,6 +55,8 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
+app.use(require("connect-datadog")({}));
+
 app.use("/metadata", metadata);
 app.use("/nowplaying", nowplaying);
 app.use("/images/background", backgroundImage);
