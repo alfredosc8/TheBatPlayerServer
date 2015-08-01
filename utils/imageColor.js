@@ -101,13 +101,19 @@ function getColorFromColorArray(colors) {
 
     // We want to discurage plain white
     if (a.family === "white") {
-      score += 0.01;
+      score += 0.03;
     }
 
     // We want to completely disallow plain black
     if (a.family === "black") {
       return 1;
     }
+
+    // We want to encourage actual pleasing colors
+    if (a.family === "red" || a.family === "blue" || a.family === "green" || a.family === "pink") {
+      score -= a.score.vivid * 0.01;
+    }
+
 
     // We want to highly discurage skin tones
     var colorDifference = colorDistance(229, 160, 115, a.rgb.r, a.rgb.g, a.rgb.b);
@@ -137,8 +143,6 @@ function getColorFromColorArray(colors) {
 
   //console.log(selectedColor);
   var colorDifference = colorDistance(229, 160, 115, selectedColor.rgb.r, selectedColor.rgb.g, selectedColor.rgb.b);
-  console.log(colorDifference);
-
   return selectedColor;
 }
 
