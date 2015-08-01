@@ -20,7 +20,7 @@ function resizeImage(url, width, height, callback) {
 
       var child = exec(command, null, function(err, stdout, stderr) {
         if (err) {
-          utils.logError(err);
+          //utils.logError(err);
 
           // If it's just a bad conversion then let it go
           if (err.message.indexOf("no decode delegate for this image format") > -1 || err.message.indexOf("delegate failed") > -1) {
