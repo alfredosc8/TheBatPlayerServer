@@ -114,7 +114,10 @@ function getColorFromColorArray(colors) {
       score -= a.score.vivid * 0.01;
     }
 
-
+    // Let's not encourage Orange unless we have to.  It falls into the skin looking territory.
+    if (a.family === "orange") {
+      score += 0.18;
+    }
     // We want to highly discurage skin tones
     var colorDifference = colorDistance(229, 160, 115, a.rgb.r, a.rgb.g, a.rgb.b);
     if (colorDifference < 60) {
@@ -141,7 +144,6 @@ function getColorFromColorArray(colors) {
     }
   }
 
-  //console.log(selectedColor);
   var colorDifference = colorDistance(229, 160, 115, selectedColor.rgb.r, selectedColor.rgb.g, selectedColor.rgb.b);
   return selectedColor;
 }
