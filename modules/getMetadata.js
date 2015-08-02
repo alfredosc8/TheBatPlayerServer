@@ -246,6 +246,16 @@ function populateTrackObjectWithArtist(track, apiData) {
         track.tags.unshift("on tour");
       }
 
+<<<<<<< HEAD
+=======
+      // Try to make a guess if we fetched metadata of a real artist by checking for
+      // real data.
+      if (bioText || track.tags || track.image) {
+        track.metaDataFetched = true;
+      }
+
+
+>>>>>>> master
     } catch (e) {
       log(e);
     }
@@ -258,7 +268,7 @@ function populateTrackObjectWithTrack(track, apiData) {
       track.album.name = apiData.album.title;
       track.album.image = apiData.album.image.last()["#text"];
       track.metaDataFetched = true;
-    } catch (e) {} finally {}
+    } catch (e) {}
   }
 }
 

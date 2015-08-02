@@ -10,7 +10,7 @@ var height = 100;
 describe("resizeImage", function() {
   it("Should save a file to disk", function(done) {
     image.resizeImage(url, width, height, function(error, path) {
-      expect(path).to.not.be.empty();
+      expect(path).to.not.be.empty;
 
       fs.exists(path, function(exists) {
         expect(exists).to.equal(true);

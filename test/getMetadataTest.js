@@ -28,7 +28,7 @@ describe("getMetadata", function() {
   it("Should have album details", function(done) {
     album.fetchAlbumForArtistAndTrack(track.artist, track.song).then(function(result) {
       expect(result).to.be.a("Object");
-      expect(result).to.not.be.empty();
+      expect(result).to.not.be.empty;
       //expect(result.image).to.not.be.empty();
       done();
     });

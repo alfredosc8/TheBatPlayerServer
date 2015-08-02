@@ -10,7 +10,7 @@ describe("createHeader", function() {
   it("Should save a file to disk", function(done) {
 
     image.createHeader(text, size, function(error, path) {
-      expect(path).to.not.be.empty();
+      expect(path).to.not.be.empty;
 
       fs.exists(path, function(exists) {
         expect(exists).to.equal(true);

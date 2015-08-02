@@ -6,8 +6,6 @@ var log = utils.log;
 var Promise = require('promise');
 
 var imagecolors = require('imagecolors');
-var colormatch = require('colormatch');
-
 var ColorSpace = C.space.rgb['CIE-RGB'];
 
 function getColorForUrl(url) {
@@ -103,7 +101,7 @@ function getColorFromColorArray(colors) {
 
     // We want to discurage plain white
     if (a.family === "white") {
-      score += 0.01;
+      score += 0.03;
     }
 
     // We want to completely disallow plain black
@@ -111,15 +109,22 @@ function getColorFromColorArray(colors) {
       return 1;
     }
 
+    // We want to encourage actual pleasing colors
+    if (a.family === "red" || a.family === "blue" || a.family === "green" || a.family === "pink") {
+      score -= a.score.vivid * 0.01;
+    }
+
+    // Let's not encourage Orange unless we have to.  It falls into the skin looking territory.
+    if (a.family === "orange") {
+      score += 0.18;
+    }
     // We want to highly discurage skin tones
-    var rgb = [a.rgb.r, a.rgb.g, a.rgb.b];
-    var skin = [229, 160, 115];
-    var isSkin = colormatch.quickMatch(rgb, skin);
-    if (isSkin) {
+    var colorDifference = colorDistance(229, 160, 115, a.rgb.r, a.rgb.g, a.rgb.b);
+    if (colorDifference < 60) {
       score += 0.5;
     }
 
-    score = Math.min(Math.max(nearest(score, 1), -1),1);
+    score = Math.min(Math.max(nearest(score, 1), -1), 1);
     return score;
   });
 
@@ -128,7 +133,7 @@ function getColorFromColorArray(colors) {
 
   // If per chance we selected something we don't want then remedy that by hoping for the best
   // and select a color right in the middle of our sorted list.
-  while (selectedColor.family === "black" || (selectedColor.family === "dark" && selectedColor.score.density > 10) || (selectedColor.family === "neutral" && selectedColor.score.luminance < 20) ) {
+  while (selectedColor.family === "black" || (selectedColor.family === "dark" && selectedColor.score.density > 10) || (selectedColor.family === "neutral" && selectedColor.score.luminance < 20)) {
     selectedColor = colors[index];
     index++;
 
@@ -139,9 +144,19 @@ function getColorFromColorArray(colors) {
     }
   }
 
-  //console.log(selectedColor);
-
+  var colorDifference = colorDistance(229, 160, 115, selectedColor.rgb.r, selectedColor.rgb.g, selectedColor.rgb.b);
   return selectedColor;
+}
+
+function colorDistance(colorRed1, colorGreen1, colorBlue1, colorRed2, colorGreen2, colorBlue2) {
+
+  var diffR, diffG, diffB;
+
+  // distance to color
+  diffR = (colorRed1 - colorRed2);
+  diffG = (colorGreen1 - colorGreen2);
+  diffB = (colorBlue1 - colorBlue2);
+  return (Math.sqrt(diffR * diffR + diffG * diffG + diffB * diffB));
 }
 
 if (!Array.prototype.last) {

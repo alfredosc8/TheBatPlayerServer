@@ -8,7 +8,10 @@ module.exports = (function() {
   var router = express.Router();
 
   router.get("/:streamurl", function(req, res, next) {
-    global.metrics.increment("batserver.metadata_fetch");
+
+    if (config.enableAnalytics) {
+      global.metrics.increment("batserver.metadata_fetch");
+    }
 
     var url = req.params.streamurl;
 

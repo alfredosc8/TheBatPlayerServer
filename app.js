@@ -1,4 +1,5 @@
 var env = process.env.NODE_ENV;
+global.env = env;
 var config = require("./config.js");
 var utils = require("./utils/utils.js");
 var metrics = require("./utils/metrics.js");
@@ -14,7 +15,7 @@ var options = {
 rollbar.handleUncaughtExceptions(config.rollbarKey, options);
 // }
 
-if (env === "deveopment") {
+if (env === "development") {
   require('look').start(3333);
   var winston = require('winston');
   winston.level = "info";
@@ -53,6 +54,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+
+app.use(require("connect-datadog")({}));
 
 app.use("/metadata", metadata);
 app.use("/nowplaying", nowplaying);
