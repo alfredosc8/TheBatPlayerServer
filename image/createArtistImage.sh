@@ -5,10 +5,10 @@ convert $1 \
 -depth 8 \
 -strip \
 -resize 500x330 \
--fill $2 -colorize 5% \
--gravity NorthWest -compose Over ./image/resources/grunge.png -composite \
+-fill $2 -colorize 8% \
+-gravity NorthWest -compose Over image/resources/grunge.png -composite \
 \( +clone -alpha extract -virtual-pixel black \
--spread 50 -blur 0x3 -threshold 60% \) \
+-spread 30 -blur 0x3 -threshold 60% \) \
 -alpha off -compose Copy_Opacity \
 -depth 8 \
 -composite \
