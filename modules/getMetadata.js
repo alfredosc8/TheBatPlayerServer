@@ -246,16 +246,12 @@ function populateTrackObjectWithArtist(track, apiData) {
         track.tags.unshift("on tour");
       }
 
-<<<<<<< HEAD
-=======
       // Try to make a guess if we fetched metadata of a real artist by checking for
       // real data.
       if (bioText || track.tags || track.image) {
         track.metaDataFetched = true;
       }
 
-
->>>>>>> master
     } catch (e) {
       log(e);
     }
