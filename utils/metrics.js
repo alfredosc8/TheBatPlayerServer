@@ -1,5 +1,5 @@
 var StatsD = require('node-dogstatsd').StatsD;
-var config = require('../config/config.js');
+var config = require('../config.js');
 
 var dogstatsd;
 var enabled = config.enableAnalytics;
