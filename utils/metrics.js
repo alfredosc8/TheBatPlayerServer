@@ -12,7 +12,7 @@ function init() {
 }
 
 function increment(counter) {
-  if (!enabled) {
+  if (!enabled || !dogstatsd) {
     console.log("Metrics are disabled.");
     return;
   }

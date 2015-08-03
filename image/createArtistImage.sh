@@ -6,7 +6,7 @@ convert $1 \
 -strip \
 -resize 500x330 \
 -fill $2 -colorize 8% \
--gravity NorthWest -compose Over image/resources/grunge.png -composite \
+-gravity NorthWest -compose Hardlight image/resources/grunge.png -composite \
 \( +clone -alpha extract -virtual-pixel black \
 -spread 30 -blur 0x3 -threshold 60% \) \
 -alpha off -compose Copy_Opacity \
