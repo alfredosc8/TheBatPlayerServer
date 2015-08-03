@@ -1,12 +1,13 @@
 var StatsD = require('node-dogstatsd').StatsD;
+var config = require('../config/config.js');
+
 var dogstatsd;
-var enabled = false;
+var enabled = config.enableAnalytics;
 
 function init() {
   var env = process.env.NODE_ENV;
-  if (env === "production") {
+  if (env === "production" && enabled) {
     dogstatsd = new StatsD();
-    enabled = true;
   }
 }
 
