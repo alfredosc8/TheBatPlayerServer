@@ -181,6 +181,8 @@ function getTrackFromStream(url) {
     internetradio.getStationInfo(url, function(error, station) {
       if (!error) {
         return fulfill(station);
+      } else {
+        return fulfill(null);
       }
     }, internetradio.StreamSource.STREAM);
   });
