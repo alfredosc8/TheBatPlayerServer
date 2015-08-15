@@ -252,7 +252,7 @@ function populateTrackObjectWithArtist(track, apiData) {
 
       var images = apiData.image
       var selectedImage = _.where(images, {
-        size: "large"
+        size: "mega"
       }).last()["#text"];
       track.image.url = selectedImage;
       track.isOnTour = parseInt(apiData.ontour);
