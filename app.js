@@ -164,7 +164,7 @@ function handleTimeout(err, req, res) {
 
   var error = {};
   error.message = "This request has timed out.";
-  error.status = 503;
+  error.status = 408;
   error.batserver = config.useragent;
 
   res.status(error.status);

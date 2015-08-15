@@ -19,7 +19,7 @@ module.exports = (function() {
       .then(function(metadata) {
 
         if (metadata == null) {
-          res.status(410);
+          res.status(415);
           res.json({
             error: {
               message: "There was an error fetching the metadata of this station."
