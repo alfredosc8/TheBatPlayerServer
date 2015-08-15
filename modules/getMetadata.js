@@ -10,6 +10,7 @@ var md5 = require('MD5');
 var config = require("../config.js");
 var Promise = require('promise');
 var request = require('request');
+var _ = require('lodash');
 
 var internetradio = require('node-internet-radio');
 
@@ -232,8 +233,13 @@ function populateTrackObjectWithArtist(track, apiData) {
       track.song = track.song;
       track.bio.text = bioText;
 
-      track.image.url = apiData.image.last()["#text"];
+      var images = apiData.image
+      var selectedImage = _.where(images, {
+        size: "large"
+      }).last()["#text"];
+      track.image.url = selectedImage;
       track.isOnTour = parseInt(apiData.ontour);
+
       track.bio.published = bioDate.year();
       if (apiData.tags.tag && apiData.tags.tag.length > 0) {
         track.tags = apiData.tags.tag.map(function(tagObject) {
