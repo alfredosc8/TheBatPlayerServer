@@ -15,10 +15,8 @@ module.exports = (function() {
 
     metadata.getTrackFromStream(url)
       .then(function(metadata) {
-        console.log(metadata)
 
         if (metadata == null) {
-          console.log("BLAHH")
           res.status(410);
           res.json({
             error: {
