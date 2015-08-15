@@ -49,6 +49,10 @@ function fetchMetadataForUrl(url) {
     // Get the currently playing track and find artist details
     getNowPlayingTrack().then(getArtistDetails).then(function(track) {
 
+      if (!track) {
+        throw (Error("Failure in getting track details."));
+      }
+
       // Get color information about the artist image and album details
       var promises = [
         getColor(track),
@@ -70,7 +74,6 @@ function fetchMetadataForUrl(url) {
     }).catch(function(error) {
       log(error);
       // Return barebones track object due to error
-      console.log("Failure in getting track details.")
       return finalCallback(track, false);
     });
   });
@@ -190,7 +193,13 @@ function getTrackFromStream(url) {
 
 function getArtistDetails(track) {
   return new Promise(function(fulfill, reject) {
-    lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
+    if (track && track.artist) {
+      track.artist = utils.sanitize(track.artist);
+    } else {
+      return fulfill(null);
+    }
+
+    lastfm.getArtistDetails(track.artist).then(function(artistDetails) {
       populateTrackObjectWithArtist(track, artistDetails);
       return fulfill(track);
     });
