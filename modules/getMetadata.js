@@ -231,6 +231,12 @@ function populateTrackObjectWithArtist(track, apiData) {
       var bioDate = moment(new Date(apiData.bio.published));
       var bioText = apiData.bio.summary.stripTags().trim().replace(/\n|\r/g, "");
 
+      // Last.FM started sending bogus bio data when it should be empty
+      if (bioDate.year() === 1970) {
+        bioText = null
+        bioDate = null
+      }
+
       track.artist = track.artist;
       track.song = track.song;
       track.bio.text = bioText;
