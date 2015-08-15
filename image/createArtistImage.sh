@@ -4,6 +4,7 @@
 convert $1 \
 -depth 8 \
 -strip \
+-fill $2 -colorize 8% \
 -resize 500x330^ \
 \( +clone -alpha extract -virtual-pixel black \
 -spread 50 -blur 0x3 -threshold 60% \) \
@@ -15,5 +16,4 @@ convert $1 \
 \( +clone -background darkgrey -shadow 75x3+9+15 \) +swap \
 -background none -compose Over -layers merge +repage \
 -trim \
--fill $2 -colorize 8% \
 png:$3
