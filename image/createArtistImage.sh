@@ -7,13 +7,13 @@ convert $1 \
 -fill $2 -colorize 8% \
 -resize 500x330^ \
 \( +clone -alpha extract -virtual-pixel black \
--spread 50 -blur 0x3 -threshold 60% \) \
+-spread 30 -blur 0x3 -threshold 60% \) \
 -alpha off -compose Copy_Opacity \
 -depth 8 \
 -composite \
 -alpha set -virtual-pixel transparent \
 -channel A -blur 0x8  -level 50%,100% +channel \
-\( +clone -background darkgrey -shadow 75x3+9+15 \) +swap \
+\( +clone -background black -shadow 75x3+10+15 \) +swap \
 -background none -compose Over -layers merge +repage \
 -trim \
 png:$3
