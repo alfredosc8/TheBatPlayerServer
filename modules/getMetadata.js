@@ -86,7 +86,7 @@ function fetchMetadataForUrl(url) {
       utils.cacheData(streamCacheKey, track, config.cachetime);
     }
     finalFulfillPromise(track);
-    preCacheImages(track);
+    //preCacheImages(track);
     return;
   }
 
