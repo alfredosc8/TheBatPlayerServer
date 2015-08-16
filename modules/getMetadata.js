@@ -302,7 +302,7 @@ function preCacheImages(track) {
       return;
     }
 
-    utils.cacheData(precacheKey, "cached", 0);
+    utils.cacheData(precacheKey, "cached", 86400);
     var artistImage = track.image.url;
     var backgroundImage = track.image.backgroundUrl;
     async.parallel([

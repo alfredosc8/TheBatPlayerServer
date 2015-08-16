@@ -82,7 +82,7 @@ function getAlbumDetails(artistName, albumName, mbid, callback) {
         if (error) {
           return callback(error, null);
         }
-        utils.cacheData(cacheKey, albumDetails, 0);
+        utils.cacheData(cacheKey, albumDetails, 604800);
         return callback(null, albumDetails);
       });
     }
@@ -104,7 +104,7 @@ function getTrackDetails(artistName, trackName, callback) {
         if (error) {
           return callback(error, null);
         }
-        utils.cacheData(cacheKey, trackDetails, 0);
+        utils.cacheData(cacheKey, trackDetails, 604800);
         return callback(null, trackDetails);
       });
 
@@ -126,7 +126,7 @@ function getArtistDetails(artistName) {
         artist: artistName,
         autocorrect: 1
       }, function(err, artistDetails) {
-        utils.cacheData(artistCacheKey, artistDetails, 0);
+        utils.cacheData(artistCacheKey, artistDetails, 604800);
         return fulfill(artistDetails);
       });
     });

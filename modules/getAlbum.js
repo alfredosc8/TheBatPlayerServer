@@ -95,11 +95,11 @@ function fetchAlbumForArtistAndTrack(artist, track) {
 
               if (!album.image) {
                 getAlbumArtForAlbum(album, function(error, finalAlbum) {
-                  utils.cacheData(albumObjectCacheKey, finalAlbum, 0);
+                  utils.cacheData(albumObjectCacheKey, finalAlbum, 604800);
                   return fulfill(finalAlbum);
                 });
               } else {
-                utils.cacheData(albumObjectCacheKey, album, 0);
+                utils.cacheData(albumObjectCacheKey, album, 604800);
                 return fulfill(album);
               }
 

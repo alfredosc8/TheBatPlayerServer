@@ -173,7 +173,7 @@ function getColorForImage(url) {
           return fulfill(result);
         } else {
           imageColor.getColorForUrl(url).then(function(color) {
-            cacheData(colorCacheKey, color, 0);
+            cacheData(colorCacheKey, color, 604800);
             return fulfill(color);
           });
         }
