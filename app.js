@@ -77,11 +77,11 @@ function setupMemcache() {
 
     if (memcacheClient === null) {
       var Memcached = require('memcached');
-      Memcached.config.poolSize = 25;
+      Memcached.config.poolSize = 200;
       Memcached.config.retries = 10;
       Memcached.config.failures = 50;
       Memcached.config.idle = 50000;
-      Memcached.config.timeout = 38000000;
+      Memcached.config.failOverServers = ['127.0.0.1:11211'];
 
       app.memcacheClient = new Memcached();
       app.memcacheClient.connect(node, function() {});
