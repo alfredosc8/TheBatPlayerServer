@@ -23,7 +23,6 @@ function fetchAlbumForArtistAndTrack(artist, track, originalArtist, originalTrac
     var originalAlbumObjectCacheKey = undefined;
     if (originalArtist && originalTrack) {
       originalAlbumObjectCacheKey = ("cache-artist-" + originalArtist + "-track-" + originalTrack).slugify();
-      console.log("Retry detected: " + originalAlbumObjectCacheKey)
     }
 
     var album = undefined;
