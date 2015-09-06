@@ -15,6 +15,17 @@ module.exports = (function() {
 
     metadata.getTrackFromStream(url)
       .then(function(metadata) {
+
+        if (metadata == null) {
+          res.status(415);
+          res.json({
+            error: {
+              message: "There was an error fetching the now playing data of this station."
+            }
+          });
+          return;
+        }
+
         if (!req.timedout) {
           res.json(metadata);
         }

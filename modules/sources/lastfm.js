@@ -4,6 +4,7 @@ var log = utils.log;
 var albumSorting = require("../albumSorting.js");
 var moment = require("moment");
 var Promise = require('promise');
+var _ = require('lodash');
 
 var LastfmAPI = require('lastfmapi');
 var lastfm = new LastfmAPI({
@@ -17,7 +18,11 @@ function getAlbum(artistName, trackName, callback) {
       if (albumResult.releasedate) {
         releaseDate = moment(new Date(albumResult.releasedate.trim())).year();
       }
-      var albumObject = albumSorting.createAlbumObject(albumResult.name, albumResult.image.last()['#text'], releaseDate, albumResult.mbid);
+      var images = albumResult.image;
+      var selectedImage = _.where(images, {
+        size: "large"
+      }).last()["#text"];
+      var albumObject = albumSorting.createAlbumObject(albumResult.name, selectedImage, releaseDate, albumResult.mbid);
       return callback(null, albumObject);
     } else {
       return callback(null, null);
@@ -49,9 +54,10 @@ function getAlbumArt(albumName, artistName, mbid, callback) {
       getAlbumDetails(artistName, albumName, mbid, function(error, result) {
         if (!error) {
           var images = result.image;
-          var image = images[images.length - 2];
-          var url = image["#text"];
-          return callback(error, url);
+          var selectedImage = _.where(images, {
+            size: "large"
+          }).last()["#text"];
+          return callback(error, selectedImage);
         } else {
           return callback(error, null);
         }
@@ -76,7 +82,7 @@ function getAlbumDetails(artistName, albumName, mbid, callback) {
         if (error) {
           return callback(error, null);
         }
-        utils.cacheData(cacheKey, albumDetails, 0);
+        utils.cacheData(cacheKey, albumDetails, 604800);
         return callback(null, albumDetails);
       });
     }
@@ -98,7 +104,7 @@ function getTrackDetails(artistName, trackName, callback) {
         if (error) {
           return callback(error, null);
         }
-        utils.cacheData(cacheKey, trackDetails, 0);
+        utils.cacheData(cacheKey, trackDetails, 604800);
         return callback(null, trackDetails);
       });
 
@@ -120,7 +126,7 @@ function getArtistDetails(artistName) {
         artist: artistName,
         autocorrect: 1
       }, function(err, artistDetails) {
-        utils.cacheData(artistCacheKey, artistDetails, 0);
+        utils.cacheData(artistCacheKey, artistDetails, 604800);
         return fulfill(artistDetails);
       });
     });

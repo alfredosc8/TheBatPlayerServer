@@ -10,6 +10,7 @@ var md5 = require('MD5');
 var config = require("../config.js");
 var Promise = require('promise');
 var request = require('request');
+var _ = require('lodash');
 
 var internetradio = require('node-internet-radio');
 
@@ -48,6 +49,10 @@ function fetchMetadataForUrl(url) {
     // Get the currently playing track and find artist details
     getNowPlayingTrack().then(getArtistDetails).then(function(track) {
 
+      if (!track) {
+        throw (Error("Failure in getting track details."));
+      }
+
       // Get color information about the artist image and album details
       var promises = [
         getColor(track),
@@ -69,7 +74,6 @@ function fetchMetadataForUrl(url) {
     }).catch(function(error) {
       log(error);
       // Return barebones track object due to error
-      console.log("Failure in getting track details.")
       return finalCallback(track, false);
     });
   });
@@ -82,7 +86,7 @@ function fetchMetadataForUrl(url) {
       utils.cacheData(streamCacheKey, track, config.cachetime);
     }
     finalFulfillPromise(track);
-    preCacheImages(track);
+    //preCacheImages(track);
     return;
   }
 
@@ -180,6 +184,8 @@ function getTrackFromStream(url) {
     internetradio.getStationInfo(url, function(error, station) {
       if (!error) {
         return fulfill(station);
+      } else {
+        return fulfill(null);
       }
     }, internetradio.StreamSource.STREAM);
   });
@@ -187,7 +193,13 @@ function getTrackFromStream(url) {
 
 function getArtistDetails(track) {
   return new Promise(function(fulfill, reject) {
-    lastfm.getArtistDetails(utils.sanitize(track.artist)).then(function(artistDetails) {
+    if (track && track.artist) {
+      track.artist = utils.sanitize(track.artist);
+    } else {
+      return fulfill(null);
+    }
+
+    lastfm.getArtistDetails(track.artist).then(function(artistDetails) {
       populateTrackObjectWithArtist(track, artistDetails);
       return fulfill(track);
     });
@@ -228,13 +240,26 @@ function populateTrackObjectWithArtist(track, apiData) {
       var bioDate = moment(new Date(apiData.bio.published));
       var bioText = apiData.bio.summary.stripTags().trim().replace(/\n|\r/g, "");
 
+      // Last.FM started sending bogus bio data when it should be empty
+      if (bioDate.year() === 1970) {
+        bioText = null
+        bioDate = null
+      }
+
       track.artist = track.artist;
       track.song = track.song;
       track.bio.text = bioText;
 
-      track.image.url = apiData.image.last()["#text"];
+      var images = apiData.image
+      var selectedImage = _.where(images, {
+        size: "mega"
+      }).last()["#text"];
+      track.image.url = selectedImage;
       track.isOnTour = parseInt(apiData.ontour);
-      track.bio.published = bioDate.year();
+
+      if (bioDate != null) {
+        track.bio.published = bioDate.year();
+      }
       if (apiData.tags.tag && apiData.tags.tag.length > 0) {
         track.tags = apiData.tags.tag.map(function(tagObject) {
           return tagObject.name;
@@ -276,7 +301,7 @@ function preCacheImages(track) {
       return;
     }
 
-    utils.cacheData(precacheKey, "cached", 0);
+    utils.cacheData(precacheKey, "cached", 86400);
     var artistImage = track.image.url;
     var backgroundImage = track.image.backgroundUrl;
     async.parallel([

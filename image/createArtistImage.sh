@@ -1,6 +1,8 @@
 #!/bin/bash
 # createArtistImage.sh originalImage.jpg "rgb(10,38,80)" outputImage.png
 
+identify $1
+
 convert $1 \
 -depth 8 \
 -strip \
@@ -12,9 +14,9 @@ convert $1 \
 -alpha off -compose Copy_Opacity \
 -depth 8 \
 -composite \
--trim \
 -alpha set -virtual-pixel transparent \
 -channel A -blur 0x8  -level 50%,100% +channel \
-\( +clone -background black -shadow 75x3+9+10 \) +swap \
+\( +clone -background black -shadow 75x3+7+13 \) +swap \
 -background none -compose Over -layers merge +repage \
+-trim \
 png:$3

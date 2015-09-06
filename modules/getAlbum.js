@@ -16,9 +16,15 @@ var Promise = require('promise');
 
 S.extendPrototype();
 
-function fetchAlbumForArtistAndTrack(artist, track) {
+function fetchAlbumForArtistAndTrack(artist, track, originalArtist, originalTrack) {
   return new Promise(function(fulfill, reject) {
     var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track).slugify();
+
+    var originalAlbumObjectCacheKey = undefined;
+    if (originalArtist && originalTrack) {
+      originalAlbumObjectCacheKey = ("cache-artist-" + originalArtist + "-track-" + originalTrack).slugify();
+    }
+
     var album = undefined;
 
     // Both artist name and track names are required
@@ -95,11 +101,11 @@ function fetchAlbumForArtistAndTrack(artist, track) {
 
               if (!album.image) {
                 getAlbumArtForAlbum(album, function(error, finalAlbum) {
-                  utils.cacheData(albumObjectCacheKey, finalAlbum, 0);
+                  cacheFinalAlbum(album, albumObjectCacheKey, originalAlbumObjectCacheKey);
                   return fulfill(finalAlbum);
                 });
               } else {
-                utils.cacheData(albumObjectCacheKey, album, 0);
+                cacheFinalAlbum(album, albumObjectCacheKey, originalAlbumObjectCacheKey);
                 return fulfill(album);
               }
 
@@ -108,7 +114,7 @@ function fetchAlbumForArtistAndTrack(artist, track) {
               var isRetrying = retrySanitized(artist, track, fulfill);
               if (!isRetrying) {
                 log("No album found and will not retry.");
-                utils.cacheData(albumObjectCacheKey, "NOALBUM", 300);
+                cacheFinalAlbum("NOALBUM", albumObjectCacheKey, originalAlbumObjectCacheKey, 300);
                 return fulfill(null);
               }
             }
@@ -118,6 +124,17 @@ function fetchAlbumForArtistAndTrack(artist, track) {
       }
     });
   });
+}
+
+function cacheFinalAlbum(album, cacheKey, secondaryCacheKey, duration) {
+  if (!duration) {
+    duration = 604800;
+  }
+
+  utils.cacheData(cacheKey, album, duration);
+  if (secondaryCacheKey) {
+    utils.cacheData(secondaryCacheKey, album, duration);
+  }
 }
 
 function getAlbumArtForAlbum(album, mainCallback) {
@@ -177,7 +194,7 @@ function retrySanitized(artistName, trackName, fulfill) {
 
   if (updatedArtist != artistName || updatedTrack != trackName) {
     log("No album. Attempting retry.");
-    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack).then(fulfill).catch(function() {
+    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack, artistName, trackName).then(fulfill).catch(function() {
       return fulfill(null);
     });
     return true;

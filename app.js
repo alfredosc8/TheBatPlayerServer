@@ -41,7 +41,7 @@ var memcacheClient = null;
 setupMemcache();
 
 // view engine setup
-app.use(timeout('7s', {
+app.use(timeout('8s', {
   respond: true
 }));
 
@@ -77,11 +77,11 @@ function setupMemcache() {
 
     if (memcacheClient === null) {
       var Memcached = require('memcached');
-      Memcached.config.poolSize = 25;
+      Memcached.config.poolSize = 200;
       Memcached.config.retries = 10;
       Memcached.config.failures = 50;
       Memcached.config.idle = 50000;
-      Memcached.config.timeout = 38000000;
+      Memcached.config.failOverServers = ['127.0.0.1:11211'];
 
       app.memcacheClient = new Memcached();
       app.memcacheClient.connect(node, function() {});
@@ -164,7 +164,7 @@ function handleTimeout(err, req, res) {
 
   var error = {};
   error.message = "This request has timed out.";
-  error.status = 503;
+  error.status = 408;
   error.batserver = config.useragent;
 
   res.status(error.status);
