@@ -1,12 +1,9 @@
 var utils = require('./utils.js');
 var fs = require('fs');
 var md5 = require('MD5');
-var C = require('c0lor');
 var log = utils.log;
 var Promise = require('promise');
-
 var imagecolors = require('imagecolors');
-var ColorSpace = C.space.rgb['CIE-RGB'];
 
 function getColorForUrl(url) {
   return new Promise(function(fulfill, reject) {

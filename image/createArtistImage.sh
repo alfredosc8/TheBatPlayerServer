@@ -1,8 +1,6 @@
 #!/bin/bash
 # createArtistImage.sh originalImage.jpg "rgb(10,38,80)" outputImage.png
 
-identify $1
-
 convert $1 \
 -depth 8 \
 -strip \
