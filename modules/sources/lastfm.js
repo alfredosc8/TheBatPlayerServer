@@ -20,7 +20,7 @@ function getAlbum(artistName, trackName, callback) {
       }
       var images = albumResult.image;
       var selectedImage = _.where(images, {
-        size: "large"
+        size: "extralarge"
       }).last()["#text"];
       var albumObject = albumSorting.createAlbumObject(albumResult.name, selectedImage, releaseDate, albumResult.mbid);
       return callback(null, albumObject);
@@ -55,7 +55,7 @@ function getAlbumArt(albumName, artistName, mbid, callback) {
         if (!error) {
           var images = result.image;
           var selectedImage = _.where(images, {
-            size: "large"
+            size: "extralarge"
           }).last()["#text"];
           return callback(error, selectedImage);
         } else {
