@@ -3,7 +3,7 @@ var image = require("../image/resize.js");
 var utils = require("../utils/utils.js");
 var fs = require('fs');
 
-var url = "http://userserve-ak.last.fm/serve/500/2428/Wolfsheim.jpg";
+var url = "http://img2-ak.lst.fm/i/u/a81e58c3cb784aceca443303866273b3.png";
 var width = 100;
 var height = 100;
 

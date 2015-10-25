@@ -54,7 +54,7 @@ describe('GET /metadata', function() {
 describe('GET /images/background', function() {
   it('respond with valid jpeg image', function(done) {
     request(app)
-      .get("/images/background/http%3A%2F%2Fuserserve-ak.last.fm%2Fserve%2F500%2F40292705%2FSuicide%2BCommando%2Bpromo04.jpg/198/185/178")
+      .get("/images/background/http%3A%2F%2Fimg2-ak.lst.fm%2Fi%2Fu%2Fa81e58c3cb784aceca443303866273b3.png/198/185/178")
       .set('Accept', 'image/jpeg')
       .expect('Content-Type', /jpeg/)
       .expect(200)
@@ -70,7 +70,7 @@ describe('GET /images/background', function() {
 describe('GET /images/artist', function() {
   it('respond with valid png image', function(done) {
     request(app)
-      .get("/images/artist/http%3A%2F%2Fuserserve-ak.last.fm%2Fserve%2F500%2F40292705%2FSuicide%2BCommando%2Bpromo04.jpg/198/185/178")
+      .get("/images/artist/http%3A%2F%2Fimg2-ak.lst.fm%2Fi%2Fu%2Fa81e58c3cb784aceca443303866273b3.png/198/185/178")
       .set('Accept', 'image/png')
       .expect('Content-Type', /png/)
       .expect(200)
