@@ -1,6 +1,6 @@
 var utils = require('./utils.js');
 var fs = require('fs');
-var md5 = require('MD5');
+var md5 = require('md5');
 var log = utils.log;
 var Promise = require('promise');
 var imagecolors = require('imagecolors');
