@@ -4,7 +4,7 @@ var utils = require("../utils/utils.js");
 var imageColor = require("../utils/imageColor.js");
 var backgroundImage = require("../image/background.js");
 var fs = require('fs');
-var md5 = require('MD5');
+var md5 = require('md5');
 
 var urls = [];
 
