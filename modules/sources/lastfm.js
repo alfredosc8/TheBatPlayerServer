@@ -66,6 +66,45 @@ function getAlbumArt(albumName, artistName, mbid, callback) {
   });
 }
 
+function getArtistTags(artistName, callback) {
+  var cacheKey = ("cache-artistTags-" + artistName).slugify();
+  utils.getCacheData(cacheKey).then(function(result) {
+    if (result) {
+      return callback(null, result);
+    }
+
+    lastfm.artist.getTopTags({
+      artist: artistName,
+      autocorrect: 1
+    }, function(error, tags) {
+
+      if (!error) {
+        var tagArray = [];
+
+        _.forEach(tags.tag, function(singleTag) {
+          var singleTagName = singleTag.name.toLowerCase();
+          var valid = true;
+
+          if (singleTagName == "seen live") {
+            valid = false;
+          }
+          if (singleTagName == "under 2000 listeners") {
+            valid = false;
+          }
+
+          if (valid) {
+            tagArray.push(singleTagName);
+          }
+        });
+      }
+      tagArray = tagArray.slice(0, 6);
+      utils.cacheData(cacheKey, tagArray, 604800);
+      return callback(error, tagArray);
+    });
+
+  });
+}
+
 function getAlbumDetails(artistName, albumName, mbid, callback) {
   var cacheKey = ("cache-album-" + albumName + "-" + artistName).slugify();
   utils.getCacheData(cacheKey).then(function(result) {
@@ -141,3 +180,4 @@ module.exports.getTrackDetails = getTrackDetails;
 module.exports.getAlbumDetails = getAlbumDetails;
 module.exports.albumUsingLastFM = albumUsingLastFM;
 module.exports.getAlbum = getAlbum;
+module.exports.getArtistTags = getArtistTags;

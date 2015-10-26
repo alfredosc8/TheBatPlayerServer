@@ -199,9 +199,15 @@ function getArtistDetails(track) {
       return fulfill(null);
     }
 
+    console.log("Getting artist details")
     lastfm.getArtistDetails(track.artist).then(function(artistDetails) {
       populateTrackObjectWithArtist(track, artistDetails);
-      return fulfill(track);
+      lastfm.getArtistTags(track.artist, function(error, tags) {
+        if (!error) {
+          track.tags = tags;
+        }
+        return fulfill(track);
+      });
     });
   });
 }
