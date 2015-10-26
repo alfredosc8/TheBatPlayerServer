@@ -97,7 +97,7 @@ function getArtistTags(artistName, callback) {
           }
         });
       }
-      if (tagArray.length > 6) {
+      if (tagArray && tagArray.length > 6) {
         tagArray = tagArray.slice(0, 6);
       }
       utils.cacheData(cacheKey, tagArray, 604800);
