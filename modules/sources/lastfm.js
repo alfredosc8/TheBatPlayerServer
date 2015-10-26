@@ -97,7 +97,9 @@ function getArtistTags(artistName, callback) {
           }
         });
       }
-      tagArray = tagArray.slice(0, 6);
+      if (tagArray.count > 6) {
+        tagArray = tagArray.slice(0, 6);
+      }
       utils.cacheData(cacheKey, tagArray, 604800);
       return callback(error, tagArray);
     });

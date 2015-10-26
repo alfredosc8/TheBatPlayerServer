@@ -199,7 +199,6 @@ function getArtistDetails(track) {
       return fulfill(null);
     }
 
-    console.log("Getting artist details")
     lastfm.getArtistDetails(track.artist).then(function(artistDetails) {
       populateTrackObjectWithArtist(track, artistDetails);
       lastfm.getArtistTags(track.artist, function(error, tags) {
