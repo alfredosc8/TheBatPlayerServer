@@ -6,6 +6,7 @@ var lastfm = require("./sources/lastfm.js");
 var musicbrainz = require("./sources/musicbrainz.js")
 var discogs = require("./sources/discogs.js")
 var gracenote = require("./sources/gracenote.js");
+var itunes = require("./sources/itunes.js");
 
 var config = require("../config.js");
 var S = require('string');
@@ -16,13 +17,16 @@ var Promise = require('promise');
 
 S.extendPrototype();
 
-function fetchAlbumForArtistAndTrack(artist, track, originalArtist, originalTrack) {
+function fetchAlbumForArtistAndTrack(artist, track, originalArtist,
+  originalTrack) {
   return new Promise(function(fulfill, reject) {
-    var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track).slugify();
+    var albumObjectCacheKey = ("cache-artist-" + artist + "-track-" + track)
+      .slugify();
 
     var originalAlbumObjectCacheKey = undefined;
     if (originalArtist && originalTrack) {
-      originalAlbumObjectCacheKey = ("cache-artist-" + originalArtist + "-track-" + originalTrack).slugify();
+      originalAlbumObjectCacheKey = ("cache-artist-" + originalArtist +
+      "-track-" + originalTrack).slugify();
     }
 
     var album = undefined;
@@ -65,6 +69,7 @@ function fetchAlbumForArtistAndTrack(artist, track, originalArtist, originalTrac
           //   }
           // },
 
+
           // Try Gracenote
           function(callback) {
             if (!album) {
@@ -86,7 +91,8 @@ function fetchAlbumForArtistAndTrack(artist, track, originalArtist, originalTrac
         ], function(error, albums) {
 
           async.filter(albums, function(singleAlbum, filterCallback) {
-            return filterCallback((singleAlbum && singleAlbum !== null && singleAlbum.name !== null));
+            return filterCallback((singleAlbum && singleAlbum !==
+              null && singleAlbum.name !== null));
           }, function(albums) {
             if (albums.length > 0) {
               var album = albums[0];
@@ -100,21 +106,27 @@ function fetchAlbumForArtistAndTrack(artist, track, originalArtist, originalTrac
               }
 
               if (!album.image) {
-                getAlbumArtForAlbum(album, function(error, finalAlbum) {
-                  cacheFinalAlbum(album, albumObjectCacheKey, originalAlbumObjectCacheKey);
+                getAlbumArtForAlbum(album, function(error,
+                  finalAlbum) {
+                  cacheFinalAlbum(album,
+                    albumObjectCacheKey,
+                    originalAlbumObjectCacheKey);
                   return fulfill(finalAlbum);
                 });
               } else {
-                cacheFinalAlbum(album, albumObjectCacheKey, originalAlbumObjectCacheKey);
+                cacheFinalAlbum(album, albumObjectCacheKey,
+                  originalAlbumObjectCacheKey);
                 return fulfill(album);
               }
 
             } else {
               // No album found
-              var isRetrying = retrySanitized(artist, track, fulfill);
+              var isRetrying = retrySanitized(artist, track,
+                fulfill);
               if (!isRetrying) {
                 log("No album found and will not retry.");
-                cacheFinalAlbum("NOALBUM", albumObjectCacheKey, originalAlbumObjectCacheKey, 300);
+                cacheFinalAlbum("NOALBUM", albumObjectCacheKey,
+                  originalAlbumObjectCacheKey, 300);
                 return fulfill(null);
               }
             }
@@ -144,7 +156,8 @@ function getAlbumArtForAlbum(album, mainCallback) {
     // Get Album art from Last.FM
     function(callback) {
       if (!album.image) {
-        lastfm.getAlbumArt(album.name, album.artist, album.mbid, function(error, result) {
+        lastfm.getAlbumArt(album.name, album.artist, album.mbid, function(
+          error, result) {
           if (!error && result) {
             album.image = result;
           }
@@ -168,6 +181,16 @@ function getAlbumArtForAlbum(album, mainCallback) {
       } else {
         return callback(null, null);
       }
+    },
+
+    // Get album art from iTunes
+    function(callback) {
+      itunes.getAlbum(album.name, album.artist, function(result) {
+        if (result && result.image) {
+          album.image = result;
+        }
+        return callback(null, album);
+      })
     }
 
   ], function(error, albums) {
@@ -194,7 +217,8 @@ function retrySanitized(artistName, trackName, fulfill) {
 
   if (updatedArtist != artistName || updatedTrack != trackName) {
     log("No album. Attempting retry.");
-    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack, artistName, trackName).then(fulfill).catch(function() {
+    fetchAlbumForArtistAndTrack(updatedArtist, updatedTrack, artistName,
+      trackName).then(fulfill).catch(function() {
       return fulfill(null);
     });
     return true;
