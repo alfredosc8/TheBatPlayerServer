@@ -8,8 +8,8 @@ var itunes = require("../modules/sources/itunes.js");
 
 var albumName = "Live At Wembly Stadium"
 var artistName = "Queen"
-
-describe("fetchAlbumForArtistAndTrack", function() {
+var trackName = "We are the champions"
+describe("fetchAlbumDetails", function() {
 
   it("Should return a single album", function(done) {
 
@@ -23,6 +23,22 @@ describe("fetchAlbumForArtistAndTrack", function() {
 
   });
 });
+
+describe("fetchAlbumDetailsFromArtistAndTrack", function() {
+  it("Should return a single album", function(done) {
+    itunes.getAlbumFromArtistTrack(artistName, trackName, function(
+      albumObject) {
+
+      check(done, function() {
+        expect(albumObject).to.have.property('name');
+        expect(albumObject).to.have.property('image');
+        expect(albumObject).to.have.property('released');
+      });
+
+    })
+  })
+})
+
 
 
 function check(done, f) {

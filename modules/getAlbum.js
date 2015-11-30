@@ -69,7 +69,15 @@ function fetchAlbumForArtistAndTrack(artist, track, originalArtist,
           //   }
           // },
 
-
+          // Try iTunes
+          function(callback) {
+            if (!album) {
+              itunes.getAlbumFromArtistTrack(artist, track,
+                callback);
+            } else {
+              return callback(null, null);
+            }
+          },
           // Try Gracenote
           function(callback) {
             if (!album) {
