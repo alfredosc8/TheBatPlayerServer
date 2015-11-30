@@ -36,7 +36,8 @@
     "valid-url": "^1.0.9",
     "winston": "^1.1.1",
     "winston-papertrail": "^1.0.1",
-    "winston-syslog": "^1.1.2"
+    "winston-syslog": "^1.1.2",
+    "imgix": "0.0.2"
   },
   "devDependencies": {
     "chai": "^3.2.0",
