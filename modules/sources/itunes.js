@@ -13,7 +13,7 @@ function getAlbumFromArtistTrack(artistName, track, callback) {
 
   var url = "https://itunes.apple.com/search?media=music&limit=4&entity=musicTrack&term=" + encodedArtist + "+" + encodedTrack;
   makeItunesApiRequest(url, artistName, function(albumObject) {
-    return callback(albumObject)
+    return callback(null, albumObject)
   });
 }
 
@@ -22,7 +22,7 @@ function getAlbum(albumName, artistName, callback) {
   var url = "https://itunes.apple.com/search?term=" + encodedAlbum + "&attribute=albumTerm&entity=album&limit=4&explicit=Yes";
 
   makeItunesApiRequest(url, artistName, function(albumObject) {
-    return callback(albumObject)
+    return callback(null, albumObject)
   });
 }
 
@@ -30,12 +30,16 @@ function makeItunesApiRequest(url, artistName, callback) {
   request(url, function(error, response, body) {
     var itunesResults = JSON.parse(body);
     var validResults = filterResultsForArtist(itunesResults.results, artistName);
-    var album = validResults[0];
-    var releaseDate = parseInt(moment(new Date(album.releaseDate)).year())
-    var artworkUrl = album.artworkUrl100.replace(/100x100/g, '600x600');
-    var albumObject = albumSorting.createAlbumObject(album.collectionName, artworkUrl, releaseDate);
 
-    console.log(albumObject);
+    var album = validResults[0];
+    if (!album) {
+      return callback(null, null);
+    }
+
+    var releaseDate = parseInt(moment(new Date(album.releaseDate)).year())
+    var artworkUrl = album.artworkUrl100.replace(/100x100/g, '400x400');
+    var albumObject = albumSorting.createAlbumObject(album.collectionName, artworkUrl, releaseDate);
+    albumObject.source = "iTunes";
 
     return callback(albumObject);
   });
