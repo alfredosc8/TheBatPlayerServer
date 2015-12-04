@@ -13,7 +13,7 @@ describe("fetchAlbumDetails", function() {
 
   it("Should return a single album", function(done) {
 
-    itunes.getAlbum(albumName, artistName, function(albumObject) {
+    itunes.getAlbum(albumName, artistName, function(error, albumObject) {
       check(done, function() {
         expect(albumObject).to.have.property('name');
         expect(albumObject).to.have.property('image');
@@ -27,7 +27,7 @@ describe("fetchAlbumDetails", function() {
 describe("fetchAlbumDetailsFromArtistAndTrack", function() {
   it("Should return a single album", function(done) {
     itunes.getAlbumFromArtistTrack(artistName, trackName, function(
-      albumObject) {
+      error, albumObject) {
 
       check(done, function() {
         expect(albumObject).to.have.property('name');
