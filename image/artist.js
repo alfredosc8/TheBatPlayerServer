@@ -1,16 +1,15 @@
-var exec = require('child_process').exec;
-var utils = require("../utils/utils.js");
-var fs = require('fs');
 var config = require("../config.js");
-var log = utils.log;
 var ImgixClient = require('imgix-core-js');
-var client = new ImgixClient("thebatplayer.imgix.net", "XTuJHoqghB0BwXOH");
+var client = new ImgixClient("thebatplayer.imgix.net", config.imgixKey);
 
-function createArtistImage(url, colorObject) {
-  var mask = "https://s3-us-west-2.amazonaws.com/batserver-static-assets/appletv-client/grunge-inverted.png";
+function artistImageUrl(url, colorObject) {
+  var mask = "http://lounge.obviousmag.org/ai_tia_chica/papel/Old-Paper-Texture-2.png";
+  // var texture = "http://assets.imgix.net/blog/texture.jpg?w=700&h=530&fit=crop&invert=true%0A&invert=true";
+
   var format = "png";
   var colorString = "'rgb\(" + colorObject.red + "," + colorObject.green + "," +
     colorObject.blue + "\)'";
+  console.log("Preparing creating artist image via imgix for url: " + url + "Color: " + colorString);
 
   var url = client.path(url).toUrl({
     w: 700,
@@ -18,42 +17,40 @@ function createArtistImage(url, colorObject) {
     blend: colorString,
     bm: "color",
     fm: format,
-    balph: 20
+    balph: 20,
+    mask: mask
   }).toString();
 
   return url;
 }
-//   var path = utils.getCacheFilepathForUrl(url, "artists");
-//   var cacheFile = utils.getCacheFilepathForUrl(url, "original");
-//
-//   fs.exists(path, function(exists) {
-//     if (exists && config.enableImageCache) {
-//       callback(null, path);
-//       return;
-//     }
-//
-//     utils.download(url, cacheFile, function() {
-//       var rgb = "'rgb\(" + colorObject.red + "," + colorObject.green + "," + colorObject.blue + "\)'";
-//       var command = "/bin/bash " + __dirname + "/createArtistImage.sh " + cacheFile + " " + rgb + " " + path;
-//       log(command);
-//
-//       var child = exec(command, null, function(err, stdout, stderr) {
-//         if (!err && !stderr) {
-//           callback(null, path);
-//         } else {
-//           utils.logError(err);
-//           utils.logError(stderr);
-//           if (err) {
-//             throw err;
-//           }
-//           callback(stderr, cacheFile);
-//         }
-//       });
-//
-//     });
-//   });
-//
-//
-// }
 
-module.exports.createArtistImage = createArtistImage;
+function createBackground(url, colorObject) {
+  console.log("Background with url: " + url);
+
+  var format = "jpeg";
+  var colorString = "'rgb\(" + colorObject.red + "," + colorObject.green + "," +
+    colorObject.blue + "\)'";
+  var processedUrl = client.path(url).toUrl({
+    fmt: format,
+    w: 480,
+    h: 270,
+    high: 100,
+    exp: 5,
+    gam: -10,
+    con: 100,
+    colorquant: 25,
+    shad: -100,
+    blur: 30,
+    sharp: 100,
+    vib: 100,
+    crop: "entropy",
+    fit: "crop",
+    blend: colorString,
+    bm: "color"
+  }).toString();
+
+  return processedUrl;
+}
+
+module.exports.artistImageUrl = artistImageUrl;
+module.exports.createBackground = createBackground;

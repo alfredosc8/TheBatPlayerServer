@@ -17,6 +17,7 @@
     "express-winston": "^0.4.1",
     "forever": "^0.15.1",
     "imagecolors": "^0.10.5",
+    "imgix-core-js": "^0.2.3",
     "jade": "^1.9.2",
     "lastfmapi": "0.0.6",
     "lodash": "^3.1.0",
@@ -36,8 +37,7 @@
     "valid-url": "^1.0.9",
     "winston": "^1.1.1",
     "winston-papertrail": "^1.0.1",
-    "winston-syslog": "^1.1.2",
-    "imgix": "0.0.2"
+    "winston-syslog": "^1.1.2"
   },
   "devDependencies": {
     "chai": "^3.2.0",

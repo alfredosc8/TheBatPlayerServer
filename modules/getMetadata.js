@@ -3,6 +3,7 @@
 var utils = require("../utils/utils.js");
 var log = utils.log;
 var lastfm = require('./sources/lastfm.js');
+var imageGenerator = require('../image/artist.js')
 var async = require("async");
 var moment = require("moment");
 var album = require("./getAlbum.js");
@@ -21,7 +22,6 @@ var validUrl = require('valid-url');
 
 
 function fetchMetadataForUrl(url) {
-
   var sourceFetchCounter = 0;
   var cacheFetchSource = false;
   var getTrackPromiseFulfill = undefined;
@@ -228,8 +228,16 @@ function getColor(track) {
         if (color) {
           track.image.color = color;
           var file = encodeURIComponent(track.image.url);
-          track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-          track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+          // track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+          //track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
+          var trackImage = track.image.url;
+          console.log("Going to create images with url: " + trackImage);
+
+          var backgroundImage = imageGenerator.createBackground(trackImage, color.rgb);
+          track.image.backgroundurl = backgroundImage
+
+          var artistImage = imageGenerator.artistImageUrl(trackImage, color.rgb);
+          track.image.url = artistImage;
         }
         return fulfill(track);
       });
