@@ -258,7 +258,7 @@ function dePremiumDigitallyImported(url) {
     var originalUrl = url;
 
     // Switch the server to a free one
-    url = url.replace(/prem.+\.di\.fm/, "pub7.di.fm");
+    url = url.replace(/prem.+\.di\.fm/, "pub6.di.fm");
 
     // Find the station name
     var sections = url.split('/');

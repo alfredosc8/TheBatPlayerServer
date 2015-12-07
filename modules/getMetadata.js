@@ -231,7 +231,6 @@ function getColor(track) {
           // track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
           //track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
           var trackImage = track.image.url;
-          console.log("Going to create images with url: " + trackImage);
 
           var backgroundImage = imageGenerator.createBackground(trackImage, color.rgb);
           track.image.backgroundurl = backgroundImage
