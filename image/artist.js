@@ -3,7 +3,7 @@ var ImgixClient = require('imgix-core-js');
 var client = new ImgixClient("thebatplayer.imgix.net", config.imgixKey);
 
 function artistImageUrl(url, colorObject) {
-  var textureNumber = Math.round(Math.random() * 2);
+  var textureNumber = Math.round(Math.random() * 3);
   var mask = "https://s3-us-west-2.amazonaws.com/batserver-static-assets/shared/imagegen/paper-texture" + textureNumber + ".png";
   var format = "png";
   var colorString = "'rgb\(" + colorObject.red + "," + colorObject.green + "," +
