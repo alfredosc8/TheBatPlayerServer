@@ -3,7 +3,7 @@ var ImgixClient = require('imgix-core-js');
 var client = new ImgixClient("thebatplayer.imgix.net", config.imgixKey);
 
 function artistImageUrl(url, colorObject) {
-  var textureNumber = Math.round(Math.random() * 3);
+  var textureNumber = Math.round(Math.random() * 4);
   var mask = "https://s3-us-west-2.amazonaws.com/batserver-static-assets/shared/imagegen/paper-texture" + textureNumber + ".png";
   var format = "png";
   var colorString = "'rgb\(" + colorObject.red + "," + colorObject.green + "," +
@@ -21,7 +21,7 @@ function artistImageUrl(url, colorObject) {
 
   return url;
 }
-
+// https://sandbox.imgix.com/view?url=https%3A%2F%2Fassets.imgix.net%2Funsplash%2Fpineneedles.jpg%3Fcolorquant%3D5%26sat%3D-100%26con%3D100%26w%3D480%26h%3D270%26high%3D100%26shad%3D-100%26exp%3D1%26blur%3D14%26sharp%3D100%26vib%3D100%26bri%3D20%26gam%3D40%26auto%3Denhance
 function createBackground(url, colorObject) {
   var format = "jpeg";
   var colorString = rgbToHex(colorObject.red, colorObject.green, colorObject.blue);
