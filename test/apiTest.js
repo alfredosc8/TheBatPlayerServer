@@ -6,8 +6,8 @@ var express = require('express');
 
 var routes = require('../routes/index');
 var metadata = require("../routes/metadata.js");
-var backgroundImage = require("../routes/backgroundImage.js");
-var artistImage = require("../routes/artistImage.js");
+// var backgroundImage = require("../routes/backgroundImage.js");
+// var artistImage = require("../routes/artistImage.js");
 var resizeImage = require("../routes/resizeImage.js");
 // var headerImage = require("../routes/headerImage.js");
 
@@ -16,8 +16,6 @@ app.use("/metadata", metadata);
 app.memcacheClient = new Memcached();
 app.memcacheClient.connect("127.0.0.1:11211", function() {});
 
-app.use("/images/background", backgroundImage);
-app.use("/images/artist", artistImage);
 app.use("/images/resize", resizeImage);
 // app.use("/images/header", headerImage);
 
@@ -49,38 +47,6 @@ describe('GET /metadata', function() {
 //       });
 //   });
 // });
-
-// Test the background image creation API call
-describe('GET /images/background', function() {
-  it('respond with valid jpeg image', function(done) {
-    request(app)
-      .get("/images/background/http%3A%2F%2Fimg2-ak.lst.fm%2Fi%2Fu%2Fa81e58c3cb784aceca443303866273b3.png/198/185/178")
-      .set('Accept', 'image/jpeg')
-      .expect('Content-Type', /jpeg/)
-      .expect(200)
-      .end(function(err, res) {
-        if (err)
-          throw err;
-        done();
-      });
-  });
-});
-
-// Test the artist image creation API call
-describe('GET /images/artist', function() {
-  it('respond with valid png image', function(done) {
-    request(app)
-      .get("/images/artist/http%3A%2F%2Fimg2-ak.lst.fm%2Fi%2Fu%2Fa81e58c3cb784aceca443303866273b3.png/198/185/178")
-      .set('Accept', 'image/png')
-      .expect('Content-Type', /png/)
-      .expect(200)
-      .end(function(err, res) {
-        if (err)
-          throw err;
-        done();
-      });
-  });
-});
 
 // Test the image resize API call
 describe('GET /images/resize', function() {
