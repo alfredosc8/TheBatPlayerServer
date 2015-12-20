@@ -42,7 +42,7 @@ function createBackground(url, colorObject) {
     bri: "20",
     crop: "entropy",
     fit: "crop",
-    gam: 40,
+    gam: 20,
     auto: "enhance"
   }).toString();
 
