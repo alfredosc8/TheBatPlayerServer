@@ -2,7 +2,6 @@ var expect = require("chai").expect;
 var async = require("async");
 var utils = require("../utils/utils.js");
 var imageColor = require("../utils/imageColor.js");
-var backgroundImage = require("../image/background.js");
 var fs = require('fs');
 var md5 = require('md5');
 
@@ -35,11 +34,9 @@ async.each(urls, function(singleUrl, callback) {
     it("Should create a background image from " + singleUrl, function(done) {
 
       imageColor.getColorForUrl(singleUrl).then(function(colorObject) {
-        backgroundImage.createBackground(singleUrl, colorObject.rgb, function(error, backgroundImagePath) {
-          html = html + "<div style=\"background-color:" + colorObject.hex + "\"><img src=" + singleUrl + "><img src=" + backgroundImagePath + "><br>" + JSON.stringify(colorObject) + "</div>";
-          done();
-          return callback();
-        });
+        html = html + "<div style=\"background-color:" + colorObject.hex + "\"><br>" + JSON.stringify(colorObject) + "</div>";
+        done();
+        return callback();
       });
     });
   });
