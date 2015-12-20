@@ -40,7 +40,7 @@ function createBackground(url, colorObject) {
     bm: "color",
     blend: colorString,
     bri: 20,
-    gam: 13,
+    gam: 15,
     crop: "entropy",
     fit: "crop",
     auto: "enhance"
