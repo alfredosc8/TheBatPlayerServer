@@ -34,7 +34,7 @@ function createBackground(url, colorObject) {
     high: 100,
     shad: -100,
     exp: 2,
-    blur: 14,
+    blur: 11,
     sharp: 100,
     vib: 100,
     bm: "color",
