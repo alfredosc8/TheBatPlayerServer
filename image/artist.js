@@ -39,8 +39,8 @@ function createBackground(url, colorObject) {
     vib: 100,
     bm: "color",
     blend: colorString,
-    bri: 30,
-    gam: 10,
+    bri: 20,
+    gam: 13,
     crop: "entropy",
     fit: "crop",
     auto: "enhance"
