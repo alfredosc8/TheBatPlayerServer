@@ -26,7 +26,7 @@ function createBackground(url, colorObject) {
   var format = "jpeg";
   var colorString = rgbToHex(colorObject.red, colorObject.green, colorObject.blue);
   var processedUrl = client.path(url).toUrl({
-    colorQuant: 5,
+    colorQuant: 4,
     sat: -100,
     con: 100,
     w: 480,
@@ -34,7 +34,7 @@ function createBackground(url, colorObject) {
     high: 100,
     shad: -100,
     exp: 2,
-    blur: 11,
+    blur: 12,
     sharp: 100,
     vib: 100,
     bm: "color",
