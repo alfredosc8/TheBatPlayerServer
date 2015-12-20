@@ -31,16 +31,15 @@ module.exports = (function() {
       blue: req.params.blue
     };
 
-    image.createArtistImage(url, colorObject, function(error, path) {
-      if (path) {
-        fs.readFile(path, function(err, data) {
-          res.end(data);
-        });
-      } else if (error) {
-        res.status(500);
-        res.end(error);
-      }
-    });
+    var path = image.createArtistImage(url, colorObject);
+    if (path) {
+      fs.readFile(path, function(err, data) {
+        res.end(data);
+      });
+    } else if (error) {
+      res.status(500);
+      res.end(error);
+    }
 
   });
 
