@@ -28,7 +28,8 @@ function fetchMetadataForUrl(url) {
 
   if (!validUrl.isUri(url)) {
     var error = {};
-    error.message = "The URL " + url + " does not appear to be a valid URL.  Please verify it's a properly encoded URL.";
+    error.message = "The URL " + url +
+      " does not appear to be a valid URL.  Please verify it's a properly encoded URL.";
     error.status = 406;
     error.batserver = config.useragent;
     return error;
@@ -114,7 +115,8 @@ function fetchMetadataForUrl(url) {
       track.station = station;
 
       if (cacheFetchSource) {
-        utils.cacheData(sourceStreamCacheKey, track.station.fetchsource, 43200);
+        utils.cacheData(sourceStreamCacheKey, track.station.fetchsource,
+          43200);
       }
 
       return fulfill(track);
@@ -133,7 +135,8 @@ function fetchMetadataForUrl(url) {
         // Failed using the single method.  Try again.
         sourceStreamCacheKey = undefined;
         sourceFetchCounter = 1;
-        getTrackFromStream(url).then(titleFetched).then(getTrackPromiseFulfill).catch(getTrackFailure);
+        getTrackFromStream(url).then(titleFetched).then(getTrackPromiseFulfill)
+          .catch(getTrackFailure);
       }
     }
   }
@@ -154,21 +157,33 @@ function fetchMetadataForUrl(url) {
           if (source) {
             sourceFetchCounter = 1;
             if (source === internetradio.StreamSource.SHOUTCAST_V1) {
-              getTrackFromServerMetadata(url, internetradio.StreamSource.SHOUTCAST_V1, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+              getTrackFromServerMetadata(url, internetradio.StreamSource
+                .SHOUTCAST_V1, metadataSource).then(titleFetched)
+                .then(fulfill).catch(getTrackFailure);
             } else if (source === internetradio.StreamSource.SHOUTCAST_V2) {
-              getTrackFromServerMetadata(url, internetradio.StreamSource.SHOUTCAST_V2, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+              getTrackFromServerMetadata(url, internetradio.StreamSource
+                .SHOUTCAST_V2, metadataSource).then(titleFetched)
+                .then(fulfill).catch(getTrackFailure);
             } else if (source === internetradio.StreamSource.ICECAST) {
-              getTrackFromServerMetadata(url, internetradio.StreamSource.ICECAST, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
+              getTrackFromServerMetadata(url, internetradio.StreamSource
+                .ICECAST, metadataSource).then(titleFetched).then(
+                fulfill).catch(getTrackFailure);
             } else {
-              getTrackFromServerMetadata(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
+              getTrackFromServerMetadata(url).then(titleFetched).then(
+                fulfill).catch(getTrackFailure);
             }
 
           } else {
             cacheFetchSource = true;
             sourceFetchCounter = 3;
-            getTrackFromServerMetadata(url, internetradio.StreamSource.SHOUTCAST_V1, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
-            getTrackFromServerMetadata(url, internetradio.StreamSource.SHOUTCAST_V2, metadataSource).then(titleFetched).then(fulfill).catch(getTrackFailure);
-            getTrackFromStream(url).then(titleFetched).then(fulfill).catch(getTrackFailure);
+            getTrackFromServerMetadata(url, internetradio.StreamSource
+              .SHOUTCAST_V1, metadataSource).then(titleFetched).then(
+              fulfill).catch(getTrackFailure);
+            getTrackFromServerMetadata(url, internetradio.StreamSource
+              .SHOUTCAST_V2, metadataSource).then(titleFetched).then(
+              fulfill).catch(getTrackFailure);
+            getTrackFromStream(url).then(titleFetched).then(fulfill)
+              .catch(getTrackFailure);
           }
         });
 
@@ -228,15 +243,19 @@ function getColor(track) {
         if (color) {
           track.image.color = color;
           var file = encodeURIComponent(track.image.url);
-          // track.image.backgroundurl = config.hostname + "/images/background/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
-          //track.image.url = config.hostname + "/images/artist/" + file + "/" + track.image.color.rgb.red + "/" + track.image.color.rgb.green + "/" + track.image.color.rgb.blue;
           var trackImage = track.image.url;
 
-          var backgroundImage = imageGenerator.createBackground(trackImage, color.rgb);
+          var backgroundImage = imageGenerator.createBackground(
+            trackImage, color.rgb);
           track.image.backgroundurl = backgroundImage
 
-          var artistImage = imageGenerator.artistImageUrl(trackImage, color.rgb);
+          var artistImage = imageGenerator.artistImageUrl(trackImage,
+            color.rgb);
           track.image.url = artistImage;
+        } else {
+          // No color available, so just do the transformation without the color
+          track.image.url = imageGenerator.artistImageUrl(trackImage);
+          track.image.backgroundurl = createBackground(trackImage);
         }
         return fulfill(track);
       });
