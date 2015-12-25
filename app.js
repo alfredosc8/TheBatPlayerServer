@@ -147,7 +147,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
 
   // Exit on end of memory
-  if (err.code === ENOMEM) {
+  if (err.code === "ENOMEM") {
     process.exit(1);
   }
 
