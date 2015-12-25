@@ -6,20 +6,21 @@ var metrics = require("./utils/metrics.js");
 metrics.init();
 global.metrics = metrics;
 
-// if (env === "production" && config.enableAnalytics) {
-require('newrelic');
-var rollbar = require("rollbar");
-var options = {
-  exitOnUncaughtException: true
-};
-rollbar.handleUncaughtExceptions(config.rollbarKey, options);
-// }
+if (env === "production" && config.enableAnalytics) {
+  // require('newrelic');
+  var rollbar = require("rollbar");
+  var options = {
+    exitOnUncaughtException: true
+  };
+  rollbar.handleUncaughtExceptions(config.rollbarKey, options);
+}
 
 if (env === "development") {
   require('look').start(3333);
   var winston = require('winston');
   winston.level = "info";
 }
+
 var express = require('express');
 var app = express();
 var compress = require('compression');
@@ -102,7 +103,7 @@ function setupLogger(app, env) {
     require('winston-papertrail').Papertrail;
     var expressWinston = require('express-winston');
 
-    // Add papertrail as central logging destinatin
+    // Add papertrail as central logging destination
     winston.add(winston.transports.Papertrail, {
       host: "logs3.papertrailapp.com",
       port: 32693,
@@ -129,8 +130,6 @@ function setupLogger(app, env) {
       msg: "{{req.method}} {{req.url}} {{res.responseTime}}ms {{req.headers['user-agent']}} {{res.statusCode}}",
       colorStatus: true
     }));
-
-    console.log("Configured Winston for logging.");
   } else {
     return;
   }
@@ -146,6 +145,11 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
+
+  // Exit on end of memory
+  if (err.code === ENOMEM) {
+    process.exit(1);
+  }
 
   if (req.timedout) {
     handleTimeout(err, req, res);
