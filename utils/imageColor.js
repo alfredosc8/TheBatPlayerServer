@@ -15,21 +15,22 @@ function getColorForUrl(url) {
     }
     utils.download(url, path, function() {
 
-      try {
-        imagecolors.extract(path, 7, function(err, colors) {
+      // try {
+      imagecolors.extract(path, 7, function(err, colors) {
 
-          if (!err && colors.length > 0) {
-            var colorObject = buildColorObjectFromColors(colors);
-            return fulfill(colorObject);
-          } else {
-            return fulfill(null);
-          }
-        });
+        if (!err && colors.length > 0) {
+          var colorObject = buildColorObjectFromColors(colors);
+          return fulfill(colorObject);
+        } else {
+          return fulfill(null);
+        }
+      });
 
-      } catch (e) {
-        console.log(e);
-        return fulfill(null);
-      }
+      // } catch (e) {
+      //   console.log(e);
+      //   if (e.code === "ENOMEM")
+      //     return fulfill(null);
+      // }
 
 
     });
