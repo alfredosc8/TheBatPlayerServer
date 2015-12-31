@@ -16,7 +16,7 @@ function getColorForUrl(url) {
     utils.download(url, path, function() {
 
       // try {
-      imagecolors.extract(path, 7, function(err, colors) {
+      imagecolors.extract(path, 5, function(err, colors) {
 
         if (!err && colors.length > 0) {
           var colorObject = buildColorObjectFromColors(colors);
@@ -87,12 +87,17 @@ function getColorFromColorArray(colors) {
     var score = 0;
 
     score += (a.score.dark * 0.01);
-    score -= (a.score.vivid * 0.01);
-    score -= (a.score.light * 0.01);
-    score -= Math.max((a.percent * 0.01), -1);
+    score -= Math.max((a.percent * 0.02), -1);
 
     // For dark or brown color classes alter the score more since it can get too dark.
     if (a.family === "dark" || a.family === "brown") {
+      score += (a.score.dark * 0.1);
+      score += (a.score.density * 0.1);
+    }
+
+    // Yellow and orange can come out kind of gross.
+    // Only allow it if there is a ton of it.
+    if ((a.family === "orange" || a.family === "yellow" || a.family === "neutral") && a.percent < 5) {
       score += (a.score.dark * 0.1);
       score += (a.score.density * 0.1);
     }
@@ -108,18 +113,8 @@ function getColorFromColorArray(colors) {
     }
 
     // We want to encourage actual pleasing colors
-    if (a.family === "red" || a.family === "blue" || a.family === "green" || a.family === "pink") {
-      score -= a.score.vivid * 0.01;
-    }
-
-    // Let's not encourage Orange unless we have to.  It falls into the skin looking territory.
-    if (a.family === "orange") {
-      score += 0.18;
-    }
-    // We want to highly discurage skin tones
-    var colorDifference = colorDistance(229, 160, 115, a.rgb.r, a.rgb.g, a.rgb.b);
-    if (colorDifference < 60) {
-      score += 0.5;
+    if (a.family === "red" || a.family === "blue" || a.family === "green") {
+      score -= 0.1;
     }
 
     score = Math.min(Math.max(nearest(score, 1), -1), 1);
