@@ -23,7 +23,7 @@ app.use("/images/resize", resizeImage);
 describe('GET /metadata', function() {
   it('respond with json', function(done) {
     request(app)
-      .get('/metadata/http%3A%2F%2F205.164.41.34%3A6699')
+      .get('/metadata/http%3A%2F%2Fice1.somafm.com%2Fgroovesalad-128.mp3')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200)
