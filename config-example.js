@@ -4,7 +4,6 @@ var env = process.env.NODE_ENV;
 console.log("Environment: " + env);
 
 config.enableCache = true;
-config.enableImageCache = true;
 config.version = "1.1.8";
 config.useragent = 'TheBatServer (http://thebatplayer.fm v' + config.version + ')';
 config.cachetime = 5;
@@ -17,7 +16,7 @@ config.gracenoteClientId = "GRACENOTE-CLIENT-ID";
 config.gracenoteClientTag = "GRACENOTE-CLIENT-TAG";
 config.gracenoteUserId = "GRACENOTE-USER-ID";
 
-config.enableAnalytics = true;
+config.enableAnalytics = false;
 
 config.rollbarKey = "ROLLBARKEY"; // Used for error reporting
 

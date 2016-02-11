@@ -7,7 +7,7 @@ var Promise = require('promise');
 chai.should();
 chai.config.includeStack = false;
 
-var streams = ["http://pub5.di.fm/di_electropop", 'http://23.27.51.2:6699/', 'http://23.27.51.2:1330/', 'http://uwstream1.somafm.com/', "http://ice31.securenetsystems.net/CAFECODY?type=.aac"];
+var streams = ['http://ice1.somafm.com/groovesalad-128-mp3', "http://ice31.securenetsystems.net/CAFECODY?type=.aac"];
 var i = Math.floor(Math.random() * streams.length);
 
 var stream = streams[i];

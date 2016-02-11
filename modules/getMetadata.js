@@ -1,5 +1,3 @@
-//var streamtitle = require("./streamTitle.js");
-// var shoutcasttitle = require("./getTitleShoutcast.js");
 var utils = require("../utils/utils.js");
 var log = utils.log;
 var lastfm = require('./sources/lastfm.js');

@@ -41,6 +41,8 @@ A NodeJS server-side application for providing metadata from a streaming interne
     }
 }
 ```
+###**Notes**
+This is not built to be very general purpose.  It uses a couple a handful of specific things such as AWS Elasticache auto-discovery, the Imgx for image generation, and a bunch of analytics and bug reporting for my own use. So if you'd like to assist in generalizing this code because you use it yourself I'd appreciate a Pull Request.
 
 ###**Running**
 1. Copy Config-example.js to Config.js and add your respective keys.
@@ -48,7 +50,7 @@ A NodeJS server-side application for providing metadata from a streaming interne
 3. _make test_ to verify everything is working.
 4. Either install and run memcached or turn *enableCache* off in your Config.js.
 5. _make dev_ to run.
-6. Make a request such as http://localhost:3000/metadata/http%3A%2F%2F205.164.41.34%3A6699
+6. Make a request such as http://localhost:3000/metadata/http%3A%2F%2Fice1.somafm.com%2Fgroovesalad-128.mp3
 
 ###**Goals**
 1. Centralize the logic required for taking an audio stream and determining the current song.

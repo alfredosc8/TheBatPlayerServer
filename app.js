@@ -7,7 +7,6 @@ metrics.init();
 global.metrics = metrics;
 
 if (env === "production" && config.enableAnalytics) {
-  // require('newrelic');
   var rollbar = require("rollbar");
   var options = {
     exitOnUncaughtException: true
@@ -16,7 +15,6 @@ if (env === "production" && config.enableAnalytics) {
 }
 
 if (env === "development") {
-  require('look').start(3333);
   var winston = require('winston');
   winston.level = "info";
 }
@@ -32,9 +30,7 @@ setupLogger(app, env);
 
 var routes = require('./routes/index');
 var metadata = require("./routes/metadata.js");
-var artistImage = require("./routes/artistImage.js");
-var resizeImage = require("./routes/resizeImage.js");
-var headerImage = require("./routes/headerImage.js");
+
 var nowplaying = require("./routes/nowplaying.js");
 
 var memcacheClient = null;
@@ -55,19 +51,15 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-app.use(require("connect-datadog")({}));
-
 app.use("/metadata", metadata);
 app.use("/nowplaying", nowplaying);
-app.use("/images/artist", artistImage);
-app.use("/images/resize", resizeImage);
-app.use("/images/header", headerImage);
 
 app.set('etag', 'weak');
 
 if (env === "production" && config.enableAnalytics) {
   var rollbar = require("rollbar");
   app.use(rollbar.errorHandler(config.rollbarKey));
+  app.use(require("connect-datadog")({}));
 }
 
 function setupMemcache() {

@@ -25,7 +25,6 @@
     "memcached": "^2.2.0",
     "moment": "^2.8.4",
     "morgan": "^1.6.0",
-    "newrelic": "^1.22.2",
     "node-dogstatsd": "0.0.6",
     "node-gracenote": "git://github.com/gabek/node-gracenote.git",
     "node-internet-radio": "git://github.com/gabek/node-internet-radio.git",
@@ -41,7 +40,6 @@
   },
   "devDependencies": {
     "chai": "^3.2.0",
-    "look": "^0.1.3",
     "mocha": "^2.2.5",
     "supertest": "^1.1.0"
   },
