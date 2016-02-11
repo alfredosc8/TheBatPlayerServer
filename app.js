@@ -105,8 +105,8 @@ function setupLogger(app, env) {
 
     // Add papertrail as central logging destination
     winston.add(winston.transports.Papertrail, {
-      host: "logs3.papertrailapp.com",
-      port: 32693,
+      host: config.paperTrailHost,
+      port: config.paperTrailPort,
       json: false,
       colorize: true,
       inlineMeta: false,
@@ -116,8 +116,8 @@ function setupLogger(app, env) {
     app.use(expressWinston.logger({
       transports: [
         new winston.transports.Papertrail({
-          host: "logs3.papertrailapp.com",
-          port: 32693,
+          host: config.paperTrailHost,
+          port: config.paperTrailPort,
           json: false,
           colorize: true,
           inlineMeta: false,

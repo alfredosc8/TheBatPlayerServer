@@ -24,6 +24,11 @@ config.rollbarKey = "ROLLBARKEY"; // Used for error reporting
 // https://www.imgix.com/docs
 config.imgixKey = "IMGXKEY" // Used for image generation
 
+// For remote logging
+config.paperTrailHost = "something.papertrailapp.com";
+config.paperTrailPort = 12345;
+
+
 // Override for tests
 if (env === "test") {
   config.enableCache = false;
