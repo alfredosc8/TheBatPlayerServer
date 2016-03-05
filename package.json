@@ -1,0 +1,23 @@
+{
+  "name": "thebatserver",
+  "version": "3.0.0",
+  "description": "The Bat Server for The Bat Player",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "imgix-core-js": "^0.3.1",
+    "lastfmapi": "0.0.6",
+    "moment": "^2.11.2",
+    "node-internet-radio": "file:///Users/gabek/Dropbox/Code/Personal/node-internet-radio",
+    "node-vibrant": "^2.0.3",
+    "string": "^3.3.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5"
+  }
+}
