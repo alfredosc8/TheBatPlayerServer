@@ -19,31 +19,56 @@ function getTrack(trackName, artistName) {
     let promises = [trackDetails, artistDetails, getAlbumPromise];
 
     Promise.all(promises).then(function(results) {
-
       let trackData = results[0];
       let artistData = results[1];
       let albumData = results[2];
 
-      if (albumData.title) {
-        trackData.album = updatedAlbum;
+      // No data available.  Return fallback result.
+      if (artistData == null) {
+        let fallbackResult = createFallbackResult(artistName, trackName);
+        return resolve(fallbackResult);
       }
 
-      artistData.image.getColors().then(function(colorData) {
-        let result = new ApiResult(trackData, artistData, colorData);
+      // If we have an updated album set it
+      if (albumData && (albumData.title || albumData.name)) {
+        trackData.album = albumData;
+      }
+
+      // Fetch artist image color
+      if (artistData.image.url != "") {
+        artistData.image.getColors().then(function(colorData) {
+          let result = new ApiResult(trackData, artistData, colorData);
+          if (!result.song) {
+            result.song = trackName;
+          }
+
+          let resultObject = result.asObject();
+          return resolve(resultObject);
+        });
+      } else {
+        let result = new ApiResult(trackData, artistData);
         let resultObject = result.asObject();
         return resolve(resultObject);
-      });
+      }
 
     });
   });
 }
 
-function getStation(url) {
-  console.log(url);
+function createFallbackResult(artistName, trackName) {
+  let fallbackResult = {};
+  fallbackResult.artist = artistName;
+  fallbackResult.track = trackName;
+  fallbackResult.title = artistName + " - " + trackName;
+  return fallbackResult;
+}
 
+function getStation(url) {
   return new Promise((resolve, reject) => {
     StationDetails.getStationInfo(url, function(error, details) {
-      details.title = Utils.fixTrackTitle(details.title);
+      if (details && details.title) {
+        details.title = Utils.fixTrackTitle(details.title);
+      }
       return resolve(details);
     });
   });
@@ -56,11 +81,20 @@ function http_getTrack(req, res) {
   let trackName = req.query.track;
 
   getTrack(trackName, artistName).then(function(trackDetails) {
+
+    if (trackDetails == null) {
+      res.send({
+        error: "Track data not available"
+      });
+    }
+
     res.send(trackDetails);
   });
 }
 
-function http_getStation(req, res) {
+function http_nowPlaying(req, res) {
+  res.setHeader('Cache-Control', 'public, max-age=30'); // 30 seconds
+
   var url = req.params.url;
 
   getStation(url).then(function(station) {
@@ -69,6 +103,8 @@ function http_getStation(req, res) {
 }
 
 function http_getStationMetadata(req, res) {
+  res.setHeader('Cache-Control', 'public, max-age=10'); // 10 seconds
+
   var url = req.params.url;
 
   getStation(url).then(function(station) {
@@ -82,5 +118,5 @@ function http_getStationMetadata(req, res) {
 }
 
 module.exports.getTrack = http_getTrack;
-module.exports.getStation = http_getStation;
+module.exports.nowPlaying = http_nowPlaying;
 module.exports.getStationMetadata = http_getStationMetadata;

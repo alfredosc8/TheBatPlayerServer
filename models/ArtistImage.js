@@ -17,6 +17,11 @@ class ArtistImage {
   }
 
   getColors() {
+    let filterOptions = {
+      targetLightLuma: 0.7,
+      minLightLuma: 0.4
+    };
+    let colorFilter = Vibrant.Filter.Default(filterOptions);
     return new Promise((resolve, reject) => {
       Vibrant.from(this.url).getPalette(function(err, palette) {
         if (palette && palette.Vibrant) {
@@ -24,7 +29,7 @@ class ArtistImage {
           let colorObject = asObject(palette.LightVibrant);
           return resolve(colorObject);
         } else {
-          return resolve(whiteColorObject());
+          return resolve(null);
         }
       });
     });

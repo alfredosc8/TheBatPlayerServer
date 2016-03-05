@@ -6,8 +6,14 @@ S.extendPrototype();
 
 class ArtistBio {
   constructor(lastFmBio) {
+    let publishedDate = moment(new Date(lastFmBio.published)).year();
+
+    if (publishedDate == 1970) {
+      return
+    }
+
     this.text = lastFmBio.summary.stripTags().trim().replace(/\n|\r/g, "");
-    this.publishedDate = moment(new Date(lastFmBio.published)).year();
+    this.publishedDate = publishedDate;
   }
 
   asObject() {

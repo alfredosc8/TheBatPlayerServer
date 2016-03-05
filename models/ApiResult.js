@@ -3,37 +3,55 @@ let Vibrant = require('node-vibrant')
 
 class ApiResult {
   constructor(trackData, artistData, colorData) {
-    this.artist = artistData.name;
-    this.song = trackData.name;
+    if (artistData) {
+      this.artist = artistData.name;
+    }
 
-    if (trackData.album) {
+    if (trackData) {
+      this.song = trackData.name;
+    }
+    if (trackData && trackData.album) {
       this.album = trackData.album.asObject();
     }
 
-    if (artistData.bio) {
+    if (artistData && artistData.bio) {
       this.bio = artistData.bio.asObject();
     }
 
-    this.tags = artistData.tags;
+    if (artistData && artistData.tags) {
+      this.tags = artistData.tags;
+    }
 
-    let image = {};
-    image.color = colorData;
-    image.backgroundurl = artistData.image.url;
-    image.url = artistData.image.url;
-    //image.original = artistData.image.url;
-    this.image = image;
+    if (artistData && artistData.image) {
+      let image = {};
+      image.color = colorData;
+      image.backgroundurl = artistData.image.url;
+      image.url = artistData.image.url;
+      //image.original = artistData.image.url;
+      this.image = image;
+    }
+
   }
 
   asObject() {
     var result = {};
     result.artist = this.artist;
     result.song = this.song;
-    result.track = "";
+    result.track = this.artist + " - " + this.song;
 
     result.album = this.album;
-    result.bio = this.bio;
-    result.image = this.image;
-    result.tags = this.tags;
+
+    if (this.bio.text) {
+      result.bio = this.bio;
+    }
+
+    if (this.image.url) {
+      result.image = this.image;
+    }
+
+    if (this.tags.length > 0) {
+      result.tags = this.tags;
+    }
 
     return result;
   }

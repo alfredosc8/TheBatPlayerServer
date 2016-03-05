@@ -17,7 +17,12 @@ class LastFM {
       lastfm.artist.getInfo({
         artist: name,
         autocorrect: 1
-      }, function(err, artistDetails) {
+      }, function(error, artistDetails) {
+
+        if (error || !artistDetails) {
+          return resolve(null);
+        }
+
         let artist = new Artist(artistDetails);
         return resolve(artist);
       });
@@ -31,6 +36,11 @@ class LastFM {
         track: trackName,
         autocorrect: 1
       }, function(error, trackDetails) {
+
+        if (error || !trackDetails) {
+          return resolve(null);
+        }
+
         let track = new Track(trackDetails);
         return resolve(track);
       });

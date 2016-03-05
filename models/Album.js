@@ -20,6 +20,16 @@ class Album {
     this.image = new ArtistImage(lastFMData.image);
   }
 
+  fromAlbumObject(albumObject) {
+    let newAlbum = new Album();
+    newAlbum.name = albumObject.name;
+    newAlbum.image = {
+      url: albumObject.image
+    };
+    newAlbum.published = albumObject.released;
+    return newAlbum;
+  }
+
   asObject() {
     let albumObject = {};
     albumObject.name = this.name;
