@@ -16,7 +16,7 @@
     "imgix-core-js": "^0.3.1",
     "lastfmapi": "0.0.6",
     "moment": "^2.11.2",
-    "node-internet-radio": "file:///Users/gabek/Dropbox/Code/Personal/node-internet-radio",
+    "node-internet-radio": "https://github.com/gabek/node-internet-radio.git",
     "node-vibrant": "^2.0.3",
     "string": "^3.3.1"
   },
