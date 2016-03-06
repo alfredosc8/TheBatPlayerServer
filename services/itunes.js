@@ -9,8 +9,8 @@ var Album = require('../models/Album.js');
 function getAlbumDetails(artistName, track) {
   return new Promise((resolve, reject) => {
 
-    var encodedTrack = track.replace(/ /g, '+');
-    var encodedArtist = artistName.replace(/ /g, '+');
+    var encodedTrack = encodeURIComponent(track.replace(/ /g, '+'));
+    var encodedArtist = encodeURIComponent(artistName.replace(/ /g, '+'));
 
     var url = "https://itunes.apple.com/search?media=music&limit=4&entity=musicTrack&term=" + encodedArtist + "+" + encodedTrack;
     makeItunesApiRequest(url, artistName, function(albumObject) {
@@ -37,11 +37,16 @@ function getAlbum(albumName, artistName, callback) {
 
 function makeItunesApiRequest(url, artistName, callback) {
   request(url, function(error, response, body) {
-    var itunesResults = JSON.parse(body);
-    var validResults = filterResultsForArtist(itunesResults.results, artistName);
+    try {
+      var itunesResults = JSON.parse(body);
+      var validResults = filterResultsForArtist(itunesResults.results, artistName);
 
-    var album = validResults[0];
-    if (!album) {
+      var album = validResults[0];
+      if (!album) {
+        return callback(null, null);
+      }
+    } catch (error) {
+      console.log(error);
       return callback(null, null);
     }
 

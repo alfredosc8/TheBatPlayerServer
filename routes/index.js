@@ -66,12 +66,17 @@ function createFallbackResult(artistName, trackName) {
 function getStation(url) {
   return new Promise((resolve, reject) => {
     StationDetails.getStationInfo(url, function(error, details) {
+      if (error) {
+        console.log(error);
+        return reject(error);
+      }
+
       if (details && details.title) {
         details.title = Utils.fixTrackTitle(details.title);
       }
       return resolve(details);
     });
-  });
+  }, StationDetails.StreamSource.STREAM);
 }
 
 function http_getTrack(req, res) {
@@ -83,12 +88,12 @@ function http_getTrack(req, res) {
   getTrack(trackName, artistName).then(function(trackDetails) {
 
     if (trackDetails == null) {
-      res.send({
+      return res.send({
         error: "Track data not available"
       });
     }
 
-    res.send(trackDetails);
+    return res.send(trackDetails);
   });
 }
 
@@ -98,7 +103,10 @@ function http_nowPlaying(req, res) {
   var url = req.params.url;
 
   getStation(url).then(function(station) {
-    res.send(station);
+    return res.send(station);
+  }).catch(function(error) {
+    console.log("Error: returning");
+    return res.send(error);
   });
 }
 
@@ -112,8 +120,10 @@ function http_getStationMetadata(req, res) {
 
     getTrack(stationTrack.name, stationTrack.artist).then(function(trackDetails) {
       trackDetails.track = station.title;
-      res.send(trackDetails);
+      return res.send(trackDetails);
     });
+  }).catch(function(error) {
+    return res.send(error);
   });
 }
 
