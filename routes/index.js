@@ -67,7 +67,6 @@ function getStation(url) {
   return new Promise((resolve, reject) => {
     StationDetails.getStationInfo(url, function(error, details) {
       if (error) {
-        console.log(error);
         return reject(error);
       }
 
@@ -75,8 +74,8 @@ function getStation(url) {
         details.title = Utils.fixTrackTitle(details.title);
       }
       return resolve(details);
-    });
-  }, StationDetails.StreamSource.STREAM);
+    }, StationDetails.StreamSource.STREAM);
+  });
 }
 
 function http_getTrack(req, res) {
@@ -105,7 +104,6 @@ function http_nowPlaying(req, res) {
   getStation(url).then(function(station) {
     return res.send(station);
   }).catch(function(error) {
-    console.log("Error: returning");
     return res.send(error);
   });
 }
