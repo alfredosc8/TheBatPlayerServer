@@ -15,10 +15,10 @@ var express = require('express');
 var app = express();
 enableLogging();
 
+// Handle timing out
 var timeout = require('connect-timeout');
 app.use(haltOnTimedout);
-
-app.use(timeout('8s', {
+app.use(timeout('7s', {
   respond: true
 }));
 
