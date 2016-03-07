@@ -22,16 +22,41 @@ class ArtistImage {
   }
 
   getColors() {
-    let filterOptions = {
-      targetLightLuma: 0.7,
-      minLightLuma: 0.4
-    };
-    let colorFilter = Vibrant.Filter.Default(filterOptions);
     return new Promise((resolve, reject) => {
-      Vibrant.from(this.url).getPalette(function(err, palette) {
-        if (palette && palette.Vibrant) {
+      let opts = {
+        quality: 5
+      };
+      let vibrant = new Vibrant(this.url, opts);
 
-          let colorObject = asObject(palette.LightVibrant);
+      vibrant.getPalette(function(err, palette) {
+        let palettes = [];
+
+        if (palette.Vibrant) {
+          palettes.push(palette.Vibrant);
+        }
+        if (palette.LightVibrant) {
+          palettes.push(palette.LightVibrant);
+        }
+        if (palette.Muted) {
+          palettes.push(palette.Muted);
+        }
+        if (palette.LightMuted) {
+          palettes.push(palette.DarkMuted);
+        }
+
+        palettes = palettes.sort(function(palette1, palette2) {
+          return palette2.population - palette1.population;
+        });
+
+        let selectedPalette = palettes[0];
+        if (selectedPalette) {
+          let colorObject = undefined;
+          if (selectedPalette.population > 0) {
+            colorObject = asObject(selectedPalette);
+          } else {
+            colorObject = whiteColorObject();
+          }
+
           return resolve(colorObject);
         } else {
           return resolve(null);

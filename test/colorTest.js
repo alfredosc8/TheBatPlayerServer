@@ -2,13 +2,12 @@
 
 var expect = require("chai").expect;
 var async = require("async");
-var utils = require("../utils/utils.js");
 var ArtistImage = require('../models/ArtistImage.js');
 
 var fs = require('fs');
 
 var urls = [];
-
+urls.push("http://img2-ak.lst.fm/i/u/770x0/2d78d384659f43c384b5b2ebf8fd707d.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/a81e58c3cb784aceca443303866273b3.png");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/4ba8e9d5fd704038b292df8d0a81afd6.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/c83bb1f6b77e4040b3a5bd131c8210d8.jpg");
