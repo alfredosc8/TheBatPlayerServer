@@ -30,7 +30,7 @@ function getTrack(trackName, artistName) {
       }
 
       // If we have an updated album set it
-      if (albumData && (albumData.title || albumData.name)) {
+      if (albumData && albumData != null && (albumData.title || albumData.name)) {
         trackData.album = albumData;
       }
 
@@ -73,6 +73,7 @@ function getStation(url) {
       if (details && details.title) {
         details.title = Utils.fixTrackTitle(details.title);
       }
+
       return resolve(details);
     }, StationDetails.StreamSource.STREAM);
   });
