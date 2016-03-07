@@ -3,6 +3,7 @@ let Vibrant = require('node-vibrant')
 
 class ApiResult {
   constructor(trackData, artistData, colorData) {
+
     if (artistData) {
       this.artist = artistData.name;
     }
@@ -10,6 +11,7 @@ class ApiResult {
     if (trackData) {
       this.song = trackData.name;
     }
+
     if (trackData && trackData.album) {
       this.album = trackData.album.asObject();
     }
@@ -22,15 +24,23 @@ class ApiResult {
       this.tags = artistData.tags;
     }
 
+
     if (artistData && artistData.image) {
       let image = {};
+
+
       image.color = colorData;
-      image.backgroundurl = artistData.image.artistUrl(colorData.hex);
-      image.url = artistData.image.artistUrl(colorData.hex);
+
+      let color = undefined
+      if (colorData) {
+        color = colorData.hex;
+      }
+
+      image.backgroundurl = artistData.image.backgroundUrl(color);
+      image.url = artistData.image.artistUrl(color);
       //image.original = artistData.image.url;
       this.image = image;
     }
-
   }
 
   asObject() {
