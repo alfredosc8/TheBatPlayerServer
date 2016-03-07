@@ -1,4 +1,5 @@
 "use strict";
+
 let Vibrant = require('node-vibrant')
 var Config = require('../config.js');
 var ImgixClient = require('imgix-core-js');
@@ -7,6 +8,10 @@ let imgixclient = new ImgixClient("thebatplayer.imgix.net", Config.IMGIX_KEY);
 class ArtistImage {
 
   constructor(lastFMData) {
+    if (!lastFMData) {
+      return;
+    }
+
     let imageArray = lastFMData.filter(function(image) {
       return (image.size == "mega" || image.size == "extralarge")
     });
