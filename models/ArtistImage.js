@@ -31,6 +31,11 @@ class ArtistImage {
       vibrant.getPalette(function(err, palette) {
         let palettes = [];
 
+        // Exit early if there are no colors 
+        if (!palette) {
+          return resolve(null);
+        }
+
         if (palette.Vibrant) {
           palettes.push(palette.Vibrant);
         }
