@@ -24,14 +24,14 @@ class ArtistImage {
   getColors() {
     return new Promise((resolve, reject) => {
       let opts = {
-        quality: 5
+        quality: 4
       };
       let vibrant = new Vibrant(this.url, opts);
 
       vibrant.getPalette(function(err, palette) {
         let palettes = [];
 
-        // Exit early if there are no colors 
+        // Exit early if there are no colors
         if (!palette) {
           return resolve(null);
         }
@@ -45,12 +45,14 @@ class ArtistImage {
         if (palette.Muted) {
           palettes.push(palette.Muted);
         }
-        if (palette.LightMuted) {
-          palettes.push(palette.DarkMuted);
+        if (palette.DarkVibrant) {
+          palettes.push(palette.DarkVibrant);
         }
 
         palettes = palettes.sort(function(palette1, palette2) {
-          return palette2.population - palette1.population;
+          let saturation1 = palette1.hsl[1];
+          let saturation2 = palette2.hsl[2];
+          return saturation2 - saturation1;
         });
 
         let selectedPalette = palettes[0];
