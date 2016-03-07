@@ -25,8 +25,8 @@ class ApiResult {
     if (artistData && artistData.image) {
       let image = {};
       image.color = colorData;
-      image.backgroundurl = artistData.image.url;
-      image.url = artistData.image.url;
+      image.backgroundurl = artistData.image.artistUrl(colorData.hex);
+      image.url = artistData.image.artistUrl(colorData.hex);
       //image.original = artistData.image.url;
       this.image = image;
     }

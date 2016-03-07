@@ -1,8 +1,8 @@
 "use strict";
 let Vibrant = require('node-vibrant')
-var ImgixClient = require('imgix-core-js');
 var Config = require('../config.js');
-var imgxclient = new ImgixClient("thebatplayer.imgix.net", Config.IMGX_KEY);
+var ImgixClient = require('imgix-core-js');
+let imgixclient = new ImgixClient("thebatplayer.imgix.net", Config.IMGIX_KEY);
 
 class ArtistImage {
 
@@ -36,8 +36,8 @@ class ArtistImage {
   }
 
   backgroundUrl(color) {
-    var format = "jpeg";
     var imageGenOptions = {
+      fm: "jpeg",
       colorQuant: 4,
       sat: -100,
       con: 100,
@@ -49,8 +49,6 @@ class ArtistImage {
       blur: 12,
       sharp: 100,
       vib: 100,
-      bm: "color",
-      blend: color.substring(1),
       bri: 20,
       gam: 15,
       crop: "entropy",
@@ -58,8 +56,13 @@ class ArtistImage {
       auto: "enhance"
     };
 
-    var url = imgxclient.path(this.url).toUrl(imageGenOptions).toString();
-    return url;
+    if (color) {
+      imageGenOptions.bm = "color";
+      imageGenOptions.blend = color.substring(1);
+    }
+
+    var processedImageUrl = imgixclient.path(this.url).toUrl(imageGenOptions).toString();
+    return processedImageUrl;
   }
 
   artistUrl(color) {
@@ -71,13 +74,16 @@ class ArtistImage {
       h: 530,
       fm: "png",
       balph: 40,
-      mask: mask,
-      blend: color.substring(1),
-      bm: "color"
+      mask: mask
     }
 
-    var url = imgxclient.path(this.url).toUrl(imageGenOptions).toString();
-    return url;
+    if (color) {
+      imageGenOptions.bm = "color";
+      imageGenOptions.blend = color.substring(1);
+    }
+
+    var processedImageUrl = imgixclient.path(this.url).toUrl(imageGenOptions).toString();
+    return processedImageUrl;
   }
 }
 
@@ -95,7 +101,6 @@ function whiteColorObject() {
     y: 255,
     z: 255
   };
-  colorObject.probablyGrayscale = true;
   return colorObject;
 }
 
@@ -111,7 +116,6 @@ function asObject(colors) {
   colorObject.hex = colors.getHex();
   colorObject.int = rgbToInt(colorObject.rgb.red, colorObject.rgb.green, colorObject.rgb.blue);
   colorObject.xyz = rgbToXyz(colorObject.rgb.red, colorObject.rgb.green, colorObject.rgb.blue);
-  colorObject.probablyGrayscale = false;
   return colorObject;
 }
 
