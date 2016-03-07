@@ -33,15 +33,22 @@ function getTrack(trackName, artistName) {
       if (albumData && albumData != null && (albumData.title || albumData.name)) {
         trackData.album = albumData;
       }
-      var result = new ApiResult(trackData, artistData);
+      var result = null;
 
       // Fetch artist image color
       if (artistData.image.url != "") {
         artistData.image.getColors().then(function(colorData) {
           if (colorData && colorData != null) {
             result = new ApiResult(trackData, artistData, colorData);
+          } else {
+            result = new ApiResult(trackData, artistData);
           }
+          // Return the final object
+          let resultObject = result.asObject();
+          return resolve(resultObject);
         });
+      } else {
+        result = new ApiResult(trackData, artistData);
       }
 
       if (!result.song) {

@@ -28,9 +28,7 @@ class ApiResult {
     if (artistData && artistData.image) {
       let image = {};
 
-
       image.color = colorData;
-
       let color = undefined
       if (colorData) {
         color = colorData.hex;
