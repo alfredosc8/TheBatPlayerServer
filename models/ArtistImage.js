@@ -29,6 +29,10 @@ class ArtistImage {
       let vibrant = new Vibrant(this.url, opts);
 
       vibrant.getPalette(function(err, palette) {
+        if (err || !palette || palette.length == 0) {
+          return resolve(null);
+        }
+
         let palettes = [];
 
         // Exit early if there are no colors
@@ -50,8 +54,17 @@ class ArtistImage {
         }
 
         palettes = palettes.sort(function(palette1, palette2) {
-          let saturation1 = palette1.hsl[1];
-          let saturation2 = palette2.hsl[2];
+          console.log(palette1.hsl)
+          let saturation1 = 0;
+          if (palette1.hsl) {
+            saturation1 = palette1.hsl[1];
+          }
+
+          let saturation2 = 0;
+          if (palette2.hsl) {
+            saturation2 = palette2.hsl[1];
+          }
+
           return saturation2 - saturation1;
         });
 
