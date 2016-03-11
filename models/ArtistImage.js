@@ -54,7 +54,6 @@ class ArtistImage {
         }
 
         palettes = palettes.sort(function(palette1, palette2) {
-          console.log(palette1.hsl)
           let saturation1 = 0;
           if (palette1.hsl) {
             saturation1 = palette1.hsl[1];
@@ -127,10 +126,10 @@ class ArtistImage {
       mask: mask
     }
 
-    if (color) {
-      imageGenOptions.bm = "color";
-      imageGenOptions.blend = color.substring(1);
-    }
+    // if (color) {
+    //   imageGenOptions.bm = "color";
+    //   imageGenOptions.blend = color.substring(1);
+    // }
 
     var processedImageUrl = imgixclient.path(this.url).toUrl(imageGenOptions).toString();
     return processedImageUrl;
