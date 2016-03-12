@@ -24,6 +24,7 @@ urls.push("http://img2-ak.lst.fm/i/u/770x0/e7a5c4240ec34063b073f8f036fadcfd.jpg"
 urls.push("http://img2-ak.lst.fm/i/u/770x0/68faebf0bda84a6e88a4e409cf0f7869.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/df03335f48b349b1bf7feef37849f24d.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/bc73fd0d2a4b456c9366a5a29223cee2.jpg");
+urls.push("http://img2-ak.lst.fm/i/u/770x0/869210f9f59b478aaeeb88bf4fc529cb.jpg");
 
 var html = "";
 
@@ -37,7 +38,7 @@ async.each(urls, function(singleUrl, callback) {
       image.url = singleUrl;
 
       image.getColors().then(function(colorObject) {
-        html = html + "<div style=\"background-color:" + colorObject.hex + "\"><img src=" + singleUrl + " height=300><br>" + JSON.stringify(colorObject) + "</div>";
+        html = html + "<div style=\"background-color:" + colorObject.hex + "\"><img src=" + image.artistUrl(null) + " height=300><br>" + JSON.stringify(colorObject) + "</div>";
         done();
       });
 
