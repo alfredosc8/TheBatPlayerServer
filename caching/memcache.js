@@ -64,6 +64,11 @@ class Cache {
 
     this.client.set("foo", "bar");
     this.client.get("foo", function(err, value) {
+
+      if (err) {
+        console.log(err);
+      }
+
       if (value != null) {
         self.cacheEnabled = true;
         console.log("Cache Enabled");
