@@ -69,18 +69,22 @@ class Cache {
 
     var self = this;
 
-    var client = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
+    var testClient = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
       username: process.env.MEMCACHEDCLOUD_USERNAME,
-      password: process.env.MEMCACHEDCLOUD_PASSWORD
+      password: process.env.MEMCACHEDCLOUD_PASSWORD,
+      failoverTime: 60,
+      retries: 2,
+      expires: 600,
+      logger: console
     });
 
-    client.set("foo", "bar", function(error, success) {
+    testClient.set("foo", "bar", function(error, success) {
       console.log(error);
       console.log(success);
     });
 
     console.log("Set test key");
-    client.get("foo", function(err, value) {
+    testClient.get("foo", function(err, value) {
       console.log("Getting test key");
 
       console.log(err);
