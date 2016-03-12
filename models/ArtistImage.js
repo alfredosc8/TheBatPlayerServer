@@ -5,9 +5,6 @@ const Config = require('../config.js');
 const ImgixClient = require('imgix-core-js');
 const imgixclient = new ImgixClient("thebatplayer.imgix.net", Config.IMGIX_KEY);
 
-const Cache = require("../caching/memcache.js");
-const cache = new Cache();
-
 class ArtistImage {
 
   constructor(lastFMData) {

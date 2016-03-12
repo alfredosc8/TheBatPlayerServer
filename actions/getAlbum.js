@@ -5,9 +5,6 @@ const iTunes = require("../services/itunes.js");
 const Utils = require("../utils/utils.js");
 const lastApi = new LastFM();
 
-const Cache = require("../caching/memcache.js");
-const cache = new Cache();
-
 const Album = require('../models/Album.js');
 
 function getAlbum(artistName, albumName, mbid) {

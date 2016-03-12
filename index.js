@@ -3,6 +3,10 @@
 var winston = require('winston'),
   expressWinston = require('express-winston');
 
+const Cache = require("./caching/memcache.js");
+const cache = new Cache();
+
+global.cache = cache;
 
 process.on('uncaughtException', function(err) {
   console.error((new Date).toUTCString() + ' uncaughtException:', err.message)

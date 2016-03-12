@@ -1,11 +1,7 @@
 "use strict";
 
 const LastFM = require("../services/lastfm.js");
-const Cache = require("../caching/memcache.js");
-
 const lastApi = new LastFM();
-const cache = new Cache();
-
 const Artist = require('../models/artist.js');
 
 function getArtist(artistName) {
