@@ -8,7 +8,7 @@ const Config = require('../config.js');
 class Cache {
 
   constructor() {
-    this.cacheEnabled = false;
+    this.cacheEnabled = true;
     this.connect();
   }
 
