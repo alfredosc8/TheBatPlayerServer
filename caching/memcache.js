@@ -15,10 +15,10 @@ class Cache {
   connect() {
     var self = this;
 
-    console.log("Connecting to cache: " + process.env.MEMCACHEDCLOUD_SERVERS);
+    console.log("Connecting to cache: " + process.env.MEMCACHIER_SERVERS);
     this.client = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
-      username: process.env.MEMCACHEDCLOUD_USERNAME,
-      password: process.env.MEMCACHEDCLOUD_PASSWORD
+      username: process.env.MEMCACHIER_USERNAME,
+      password: process.env.MEMCACHIER_PASSWORD
     });
 
     setTimeout(function() {
