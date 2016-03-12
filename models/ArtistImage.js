@@ -126,10 +126,10 @@ class ArtistImage {
       mask: mask
     }
 
-    // if (color) {
-    //   imageGenOptions.bm = "color";
-    //   imageGenOptions.blend = color.substring(1);
-    // }
+    if (color) {
+      imageGenOptions.bm = "color";
+      imageGenOptions.blend = color.substring(1);
+    }
 
     var processedImageUrl = imgixclient.path(this.url).toUrl(imageGenOptions).toString();
     return processedImageUrl;
