@@ -59,6 +59,7 @@ class Cache {
   }
 
   test() {
+    console.log("Testing Cache...");
     var self = this;
 
     this.client.set("foo", "bar");
