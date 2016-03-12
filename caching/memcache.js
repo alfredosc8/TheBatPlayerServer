@@ -61,6 +61,7 @@ class Cache {
   test() {
     console.log("Testing Cache...");
     var self = this;
+    console.log(this.client);
 
     this.client.set("foo", "bar");
     this.client.get("foo", function(err, value) {
@@ -74,6 +75,7 @@ class Cache {
       } else {
         console.log("Cache Disabled");
       }
+
     });
   }
 
