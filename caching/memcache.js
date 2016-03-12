@@ -16,7 +16,7 @@ class Cache {
     var self = this;
 
     console.log("Connecting to cache: " + process.env.MEMCACHIER_SERVERS);
-    this.client = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
+    this.client = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
       username: process.env.MEMCACHIER_USERNAME,
       password: process.env.MEMCACHIER_PASSWORD
     });
