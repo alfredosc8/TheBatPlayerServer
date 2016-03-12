@@ -3,6 +3,7 @@
 const memjs = require('memjs');
 const S = require('string');
 S.extendPrototype();
+const Config = require('../config.js');
 
 class Cache {
 
@@ -34,7 +35,7 @@ class Cache {
         }
 
         resolve();
-      }, 600);
+      }, Config.cacheDuration);
     });
   }
 
