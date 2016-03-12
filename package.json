@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "start": "node --max_old_space_size=400 index.js"
+    "start": "node index.js"
   },
   "engines": {
     "node": "5.7.1"
@@ -23,7 +23,8 @@
     "moment": "^2.11.2",
     "node-internet-radio": "https://github.com/gabek/node-internet-radio.git",
     "node-vibrant": "^2.0.3",
-    "string": "^3.3.1"
+    "string": "^3.3.1",
+    "throng": "^2.0.1"
   },
   "devDependencies": {
     "async": "^1.5.2",
