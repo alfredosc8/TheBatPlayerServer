@@ -13,12 +13,17 @@ class Cache {
   }
 
   connect() {
+    var self = this;
+
     console.log("Connecting to cache: " + process.env.MEMCACHEDCLOUD_SERVERS);
     this.client = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
       username: process.env.MEMCACHEDCLOUD_USERNAME,
       password: process.env.MEMCACHEDCLOUD_PASSWORD
     });
-    this.test();
+
+    setTimeout(function() {
+      self.test();
+    }, 5000);
   }
 
   set(key, value) {
@@ -60,8 +65,8 @@ class Cache {
 
   test() {
     console.log("Testing Cache...");
+
     var self = this;
-    console.log(this.client);
 
     this.client.set("foo", "bar");
     this.client.get("foo", function(err, value) {
