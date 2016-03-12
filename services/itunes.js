@@ -4,24 +4,19 @@ var albumSorting = require("../utils/albumSorting.js");
 var _ = require('lodash');
 var request = require('request');
 
-var Album = require('../models/Album.js');
-
 function getAlbumDetails(artistName, track) {
   return new Promise((resolve, reject) => {
-
     var encodedTrack = encodeURIComponent(track.replace(/ /g, '+'));
     var encodedArtist = encodeURIComponent(artistName.replace(/ /g, '+'));
 
     var url = "https://itunes.apple.com/search?media=music&limit=4&entity=musicTrack&term=" + encodedArtist + "+" + encodedTrack;
-    makeItunesApiRequest(url, artistName, function(albumObject) {
 
+    makeItunesApiRequest(url, artistName, function(albumObject) {
       if (albumObject) {
-        let album = new Album().fromAlbumObject(albumObject);
-        return resolve(album);
+        return resolve(albumObject);
       } else {
         return resolve(null);
       }
-
     });
   });
 }
