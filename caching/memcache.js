@@ -8,7 +8,7 @@ const Config = require('../config.js');
 class Cache {
 
   constructor() {
-    this.cacheEnabled = true;
+    this.cacheEnabled = false;
     this.connect();
   }
 
@@ -22,7 +22,7 @@ class Cache {
     });
 
     setTimeout(function() {
-      self.test(self.client);
+      self.test();
     }, 5000);
   }
 
@@ -68,9 +68,9 @@ class Cache {
 
     var self = this;
 
-    client.set("foo", "bar");
+    self.client.set("foo", "bar");
     console.log("Set test key");
-    client.get("foo", function(err, value) {
+    self.client.get("foo", function(err, value) {
       console.log("Getting test key");
 
       console.log(err);
