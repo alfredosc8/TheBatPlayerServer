@@ -69,7 +69,9 @@ class Cache {
     var self = this;
 
     this.client.set("foo", "bar");
+    console.log("Set test key");
     this.client.get("foo", function(err, value) {
+      console.log("Getting test key");
 
       console.log(err);
       console.log(value);
