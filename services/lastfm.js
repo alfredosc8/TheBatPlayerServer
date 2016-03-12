@@ -22,9 +22,7 @@ class LastFM {
         if (error || !artistDetails) {
           return resolve(null);
         }
-
-        let artist = new Artist(artistDetails);
-        return resolve(artist);
+        return resolve(artistDetails);
       });
     });
   };

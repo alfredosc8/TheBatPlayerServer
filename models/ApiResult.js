@@ -1,5 +1,4 @@
 "use strict";
-let Vibrant = require('node-vibrant')
 
 class ApiResult {
   constructor(trackData, artistData, colorData) {

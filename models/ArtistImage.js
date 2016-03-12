@@ -27,7 +27,6 @@ class ArtistImage {
         quality: 4
       };
       let vibrant = new Vibrant(this.url, opts);
-
       vibrant.getPalette(function(err, palette) {
         if (err || !palette || palette.length == 0) {
           return resolve(null);
