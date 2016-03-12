@@ -38,7 +38,7 @@ async.each(urls, function(singleUrl, callback) {
       image.url = singleUrl;
 
       image.getColors().then(function(colorObject) {
-        html = html + "<div style=\"background-color:" + colorObject.hex + "\"><img src=" + image.artistUrl(null) + " height=300><br>" + JSON.stringify(colorObject) + "</div>";
+        html = html + "<div style=\"background-color:" + colorObject.hex + "\"><img src=" + image.artistUrl(colorObject.hex) + " height=300><br>" + JSON.stringify(colorObject) + "</div>";
         done();
       });
 

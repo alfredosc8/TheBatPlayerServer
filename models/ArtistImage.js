@@ -105,7 +105,7 @@ class ArtistImage {
       auto: "enhance"
     };
 
-    if (color) {
+    if (color && color != "#ffffff") {
       imageGenOptions.bm = "color";
       imageGenOptions.blend = color.substring(1);
     }
@@ -126,7 +126,7 @@ class ArtistImage {
       mask: mask
     }
 
-    if (color) {
+    if (color && color != "#ffffff") {
       imageGenOptions.bm = "color";
       imageGenOptions.blend = color.substring(1);
     }
