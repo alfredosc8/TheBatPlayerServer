@@ -10,8 +10,9 @@ const Artist = require('../models/artist.js');
 
 function getArtist(artistName) {
   return new Promise((resolve, reject) => {
+    let cacheKey = "artist-" + artistName;
 
-    cache.get(artistName).then(function(artistDetails) {
+    cache.get(cacheKey).then(function(artistDetails) {
       artistDetails = JSON.parse(artistDetails)
       let artist = new Artist(artistDetails);
       return resolve(artist);
@@ -24,8 +25,9 @@ function getArtist(artistName) {
 }
 
 function makeNewRequest(artistName, resolve, reject) {
+  let cacheKey = "artist-" + artistName;
   lastApi.getArtistDetails(artistName).then(function(artistDetails) {
-    cache.set(artistName, JSON.stringify(artistDetails));
+    cache.set(cacheKey, JSON.stringify(artistDetails));
     let artist = new Artist(artistDetails);
     return resolve(artist);
   });

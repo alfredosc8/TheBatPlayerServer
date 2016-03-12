@@ -1,9 +1,12 @@
 "use strict";
 
-let Vibrant = require('node-vibrant')
-var Config = require('../config.js');
-var ImgixClient = require('imgix-core-js');
-let imgixclient = new ImgixClient("thebatplayer.imgix.net", Config.IMGIX_KEY);
+const Vibrant = require('node-vibrant')
+const Config = require('../config.js');
+const ImgixClient = require('imgix-core-js');
+const imgixclient = new ImgixClient("thebatplayer.imgix.net", Config.IMGIX_KEY);
+
+const Cache = require("../caching/memcache.js");
+const cache = new Cache();
 
 class ArtistImage {
 
@@ -22,64 +25,85 @@ class ArtistImage {
   }
 
   getColors() {
+    let self = this;
+
     return new Promise((resolve, reject) => {
-      let opts = {
-        quality: 4
-      };
-      let vibrant = new Vibrant(this.url, opts);
-      vibrant.getPalette(function(err, palette) {
-        if (err || !palette || palette.length == 0) {
-          return resolve(null);
+      let cacheKey = "color-" + this.url;
+
+      cache.get(cacheKey).then(function(color) {
+        if (!color) {
+          return self.processColors(self.url, resolve, reject);
         }
 
-        let palettes = [];
-
-        // Exit early if there are no colors
-        if (!palette) {
-          return resolve(null);
-        }
-
-        if (palette.Vibrant) {
-          palettes.push(palette.Vibrant);
-        }
-        if (palette.LightVibrant) {
-          palettes.push(palette.LightVibrant);
-        }
-        if (palette.Muted) {
-          palettes.push(palette.Muted);
-        }
-        if (palette.DarkVibrant) {
-          palettes.push(palette.DarkVibrant);
-        }
-
-        palettes = palettes.sort(function(palette1, palette2) {
-          let saturation1 = 0;
-          if (palette1.hsl) {
-            saturation1 = palette1.hsl[1];
-          }
-
-          let saturation2 = 0;
-          if (palette2.hsl) {
-            saturation2 = palette2.hsl[1];
-          }
-
-          return saturation2 - saturation1;
-        });
-
-        let selectedPalette = palettes[0];
-        if (selectedPalette) {
-          let colorObject = undefined;
-          if (selectedPalette.population > 0) {
-            colorObject = asObject(selectedPalette);
-          } else {
-            colorObject = whiteColorObject();
-          }
-
-          return resolve(colorObject);
-        } else {
-          return resolve(null);
-        }
+        let colorObject = JSON.parse(color);
+        return resolve(colorObject);
       });
+
+
+    });
+  }
+
+  processColors(url, resolve, reject) {
+    let cacheKey = "color-" + url;
+
+    let opts = {
+      quality: 4
+    };
+
+    let vibrant = new Vibrant(url, opts);
+    vibrant.getPalette(function(err, palette) {
+
+      if (err || !palette || palette.length == 0) {
+        return resolve(null);
+      }
+      let palettes = [];
+
+      // Exit early if there are no colors
+      if (!palette) {
+        return resolve(null);
+      }
+
+      if (palette.Vibrant) {
+        palettes.push(palette.Vibrant);
+      }
+      if (palette.LightVibrant) {
+        palettes.push(palette.LightVibrant);
+      }
+      if (palette.Muted) {
+        palettes.push(palette.Muted);
+      }
+      if (palette.DarkVibrant) {
+        palettes.push(palette.DarkVibrant);
+      }
+
+      palettes = palettes.sort(function(palette1, palette2) {
+        let saturation1 = 0;
+        if (palette1.hsl) {
+          saturation1 = palette1.hsl[1];
+        }
+
+        let saturation2 = 0;
+        if (palette2.hsl) {
+          saturation2 = palette2.hsl[1];
+        }
+
+        return saturation2 - saturation1;
+      });
+
+      let selectedPalette = palettes[0];
+      if (selectedPalette) {
+        let colorObject = undefined;
+        if (selectedPalette.population > 0) {
+          colorObject = asObject(selectedPalette);
+        } else {
+          colorObject = whiteColorObject();
+        }
+
+        cache.set(cacheKey, JSON.stringify(colorObject));
+        return resolve(colorObject);
+      } else {
+        return resolve(null);
+      }
     });
   }
 

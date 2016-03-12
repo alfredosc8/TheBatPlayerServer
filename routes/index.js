@@ -1,19 +1,17 @@
 "use strict";
 
 const ApiResult = require('../models/ApiResult.js');
-const LastFM = require("../services/lastfm.js");
 const StationDetails = require("node-internet-radio");
 const Utils = require("../utils/utils.js");
 
 const getArtist = require("../actions/getArtist.js").getArtist;
 const getAlbum = require("../actions/getAlbum.js").getAlbum;
+const getTrackDetails = require("../actions/getTrack.js").getTrack;
 
 function getTrack(trackName, artistName) {
   return new Promise((resolve, reject) => {
 
-    let lastApi = new LastFM();
-
-    let trackDetails = lastApi.getTrackDetails(artistName, trackName);
+    let trackDetails = getTrackDetails(artistName, trackName);
     let getAlbumPromise = getAlbum(artistName, trackName);
     let artistDetails = getArtist(artistName);
     let promises = [trackDetails, artistDetails, getAlbumPromise];
@@ -93,13 +91,11 @@ function http_getTrack(req, res) {
   let trackName = req.query.track;
 
   getTrack(trackName, artistName).then(function(trackDetails) {
-
     if (trackDetails == null) {
       return res.send({
         error: "Track data not available"
       });
     }
-
     return res.send(trackDetails);
   });
 }

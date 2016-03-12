@@ -3,8 +3,6 @@
 var LastfmAPI = require('lastfmapi');
 var Config = require('../config.js');
 var Artist = require('../models/artist.js');
-var Track = require('../models/Track.js');
-var Album = require('../models/Album.js');
 
 var lastfm = new LastfmAPI({
   api_key: Config.LAST_FM_KEY
@@ -39,8 +37,7 @@ class LastFM {
           return resolve(null);
         }
 
-        let track = new Track(trackDetails);
-        return resolve(track);
+        return resolve(trackDetails);
       });
     });
   }

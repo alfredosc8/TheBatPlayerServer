@@ -11,7 +11,7 @@ const cache = new Cache();
 const Album = require('../models/Album.js');
 
 function getAlbum(artistName, albumName, mbid) {
-  let cacheKey = artistName + albumName;
+  let cacheKey = "album-" + artistName + albumName;
 
   return new Promise((resolve, reject) => {
 
@@ -31,8 +31,13 @@ function getAlbum(artistName, albumName, mbid) {
 }
 
 function makeNewRequest(artistName, albumName, mbid, resolve, reject) {
-  let cacheKey = artistName + albumName;
+  let cacheKey = "album-" + artistName + albumName;
+
   iTunes.getAlbumDetails(artistName, albumName, mbid).then(function(albumObject) {
+    if (!albumObject) {
+      return resolve(null);
+    }
+
     cache.set(cacheKey, JSON.stringify(albumObject));
     let album = new Album().fromAlbumObject(albumObject);
     return resolve(album);

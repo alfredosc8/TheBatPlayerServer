@@ -47,10 +47,8 @@ class Cache {
       let slugKey = key.slugify();
       console.log("Getting " + slugKey);
       this.client.get(slugKey, function(err, val) {
-
         if ((err && err.code == "ECONNREFUSED") || !val) {
-          console.log(err);
-          return reject(err);
+          return resolve(null);
         }
 
         let result = val ? val.toString() : null;
