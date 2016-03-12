@@ -22,7 +22,7 @@ class Cache {
     });
 
     setTimeout(function() {
-      self.test();
+      self.test(self.client);
     }, 5000);
   }
 
@@ -63,14 +63,14 @@ class Cache {
     });
   }
 
-  test() {
+  test(client) {
     console.log("Testing Cache...");
 
     var self = this;
 
-    this.client.set("foo", "bar");
+    client.set("foo", "bar");
     console.log("Set test key");
-    this.client.get("foo", function(err, value) {
+    client.get("foo", function(err, value) {
       console.log("Getting test key");
 
       console.log(err);
