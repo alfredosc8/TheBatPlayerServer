@@ -16,11 +16,15 @@ class Cache {
     var self = this;
 
     console.log("Connecting to cache: " + process.env.MEMCACHEDCLOUD_SERVERS);
-
-    this.client = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
-      username: process.env.MEMCACHEDCLOUD_USERNAME,
-      password: process.env.MEMCACHEDCLOUD_PASSWORD
-    });
+    this.client = memjs.Client.create();
+    // this.client = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
+    //   username: process.env.MEMCACHEDCLOUD_USERNAME,
+    //   password: process.env.MEMCACHEDCLOUD_PASSWORD,
+    //   failoverTime: 60,
+    //   retries: 2,
+    //   expires: 600,
+    //   logger: console
+    // });
 
     setTimeout(function() {
       self.test();
@@ -69,22 +73,13 @@ class Cache {
 
     var self = this;
 
-    var testClient = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
-      username: process.env.MEMCACHEDCLOUD_USERNAME,
-      password: process.env.MEMCACHEDCLOUD_PASSWORD,
-      failoverTime: 60,
-      retries: 2,
-      expires: 600,
-      logger: console
-    });
-
-    testClient.set("foo", "bar", function(error, success) {
+    self.client.set("foo", "bar", function(error, success) {
       console.log(error);
       console.log(success);
     });
 
     console.log("Set test key");
-    testClient.get("foo", function(err, value) {
+    self.client.get("foo", function(err, value) {
       console.log("Getting test key");
 
       console.log(err);
