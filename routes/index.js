@@ -1,12 +1,12 @@
 "use strict";
 
 const ApiResult = require('../models/ApiResult.js');
-const StationDetails = require("node-internet-radio");
 const Utils = require("../utils/utils.js");
 
 const getArtist = require("../actions/getArtist.js").getArtist;
 const getAlbum = require("../actions/getAlbum.js").getAlbum;
 const getTrackDetails = require("../actions/getTrack.js").getTrack;
+const getStation = require("../actions/getStation.js").getStation;
 
 function getTrack(trackName, artistName) {
   console.log("Artist: " + artistName)
@@ -75,21 +75,7 @@ function createFallbackResult(artistName, trackName) {
   return fallbackResult;
 }
 
-function getStation(url) {
-  return new Promise((resolve, reject) => {
-    StationDetails.getStationInfo(url, function(error, details) {
-      if (error) {
-        return reject(error);
-      }
 
-      if (details && details.title) {
-        details.title = Utils.fixTrackTitle(details.title);
-      }
-
-      return resolve(details);
-    }, StationDetails.StreamSource.STREAM);
-  });
-}
 
 function http_getTrack(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=604800'); // one week

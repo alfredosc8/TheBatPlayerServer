@@ -21,7 +21,11 @@ class Cache {
     });
   }
 
-  set(key, value) {
+  set(key, value, expiration) {
+    if (!expiration) {
+      expiration = Config.cacheDuration;
+    }
+
     return new Promise((resolve, reject) => {
       if (!this.cacheEnabled) {
         return resolve();
@@ -29,7 +33,7 @@ class Cache {
 
       let slugKey = key.slugify();
       console.log("Setting " + slugKey);
-      this.client.set(slugKey, value, 'EX', Config.cacheDuration);
+      this.client.set(slugKey, value, 'EX', expiration);
       resolve();
 
     });
