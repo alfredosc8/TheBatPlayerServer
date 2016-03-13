@@ -14,15 +14,14 @@ class Cache {
 
   connect() {
     var self = this;
-    let server = process.env.MEMCACHEDCLOUD_USERNAME + ":" + process.env.MEMCACHEDCLOUD_PASSWORD + "@pub-memcache-19348.us-east-1-2.3.ec2.garantiadata.com:19348"
 
-    console.log("Connecting to cache: " + server);
+    console.log("Connecting to cache: " + process.env.MEMCACHEDCLOUD_SERVERS);
 
-    this.client = memjs.Client.create(server, {
+    this.client = memjs.Client.create(process.env.MEMCACHEDCLOUD_SERVERS, {
       username: process.env.MEMCACHEDCLOUD_USERNAME,
       password: process.env.MEMCACHEDCLOUD_PASSWORD,
       failoverTime: 60,
-      retries: 2,
+      retries: 5,
       expires: 600,
       logger: console
     });
