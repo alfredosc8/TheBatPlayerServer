@@ -14,7 +14,7 @@ function getAlbum(artistName, albumName, mbid) {
 
     cache.get(cacheKey).then(function(albumDetails) {
       if (!albumDetails) {
-        return makeNewRequest(artistName, albumName, mbid, resolve, reject);
+        return makeNewRequest(artistName, albumName, resolve);
       }
 
       albumDetails = JSON.parse(albumDetails)
@@ -24,17 +24,43 @@ function getAlbum(artistName, albumName, mbid) {
   });
 }
 
-function makeNewRequest(artistName, albumName, mbid, resolve, reject) {
+function makeNewRequest(artistName, albumName, resolve) {
   let cacheKey = "album-" + artistName + albumName;
-  iTunes.getAlbumDetails(artistName, albumName, mbid).then(function(albumObject) {
+  iTunes.getAlbumDetails(artistName, albumName).then(function(albumObject) {
+
+    // No result
     if (!albumObject) {
-      return resolve(null);
+      console.log("Returned from itunes with no album")
+      // Should we retry it with a different track name?
+      let shouldRetry = retrySanitized(artistName, albumName);
+      console.log("Should retry album fetch: " + shouldRetry)
+      if (shouldRetry) {
+        return
+      } else {
+        return resolve(null);
+      }
     }
 
     cache.set(cacheKey, JSON.stringify(albumObject));
     let album = new Album().fromAlbumObject(albumObject);
     return resolve(album);
   });
+}
+
+function retrySanitized(artistName, trackName) {
+  console.log("Testing for retry")
+  if (!artistName || !trackName) {
+    return false;
+  }
+  var updatedArtist = Utils.sanitize(artistName);
+  var updatedTrack = Utils.sanitize(trackName);
+
+  if (updatedArtist != artistName || updatedTrack != trackName) {
+    makeNewRequest(updatedArtist, updatedTrack);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 module.exports.getAlbum = getAlbum;

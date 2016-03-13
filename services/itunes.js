@@ -31,7 +31,7 @@ function getAlbum(albumName, artistName, callback) {
 
 function makeItunesApiRequest(url, artistName, callback) {
   request(url, {
-    timeout: 1500
+    timeout: 1000
   }, function(error, response, body) {
     try {
       var itunesResults = JSON.parse(body);
@@ -39,11 +39,11 @@ function makeItunesApiRequest(url, artistName, callback) {
 
       var album = validResults[0];
       if (!album) {
-        return callback(null, null);
+        return callback(null);
       }
     } catch (error) {
       console.log(error);
-      return callback(null, null);
+      return callback(null);
     }
 
     var releaseDate = album.releaseDate;

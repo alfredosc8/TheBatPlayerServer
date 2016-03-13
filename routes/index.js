@@ -37,8 +37,10 @@ function getTrack(trackName, artistName) {
       var result = null;
 
       // Fetch artist image color
-      if (artistData.image.url != "") {
-        artistData.image.getColors().then(function(colorData) {
+      if (artistData.image && artistData.image.url != "") {
+
+        // Fetch colors and return final object
+        return artistData.image.getColors().then(function(colorData) {
           if (colorData && colorData != null) {
             result = new ApiResult(trackData, artistData, colorData);
           } else {
@@ -48,6 +50,8 @@ function getTrack(trackName, artistName) {
           let resultObject = result.asObject();
           return resolve(resultObject);
         });
+
+      // No colors to fetch.  Return final object.
       } else {
         result = new ApiResult(trackData, artistData);
       }

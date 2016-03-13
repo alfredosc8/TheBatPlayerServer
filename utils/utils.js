@@ -44,8 +44,33 @@ function fixTrackTitle(trackString) {
   } else {
     return trackString;
   }
+}
 
+function sanitize(string) {
+  var checkString = string.toLowerCase();
+
+  if (checkString.indexOf("(") > -1) {
+    string = string.substring(0, checkString.indexOf("("));
+  }
+  if (checkString.indexOf(" ft") > -1) {
+    string = string.substring(0, checkString.indexOf(" ft"));
+  }
+  if (checkString.indexOf(" feat") > -1) {
+    string = string.substring(0, checkString.indexOf(" feat"));
+  }
+  if (checkString.indexOf(" vs") > -1) {
+    string = string.substring(0, checkString.indexOf(" vs"));
+  }
+  if (checkString.indexOf(" versus ") > -1) {
+    string = string.substring(0, checkString.indexOf(" versus "));
+  }
+  if (checkString.indexOf(" [") > -1) {
+    string = string.substring(0, checkString.indexOf(" ["));
+  }
+
+  return string;
 }
 
 module.exports.createTrackFromTitle = createTrackFromTitle;
 module.exports.fixTrackTitle = fixTrackTitle;
+module.exports.sanitize = sanitize;
