@@ -29,7 +29,7 @@ class Cache {
 
       let slugKey = key.slugify();
       console.log("Setting " + slugKey);
-      this.client.set(slugKey, value);
+      this.client.set(slugKey, value, 'EX', Config.cacheDuration);
       resolve();
 
     });
