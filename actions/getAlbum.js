@@ -20,16 +20,12 @@ function getAlbum(artistName, albumName, mbid) {
       albumDetails = JSON.parse(albumDetails)
       let album = new Album().fromAlbumObject(albumDetails);
       return resolve(album);
-    }).catch(function(e) {
-      console.log(e);
-      return makeNewRequest(artistName, albumName, mbid, resolve, reject);
     });
   });
 }
 
 function makeNewRequest(artistName, albumName, mbid, resolve, reject) {
   let cacheKey = "album-" + artistName + albumName;
-
   iTunes.getAlbumDetails(artistName, albumName, mbid).then(function(albumObject) {
     if (!albumObject) {
       return resolve(null);

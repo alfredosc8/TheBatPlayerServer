@@ -9,6 +9,9 @@ const getAlbum = require("../actions/getAlbum.js").getAlbum;
 const getTrackDetails = require("../actions/getTrack.js").getTrack;
 
 function getTrack(trackName, artistName) {
+  console.log("Artist: " + artistName)
+  console.log("Track: " + trackName);
+
   return new Promise((resolve, reject) => {
 
     let trackDetails = getTrackDetails(artistName, trackName);
@@ -49,9 +52,13 @@ function getTrack(trackName, artistName) {
         result = new ApiResult(trackData, artistData);
       }
 
+      // Use the original track name if we don't have anything better
       if (!result.song) {
         result.song = trackName;
       }
+
+      // Use the original artist name in the returned data
+      result.artist = artistName;
 
       // Return the final object
       let resultObject = result.asObject();
