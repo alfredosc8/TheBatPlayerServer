@@ -23,8 +23,7 @@ class ApiResult {
       this.tags = artistData.tags;
     }
 
-
-    if (artistData && artistData.image) {
+    if (artistData && artistData.image && artistData.image.url != '') {
       let image = {};
 
       image.color = colorData;
@@ -36,6 +35,7 @@ class ApiResult {
       image.backgroundurl = artistData.image.backgroundUrl(color);
       image.url = artistData.image.artistUrl(color);
       //image.original = artistData.image.url;
+
       this.image = image;
     }
   }
@@ -52,7 +52,7 @@ class ApiResult {
       result.bio = this.bio;
     }
 
-    if (this.image.url) {
+    if (this.image) {
       result.image = this.image;
     }
 
