@@ -11,7 +11,7 @@ function start(id) {
   var winston = require('winston'),
     expressWinston = require('express-winston');
 
-  const Cache = require("./caching/memcache.js");
+  const Cache = require("./caching/redis.js");
   const cache = new Cache();
 
   global.cache = cache;
