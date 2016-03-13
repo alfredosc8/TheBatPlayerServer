@@ -11,10 +11,7 @@ function start(id) {
   var winston = require('winston'),
     expressWinston = require('express-winston');
 
-  const Cache = require("./caching/redis.js");
-  const cache = new Cache();
-
-  global.cache = cache;
+  setupCache();
 
   process.on('uncaughtException', function(err) {
     console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
@@ -75,6 +72,12 @@ function start(id) {
         return false;
       } // optional: allows to skip some log messages based on request and/or response
     }));
+  }
+
+  function setupCache() {
+    const Cache = require("./caching/redis.js");
+    const cache = new Cache();
+    global.cache = cache;
   }
 
   function haltOnTimedout(req, res, next) {

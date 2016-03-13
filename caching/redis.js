@@ -10,15 +10,42 @@ class Cache {
 
   connect() {
     this.cacheEnabled = false;
-    this.client = redis.createClient(process.env.REDISCLOUD_URL, {
-      no_ready_check: true
-    });
 
-    var self = this;
-    this.client.on('connect', function() {
-      console.log('Connected to Redis');
-      self.cacheEnabled = true;
-    });
+    try {
+      console.log("Connecting to: " + process.env.REDISCLOUD_URL)
+      this.client = redis.createClient(process.env.REDISCLOUD_URL, {
+        no_ready_check: true,
+        retry_strategy: function(options) {
+          if (options.error.code === 'ECONNREFUSED') {
+            // End reconnecting on a specific error and flush all commands with a individual error
+            return new Error('The server refused the connection');
+          }
+          if (options.total_retry_time > 1000 * 60 * 60) {
+            // End reconnecting after a specific timeout and flush all commands with a individual error
+            return new Error('Retry time exhausted');
+          }
+          if (options.times_connected > 10) {
+            // End reconnecting with built in error
+            return undefined;
+          }
+          // reconnect after
+          return Math.max(options.attempt * 100, 3000);
+        }
+      });
+
+      var self = this;
+      this.client.on('connect', function() {
+        console.log('Connected to Redis');
+        self.cacheEnabled = true;
+      });
+
+      this.client.on('error', function(error) {
+        console.log(error);
+      });
+
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   set(key, value, expiration) {
