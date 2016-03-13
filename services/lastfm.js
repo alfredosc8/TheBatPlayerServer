@@ -5,7 +5,7 @@ var Config = require('../config.js');
 var Artist = require('../models/artist.js');
 
 var lastfm = new LastfmAPI({
-  api_key: Config.LAST_FM_KEY
+  api_key: process.env.LAST_FM_KEY
 });
 
 class LastFM {

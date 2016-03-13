@@ -3,7 +3,7 @@
 const Vibrant = require('node-vibrant')
 const Config = require('../config.js');
 const ImgixClient = require('imgix-core-js');
-const imgixclient = new ImgixClient("thebatplayer.imgix.net", Config.IMGIX_KEY);
+const imgixclient = new ImgixClient("thebatplayer.imgix.net", process.env.IMGIX_KEY);
 
 class ArtistImage {
 
