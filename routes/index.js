@@ -42,10 +42,11 @@ function getTrack(trackName, artistName) {
         // Fetch colors and return final object
         return artistData.image.getColors().then(function(colorData) {
           if (colorData && colorData != null) {
-            result = new ApiResult(trackData, artistData, colorData);
+            result = new ApiResult(trackData, artistData, colorData, artistName, trackName);
           } else {
-            result = new ApiResult(trackData, artistData);
+            result = new ApiResult(trackData, artistData, null, artistName, trackName);
           }
+
           // Return the final object
           let resultObject = result.asObject();
           return resolve(resultObject);
@@ -53,7 +54,7 @@ function getTrack(trackName, artistName) {
 
       // No colors to fetch.  Return final object.
       } else {
-        result = new ApiResult(trackData, artistData);
+        result = new ApiResult(trackData, artistData, null, artistName, trackName);
       }
 
       // Use the original track name if we don't have anything better
@@ -74,8 +75,8 @@ function getTrack(trackName, artistName) {
 function createFallbackResult(artistName, trackName) {
   let fallbackResult = {};
   fallbackResult.artist = artistName;
-  fallbackResult.track = trackName;
-  fallbackResult.title = artistName + " - " + trackName;
+  fallbackResult.song = trackName;
+  fallbackResult.track = artistName + " - " + trackName;
   return fallbackResult;
 }
 

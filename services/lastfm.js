@@ -1,11 +1,16 @@
 "use strict";
 
+const assert = require('assert');
+
 var LastfmAPI = require('lastfmapi');
 var Config = require('../config.js');
 var Artist = require('../models/artist.js');
 
+let apiKey = process.env.LAST_FM_KEY;
+assert(apiKey, "LastFM API is required.");
+
 var lastfm = new LastfmAPI({
-  api_key: process.env.LAST_FM_KEY
+  api_key: apiKey
 });
 
 class LastFM {

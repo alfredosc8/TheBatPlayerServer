@@ -1,15 +1,13 @@
 "use strict";
 
 class ApiResult {
-  constructor(trackData, artistData, colorData) {
+  constructor(trackData, artistData, colorData, artistName, trackName) {
 
     if (artistData) {
       this.artist = artistData.name;
     }
 
-    if (trackData) {
-      this.song = trackData.name;
-    }
+    this.song = trackName;
 
     if (trackData && trackData.album) {
       this.album = trackData.album.asObject();

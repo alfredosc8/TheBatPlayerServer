@@ -13,7 +13,7 @@ function getTrack(artistName, trackName) {
 
     cache.get(cacheKey).then(function(trackDetails) {
       if (!trackDetails) {
-        return makeNewRequest(artistName, trackName, resolve, reject);
+        return makeNewRequest(artistName, trackName, resolve);
       }
 
       let track = new Track(JSON.parse(trackDetails));
@@ -22,14 +22,38 @@ function getTrack(artistName, trackName) {
   });
 }
 
-function makeNewRequest(artistName, trackName, resolve, reject) {
+function makeNewRequest(artistName, trackName, resolve) {
   let cacheKey = "track-" + artistName + trackName;
-
   lastApi.getTrackDetails(artistName, trackName).then(function(trackDetails) {
+
+    if (!trackDetails) {
+      let shouldRetry = retrySanitized(artistName, trackName, resolve);
+      if (!shouldRetry) {
+        return resolve(null);
+      } else {
+        return;
+      }
+    }
+
     cache.set(cacheKey, JSON.stringify(trackDetails));
     let track = new Track(trackDetails);
     return resolve(track);
   });
+}
+
+function retrySanitized(artistName, trackName, resolve) {
+  if (!artistName || !trackName) {
+    return false;
+  }
+  var updatedArtist = Utils.sanitize(artistName);
+  var updatedTrack = Utils.sanitize(trackName);
+
+  if (updatedArtist != artistName || updatedTrack != trackName) {
+    makeNewRequest(updatedArtist, updatedTrack, resolve);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 module.exports.getTrack = getTrack;

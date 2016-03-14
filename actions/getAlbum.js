@@ -26,41 +26,17 @@ function getAlbum(artistName, albumName, mbid) {
 
 function makeNewRequest(artistName, albumName, resolve) {
   let cacheKey = "album-" + artistName + albumName;
+  console.log("Fetching from itunes")
   iTunes.getAlbumDetails(artistName, albumName).then(function(albumObject) {
 
-    // No result
     if (!albumObject) {
-      console.log("Returned from itunes with no album")
-      // Should we retry it with a different track name?
-      let shouldRetry = retrySanitized(artistName, albumName);
-      console.log("Should retry album fetch: " + shouldRetry)
-      if (shouldRetry) {
-        return
-      } else {
-        return resolve(null);
-      }
+      console.log("No itunes result")
+      return resolve(null);
     }
-
     cache.set(cacheKey, JSON.stringify(albumObject));
     let album = new Album().fromAlbumObject(albumObject);
     return resolve(album);
   });
-}
-
-function retrySanitized(artistName, trackName) {
-  console.log("Testing for retry")
-  if (!artistName || !trackName) {
-    return false;
-  }
-  var updatedArtist = Utils.sanitize(artistName);
-  var updatedTrack = Utils.sanitize(trackName);
-
-  if (updatedArtist != artistName || updatedTrack != trackName) {
-    makeNewRequest(updatedArtist, updatedTrack);
-    return true;
-  } else {
-    return false;
-  }
 }
 
 module.exports.getAlbum = getAlbum;
