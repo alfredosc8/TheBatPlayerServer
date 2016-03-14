@@ -10,7 +10,6 @@ function getAlbumDetails(artistName, track) {
     var encodedArtist = encodeURIComponent(artistName.replace(/ /g, '+'));
 
     var url = "https://itunes.apple.com/search?media=music&limit=4&entity=musicTrack&term=" + encodedArtist + "+" + encodedTrack;
-    console.log(url)
     makeItunesApiRequest(url, artistName, function(albumObject) {
       if (albumObject) {
         return resolve(albumObject);
@@ -34,8 +33,6 @@ function makeItunesApiRequest(url, artistName, callback) {
   request(url, {
     timeout: 1000
   }, function(error, response, body) {
-    console.log(error);
-    console.log(body);
 
     try {
       var itunesResults = JSON.parse(body);
