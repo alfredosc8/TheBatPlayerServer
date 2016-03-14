@@ -17,7 +17,7 @@ function getTrack(trackName, artistName) {
 
     cache.get(cacheKey).then(function(resultObject) {
       if (resultObject) {
-        return resolve(resultObject);
+        return resolve(JSON.parse(resultObject));
       } else {
         return start(artistName, trackName, resolve)
       }

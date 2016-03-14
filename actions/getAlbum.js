@@ -26,11 +26,9 @@ function getAlbum(artistName, albumName, mbid) {
 
 function makeNewRequest(artistName, albumName, resolve) {
   let cacheKey = "album-" + artistName + albumName;
-  console.log("Fetching from itunes")
   iTunes.getAlbumDetails(artistName, albumName).then(function(albumObject) {
 
     if (!albumObject) {
-      console.log("No itunes result")
       return resolve(null);
     }
     cache.set(cacheKey, JSON.stringify(albumObject));
