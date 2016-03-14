@@ -11,65 +11,85 @@ const getStation = require("../actions/getStation.js").getStation;
 function getTrack(trackName, artistName) {
   console.log("Artist: " + artistName)
   console.log("Track: " + trackName);
+  let cacheKey = "response-" + artistName + trackName;
 
   return new Promise((resolve, reject) => {
 
-    let trackDetails = getTrackDetails(artistName, trackName);
-    let getAlbumPromise = getAlbum(artistName, trackName);
-    let artistDetails = getArtist(artistName);
-    let promises = [trackDetails, artistDetails, getAlbumPromise];
-
-    Promise.all(promises).then(function(results) {
-      let trackData = results[0];
-      let artistData = results[1];
-      let albumData = results[2];
-
-      // No data available.  Return fallback result.
-      if (artistData == null) {
-        let fallbackResult = createFallbackResult(artistName, trackName);
-        return resolve(fallbackResult);
-      }
-
-      // If we have an updated album set it
-      if (albumData && albumData != null && (albumData.title || albumData.name)) {
-        trackData.album = albumData;
-      }
-      var result = null;
-
-      // Fetch artist image color
-      if (artistData.image && artistData.image.url != "") {
-
-        // Fetch colors and return final object
-        return artistData.image.getColors().then(function(colorData) {
-          if (colorData && colorData != null) {
-            result = new ApiResult(trackData, artistData, colorData, artistName, trackName);
-          } else {
-            result = new ApiResult(trackData, artistData, null, artistName, trackName);
-          }
-
-          // Return the final object
-          let resultObject = result.asObject();
-          return resolve(resultObject);
-        });
-
-      // No colors to fetch.  Return final object.
+    cache.get(cacheKey).then(function(resultObject) {
+      if (resultObject) {
+        return resolve(resultObject);
       } else {
-        result = new ApiResult(trackData, artistData, null, artistName, trackName);
+        return start(artistName, trackName, resolve)
       }
-
-      // Use the original track name if we don't have anything better
-      if (!result.song) {
-        result.song = trackName;
-      }
-
-      // Use the original artist name in the returned data
-      result.artist = artistName;
-
-      // Return the final object
-      let resultObject = result.asObject();
-      return resolve(resultObject);
     });
+
   });
+}
+
+function start(artistName, trackName, resolve) {
+  let cacheKey = "response-" + artistName + trackName;
+  let trackDetails = getTrackDetails(artistName, trackName);
+  let getAlbumPromise = getAlbum(artistName, trackName);
+  let artistDetails = getArtist(artistName);
+  let promises = [trackDetails, artistDetails, getAlbumPromise];
+
+  Promise.all(promises).then(function(results) {
+    let trackData = results[0];
+    let artistData = results[1];
+    let albumData = results[2];
+
+    // No data available.  Return fallback result.
+    if (artistData == null) {
+      let fallbackResult = createFallbackResult(artistName, trackName);
+      return resolve(fallbackResult);
+    }
+
+    // If we have an updated album set it
+    if (albumData && albumData != null && (albumData.title || albumData.name)) {
+      trackData.album = albumData;
+    }
+    var result = null;
+
+    // Fetch artist image color
+    if (artistData.image && artistData.image.url != "") {
+
+      // Fetch colors and return final object
+      return artistData.image.getColors().then(function(colorData) {
+        if (colorData && colorData != null) {
+          result = new ApiResult(trackData, artistData, colorData, artistName, trackName);
+        } else {
+          result = new ApiResult(trackData, artistData, null, artistName, trackName);
+        }
+
+        // Return the final object
+        let resultObject = result.asObject();
+        return returnResult(resultObject, resolve, cacheKey);
+      // return resolve(resultObject);
+      });
+
+    // No colors to fetch.  Return final object.
+    } else {
+      result = new ApiResult(trackData, artistData, null, artistName, trackName);
+    }
+
+    // Use the original track name if we don't have anything better
+    if (!result.song) {
+      result.song = trackName;
+    }
+
+    // Use the original artist name in the returned data
+    result.artist = artistName;
+
+    // Return the final object
+    let resultObject = result.asObject();
+    return returnResult(resultObject, resolve, cacheKey);
+  // return resolve(resultObject);
+  });
+}
+
+function returnResult(resultObject, resolve, cacheKey) {
+  cache.set(cacheKey, JSON.stringify(resultObject));
+  return resolve(resultObject);
 }
 
 function createFallbackResult(artistName, trackName) {
