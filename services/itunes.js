@@ -20,15 +20,6 @@ function getAlbumDetails(artistName, track) {
   });
 }
 
-// function getAlbum(albumName, artistName, callback) {
-//   var encodedAlbum = albumName.replace(/ /g, '+');
-//   var url = "https://itunes.apple.com/search?term=" + encodedAlbum + "&attribute=albumTerm&entity=album&limit=4&explicit=Yes";
-//
-//   makeItunesApiRequest(url, artistName, function(albumObject) {
-//     return callback(null, albumObject)
-//   });
-// }
-
 function makeItunesApiRequest(url, artistName, callback) {
   request(url, {
     timeout: 1000

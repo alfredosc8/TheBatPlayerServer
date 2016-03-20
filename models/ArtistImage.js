@@ -128,6 +128,7 @@ class ArtistImage {
     if (color && color != "#ffffff") {
       imageGenOptions.bm = "color";
       imageGenOptions.blend = color.substring(1);
+      imageGenOptions.balph = 100;
     }
 
     var processedImageUrl = imgixclient.path(this.url).toUrl(imageGenOptions).toString();
@@ -142,13 +143,13 @@ class ArtistImage {
       w: 700,
       h: 530,
       fm: "png",
-      balph: 40,
       mask: mask
     }
 
     if (color && color != "#ffffff") {
       imageGenOptions.bm = "color";
       imageGenOptions.blend = color.substring(1);
+      imageGenOptions.balph = 25;
     }
 
     var processedImageUrl = imgixclient.path(this.url).toUrl(imageGenOptions).toString();

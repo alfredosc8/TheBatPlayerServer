@@ -64,7 +64,6 @@ function start(artistName, trackName, resolve) {
         // Return the final object
         let resultObject = result.asObject();
         return returnResult(resultObject, resolve, cacheKey);
-      // return resolve(resultObject);
       });
 
     // No colors to fetch.  Return final object.
@@ -83,7 +82,6 @@ function start(artistName, trackName, resolve) {
     // Return the final object
     let resultObject = result.asObject();
     return returnResult(resultObject, resolve, cacheKey);
-  // return resolve(resultObject);
   });
 }
 
