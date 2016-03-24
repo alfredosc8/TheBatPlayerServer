@@ -2,6 +2,7 @@
 
 const ApiResult = require('../models/ApiResult.js');
 const Utils = require("../utils/utils.js");
+const Metrics = require("../utils/metrics.js");
 
 const getArtist = require("../actions/getArtist.js").getArtist;
 const getAlbum = require("../actions/getAlbum.js").getAlbum;
@@ -101,6 +102,8 @@ function createFallbackResult(artistName, trackName) {
 
 
 function http_getTrack(req, res) {
+  Metrics.increment("track_fetch");
+
   res.setHeader('Cache-Control', 'public, max-age=604800'); // one week
 
   let artistName = req.query.artist;
@@ -117,6 +120,8 @@ function http_getTrack(req, res) {
 }
 
 function http_nowPlaying(req, res) {
+  Metrics.increment("nowplaying_fetch");
+
   res.setHeader('Cache-Control', 'public, max-age=30'); // 30 seconds
 
   var url = req.params.url;
@@ -129,6 +134,8 @@ function http_nowPlaying(req, res) {
 }
 
 function http_getStationMetadata(req, res) {
+  Metrics.increment("metadata_fetch");
+
   res.setHeader('Cache-Control', 'public, max-age=10'); // 10 seconds
 
   var url = req.params.url;
