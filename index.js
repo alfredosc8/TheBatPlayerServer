@@ -2,8 +2,10 @@
 
 const throng = require("throng");
 const logging = require("./utils/logging.js");
+const Metrics = require("./utils/metrics.js");
 
 enableConcurrency();
+Metrics.init();
 
 function start(id) {
   console.log(`Started worker ${id}`);

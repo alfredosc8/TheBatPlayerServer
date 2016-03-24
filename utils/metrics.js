@@ -3,7 +3,7 @@ var StatsD = require('node-dogstatsd').StatsD;
 var dogstatsd;
 
 function init() {
-  if (env === "production" && enabled) {
+  if (process.env.DATADOG_API_KEY) {
     dogstatsd = new StatsD();
   }
 }
