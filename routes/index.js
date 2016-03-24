@@ -102,7 +102,7 @@ function createFallbackResult(artistName, trackName) {
 
 
 function http_getTrack(req, res) {
-  Metrics.increment("track_fetch");
+  Metrics.increment("batserver.track_fetch");
 
   res.setHeader('Cache-Control', 'public, max-age=604800'); // one week
 
@@ -120,7 +120,7 @@ function http_getTrack(req, res) {
 }
 
 function http_nowPlaying(req, res) {
-  Metrics.increment("nowplaying_fetch");
+  Metrics.increment("batserver.nowplaying_fetch");
 
   res.setHeader('Cache-Control', 'public, max-age=30'); // 30 seconds
 
@@ -134,7 +134,7 @@ function http_nowPlaying(req, res) {
 }
 
 function http_getStationMetadata(req, res) {
-  Metrics.increment("metadata_fetch");
+  Metrics.increment("batserver.metadata_fetch");
 
   res.setHeader('Cache-Control', 'public, max-age=10'); // 10 seconds
 
