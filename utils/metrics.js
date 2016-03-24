@@ -9,7 +9,7 @@ function init() {
 }
 
 function increment(counter) {
-  if (process.env.DATADOG_API_KEY && !dogstatsd) {
+  if (process.env.DATADOG_API_KEY && dogstatsd) {
     dogstatsd.increment(counter);
   }
 }
