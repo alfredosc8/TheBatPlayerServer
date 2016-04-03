@@ -59,7 +59,7 @@ class Cache {
       }
 
       let slugKey = key.slugify();
-      console.log("Setting " + slugKey);
+      // console.log("Setting " + slugKey);
       this.client.set(slugKey, value, 'EX', expiration);
       resolve();
 
@@ -73,7 +73,7 @@ class Cache {
       }
 
       let slugKey = key.slugify();
-      console.log("Getting " + slugKey);
+      // console.log("Getting " + slugKey);
       this.client.get(slugKey, function(err, val) {
         if ((err && err.code == "ECONNREFUSED") || !val) {
           return resolve(null);
