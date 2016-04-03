@@ -39,6 +39,9 @@ function start(artistName, trackName, resolve) {
     let artistData = results[1];
     let albumData = results[2];
 
+    console.log(trackData)
+    console.log(artistData)
+    console.log(albumData)
     // No data available.  Return fallback result.
     if (artistData == null) {
       let fallbackResult = createFallbackResult(artistName, trackName);
