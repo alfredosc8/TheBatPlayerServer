@@ -53,6 +53,10 @@ class Cache {
       expiration = Config.cacheDuration;
     }
 
+    if (!value) {
+      value = "null"
+    }
+
     return new Promise((resolve, reject) => {
       if (!this.cacheEnabled) {
         return resolve();
@@ -75,6 +79,10 @@ class Cache {
       let slugKey = key.slugify();
       // console.log("Getting " + slugKey);
       this.client.get(slugKey, function(err, val) {
+        if (val == "null") {
+          val = null
+        }
+
         if ((err && err.code == "ECONNREFUSED") || !val) {
           return resolve(null);
         }
