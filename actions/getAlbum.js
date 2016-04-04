@@ -27,7 +27,6 @@ function getAlbum(artistName, albumName, mbid) {
 function makeNewRequest(artistName, albumName, resolve) {
   let cacheKey = "album-" + artistName + albumName;
   iTunes.getAlbumDetails(artistName, albumName).then(function(albumObject) {
-
     if (!albumObject) {
       return resolve(null);
     }

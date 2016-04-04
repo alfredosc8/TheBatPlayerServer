@@ -37,7 +37,6 @@ class LastFM {
         track: trackName,
         autocorrect: 1
       }, function(error, trackDetails) {
-
         if (error || !trackDetails) {
           return resolve(null);
         }

@@ -25,7 +25,6 @@ function getTrack(artistName, trackName) {
 function makeNewRequest(artistName, trackName, resolve) {
   let cacheKey = "track-" + artistName + trackName;
   lastApi.getTrackDetails(artistName, trackName).then(function(trackDetails) {
-
     if (!trackDetails) {
       let shouldRetry = retrySanitized(artistName, trackName, resolve);
       if (!shouldRetry) {
