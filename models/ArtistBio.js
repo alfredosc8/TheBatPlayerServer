@@ -13,12 +13,15 @@ class ArtistBio {
     }
 
     this.text = lastFmBio.summary.stripTags().trim().replace(/\n|\r/g, "");
+    this.fullText = lastFmBio.content.stripTags();
+
     this.publishedDate = publishedDate;
   }
 
   asObject() {
     let bioObject = {};
     bioObject.text = this.text;
+    bioObject.fullText = this.fullText;
     bioObject.published = this.publishedDate;
     return bioObject;
   }
