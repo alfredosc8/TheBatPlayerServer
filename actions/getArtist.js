@@ -14,7 +14,7 @@ function getArtist(artistName) {
       return resolve(artist);
     }).catch(function(e) {
       console.log(e);
-      makeNewRequest(artistName, resolve, reject);
+      return makeNewRequest(artistName, resolve, reject);
     });
 
   });
@@ -23,6 +23,9 @@ function getArtist(artistName) {
 function makeNewRequest(artistName, resolve, reject) {
   let cacheKey = "artist-" + artistName;
   lastApi.getArtistDetails(artistName).then(function(artistDetails) {
+    if (!artistDetails) {
+      return resolve(null);
+    }
     cache.set(cacheKey, JSON.stringify(artistDetails));
     let artist = new Artist(artistDetails);
     return resolve(artist);
