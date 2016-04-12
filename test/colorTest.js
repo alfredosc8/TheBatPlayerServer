@@ -46,5 +46,5 @@ async.each(urls, function(singleUrl, callback) {
     });
   });
 }, function(err) {
-  fs.writeFile("colorTest.html", html);
+  fs.writeFile("./test/colorTest.html", html);
 });
