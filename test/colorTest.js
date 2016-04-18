@@ -7,6 +7,7 @@ var ArtistImage = require('../models/ArtistImage.js');
 var fs = require('fs');
 
 var urls = [];
+urls.push("http://img2-ak.lst.fm/i/u/770x0/ace5360b339b461a9b31af683b305d43.jpg")
 urls.push("http://img2-ak.lst.fm/i/u/770x0/2d78d384659f43c384b5b2ebf8fd707d.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/a81e58c3cb784aceca443303866273b3.png");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/4ba8e9d5fd704038b292df8d0a81afd6.jpg");
