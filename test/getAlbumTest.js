@@ -26,18 +26,15 @@ describe('Fetch track information', function() {
     expect(promise).to.be.a('promise');
   });
 
-  it('should not return null', function() {
-    return expect(promise).to.eventually.not.equal(null);
+  it('is not null', function() {
+    expect(promise).to.eventually.not.equal(null);
+    return
   });
-  //promise.should.be.fulfilled;
 
-  // console.log(album)
-  // assert(false);
+  it('should have the correct name', function() {
+    promise.then(function(track) {
+      expect(track.name).to.equal(artist);
+    });
+  });
 
-
-  // expect(album).not.to.be.undefined;
-  // expect(album.name).to.be.a('string');
-
-// });
-// });
 });

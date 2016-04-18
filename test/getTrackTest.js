@@ -29,5 +29,4 @@ describe('Fetch track information', function() {
     });
   });
 
-
 });
