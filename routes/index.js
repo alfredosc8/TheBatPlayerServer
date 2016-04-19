@@ -108,7 +108,7 @@ function http_getTrack(req, res) {
 
   let artistName = req.query.artist;
   let trackName = req.query.track;
-  artistName = Utils.fixTrackTitle(artistName);
+  artistName = Utils.fixArtistNameWithoutTrack(artistName);
 
   getTrack(trackName, artistName).then(function(trackDetails) {
     if (trackDetails == null) {

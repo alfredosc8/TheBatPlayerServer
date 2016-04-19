@@ -46,6 +46,16 @@ function fixTrackTitle(trackString) {
   }
 }
 
+function fixArtistNameWithoutTrack(trackString) {
+  // Fix the "The" issue
+  if (trackString.indexOf(", The") !== -1) {
+    var artist = trackString.split(",")[0];
+    return "The " + artist;
+  } else {
+    return trackString;
+  }
+}
+
 function sanitize(string) {
   var checkString = string.toLowerCase();
 
@@ -73,4 +83,5 @@ function sanitize(string) {
 
 module.exports.createTrackFromTitle = createTrackFromTitle;
 module.exports.fixTrackTitle = fixTrackTitle;
+module.exports.fixArtistNameWithoutTrack = fixArtistNameWithoutTrack;
 module.exports.sanitize = sanitize;
