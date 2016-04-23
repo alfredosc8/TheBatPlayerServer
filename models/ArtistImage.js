@@ -69,9 +69,9 @@ class ArtistImage {
       if (palette.Muted) {
         palettes.push(palette.Muted);
       }
-      if (palette.DarkVibrant) {
-        palettes.push(palette.DarkVibrant);
-      }
+      // if (palette.DarkVibrant) {
+      //   palettes.push(palette.DarkVibrant);
+      // }
 
       palettes = palettes.sort(function(palette1, palette2) {
         let saturation1 = 0;
