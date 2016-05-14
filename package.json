@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "start": "node --optimize_for_size --max_old_space_size=256 --gc_global --always_compact --gc_interval=100 index.js"
+    "start": "node --optimize_for_size --max_old_space_size=256 --max_semi_space_size=1 --gc_global --always_compact --gc_interval=100 index.js"
   },
   "engines": {
     "node": "5.10.0"
