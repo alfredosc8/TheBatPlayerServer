@@ -3,6 +3,7 @@
 const throng = require("throng");
 const logging = require("./utils/logging.js");
 const Metrics = require("./utils/metrics.js");
+const Regiment = require('regiment');
 
 enableConcurrency();
 Metrics.init();
@@ -18,6 +19,14 @@ function start(id) {
 
   var express = require('express');
   var app = express();
+
+  app.use(Regiment.middleware.MemoryFootprint(256)); // Replace workers after rss reaches 750mb
+  app.use(Regiment.middleware.RequestCount(1000)); // Replace workers after every 1000 requests
+
+  Regiment(function(workerId) {
+    return app.listen();
+  });
+
   logging.setupLogging(app);
   setupCache();
 
