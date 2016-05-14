@@ -18,6 +18,7 @@ function start(id) {
 
   var express = require('express');
   var app = express();
+
   logging.setupLogging(app);
   setupCache();
 
