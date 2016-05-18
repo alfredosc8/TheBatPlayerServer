@@ -1,0 +1,44 @@
+{
+  "name": "TheBatPlayerServer",
+  "scripts": {
+  },
+  "env": {
+    "BUILDPACK_URL": {
+      "required": true
+    },
+    "DATADOG_API_KEY": {
+      "required": true
+    },
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
+    "IMGIX_KEY": {
+      "required": true
+    },
+    "LAST_FM_KEY": {
+      "required": true
+    },
+    "PAPERTRAIL_HOST": {
+      "required": true
+    },
+    "PAPERTRAIL_PORT": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "rediscloud"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/miketheman/heroku-buildpack-datadog.git"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
