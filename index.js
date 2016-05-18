@@ -3,7 +3,7 @@
 const throng = require("throng");
 const logging = require("./utils/logging.js");
 const Metrics = require("./utils/metrics.js");
-const UserAgentCheck = require("./utils/UserAgentCheck.js").userAgentCheck;
+const UserAgentCheck = require("./utils/userAgentCheck.js").userAgentCheck;
 
 enableConcurrency();
 Metrics.init();
