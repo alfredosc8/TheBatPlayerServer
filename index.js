@@ -3,6 +3,7 @@
 const throng = require("throng");
 const logging = require("./utils/logging.js");
 const Metrics = require("./utils/metrics.js");
+const UserAgentCheck = require("./utils/UserAgentCheck.js").userAgentCheck;
 
 enableConcurrency();
 Metrics.init();
@@ -21,6 +22,8 @@ function start(id) {
 
   logging.setupLogging(app);
   setupCache();
+
+  app.use(UserAgentCheck);
 
   // Handle timing out
   var timeout = require('connect-timeout');
