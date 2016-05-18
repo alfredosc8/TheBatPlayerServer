@@ -23,7 +23,7 @@ function start(id) {
   logging.setupLogging(app);
   setupCache();
 
-  app.use(UserAgentCheck);
+  //app.use(UserAgentCheck);
 
   // Handle timing out
   var timeout = require('connect-timeout');
