@@ -142,6 +142,13 @@ function http_getStationMetadata(req, res) {
   var url = req.params.url;
 
   getStation(url).then(function(station) {
+    if (station.title == "") {
+      let fallbackResult = {};
+      fallbackResult.artist = "";
+      fallbackResult.song = "";
+      fallbackResult.track = ""
+      return res.send(fallbackResult);
+    }
     let stationTrack = Utils.createTrackFromTitle(station.title);
 
     getTrack(stationTrack.name, stationTrack.artist).then(function(trackDetails) {
