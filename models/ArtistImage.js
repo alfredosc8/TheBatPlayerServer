@@ -51,51 +51,6 @@ class ArtistImage {
       console.log(colorObject);
       return resolve(colorObject);
     });
-
-
-    // let vibrant = new Vibrant(url, opts);
-    // vibrant.getPalette(function(err, palette) {
-    //
-    //   if (err || !palette || palette.length == 0) {
-    //     return resolve(null);
-    //   }
-    //   let palettes = [];
-    //
-    //   // Exit early if there are no colors
-    //   if (!palette) {
-    //     return resolve(null);
-    //   }
-    //
-    //   if (palette.Vibrant) {
-    //     palettes.push(palette.Vibrant);
-    //   }
-    //   if (palette.LightVibrant) {
-    //     palettes.push(palette.LightVibrant);
-    //   }
-    //   if (palette.Muted) {
-    //     palettes.push(palette.Muted);
-    //   }
-    //   // if (palette.DarkVibrant) {
-    //   //   palettes.push(palette.DarkVibrant);
-    //   // }
-    //
-
-  //
-  //   let selectedPalette = palettes[0];
-  //   if (selectedPalette) {
-  //     let colorObject = undefined;
-  //     if (selectedPalette.population > 0) {
-  //       colorObject = asObject(selectedPalette);
-  //     } else {
-  //       colorObject = whiteColorObject();
-  //     }
-  //
-  //     cache.set(cacheKey, JSON.stringify(colorObject));
-  //     return resolve(colorObject);
-  //   } else {
-  //     return resolve(null);
-  //   }
-  // });
   }
 
   backgroundUrl(color) {
