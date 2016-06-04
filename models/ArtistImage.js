@@ -5,6 +5,8 @@ const Config = require('../config.js');
 const ImgixClient = require('imgix-core-js');
 const imgixclient = new ImgixClient("thebatplayer.imgix.net", process.env.IMGIX_KEY);
 
+const getColors = require("get-image-colors")
+
 class ArtistImage {
 
   constructor(lastFMData) {
@@ -27,81 +29,73 @@ class ArtistImage {
     return new Promise((resolve, reject) => {
       let cacheKey = "color-" + this.url;
 
-      cache.get(cacheKey).then(function(color) {
-        if (!color) {
-          return self.processColors(self.url, resolve, reject);
-        }
+      // cache.get(cacheKey).then(function(color) {
+      //   if (!color) {
+      return self.processColors(self.url, resolve, reject);
+      // }
 
-        let colorObject = JSON.parse(color);
-        return resolve(colorObject);
-      });
+      //   let colorObject = JSON.parse(color);
+      //   return resolve(colorObject);
+      // });
 
 
     });
   }
 
+
   processColors(url, resolve, reject) {
-    let cacheKey = "color-" + url;
 
-    let opts = {
-      quality: 4
-    };
-
-    let vibrant = new Vibrant(url, opts);
-    vibrant.getPalette(function(err, palette) {
-
-      if (err || !palette || palette.length == 0) {
-        return resolve(null);
-      }
-      let palettes = [];
-
-      // Exit early if there are no colors
-      if (!palette) {
-        return resolve(null);
-      }
-
-      if (palette.Vibrant) {
-        palettes.push(palette.Vibrant);
-      }
-      if (palette.LightVibrant) {
-        palettes.push(palette.LightVibrant);
-      }
-      if (palette.Muted) {
-        palettes.push(palette.Muted);
-      }
-      // if (palette.DarkVibrant) {
-      //   palettes.push(palette.DarkVibrant);
-      // }
-
-      palettes = palettes.sort(function(palette1, palette2) {
-        let saturation1 = 0;
-        if (palette1.hsl) {
-          saturation1 = palette1.hsl[0] + palette1.hsl[1];
-        }
-
-        let saturation2 = 0;
-        if (palette2.hsl) {
-          saturation2 = palette2.hsl[0] + palette2.hsl[1];
-        }
-
-        return saturation2 - saturation1;
-      });
-
-      let selectedPalette = palettes[0];
-      if (selectedPalette) {
-        let colorObject = undefined;
-        if (selectedPalette.population > 0) {
-          colorObject = asObject(selectedPalette);
-        } else {
-          colorObject = whiteColorObject();
-        }
-
-        cache.set(cacheKey, JSON.stringify(colorObject));
-        return resolve(colorObject);
-      } else {
-        return resolve(null);
-      }
+    getColors(url, function(err, colors) {
+      let color = sortColors(colors);
+      let colorObject = asObject(color);
+      console.log(colorObject);
+      return resolve(colorObject);
     });
+
+
+    // let vibrant = new Vibrant(url, opts);
+    // vibrant.getPalette(function(err, palette) {
+    //
+    //   if (err || !palette || palette.length == 0) {
+    //     return resolve(null);
+    //   }
+    //   let palettes = [];
+    //
+    //   // Exit early if there are no colors
+    //   if (!palette) {
+    //     return resolve(null);
+    //   }
+    //
+    //   if (palette.Vibrant) {
+    //     palettes.push(palette.Vibrant);
+    //   }
+    //   if (palette.LightVibrant) {
+    //     palettes.push(palette.LightVibrant);
+    //   }
+    //   if (palette.Muted) {
+    //     palettes.push(palette.Muted);
+    //   }
+    //   // if (palette.DarkVibrant) {
+    //   //   palettes.push(palette.DarkVibrant);
+    //   // }
+    //
+
+  //
+  //   let selectedPalette = palettes[0];
+  //   if (selectedPalette) {
+  //     let colorObject = undefined;
+  //     if (selectedPalette.population > 0) {
+  //       colorObject = asObject(selectedPalette);
+  //     } else {
+  //       colorObject = whiteColorObject();
+  //     }
+  //
+  //     cache.set(cacheKey, JSON.stringify(colorObject));
+  //     return resolve(colorObject);
+  //   } else {
+  //     return resolve(null);
+  //   }
+  // });
   }
 
   backgroundUrl(color) {
@@ -157,6 +151,21 @@ class ArtistImage {
   }
 }
 
+function sortColors(colors) {
+  let dominantColor = colors[0];
+
+  if (dominantColor.hsi()[2] + dominantColor.hsi()[1] > 0.8) {
+    return dominantColor;
+  }
+
+  colors = colors.sort(function(color1, color2) {
+    return color2.hsi()[2] + color2.hsi()[1] - color1.hsi()[2] + color1.hsi()[1];
+  });
+  let color = colors[0];
+
+  return colors[0];
+}
+
 function whiteColorObject() {
   let colorObject = {};
   colorObject.rgb = {
@@ -175,15 +184,15 @@ function whiteColorObject() {
 }
 
 
-function asObject(colors) {
+function asObject(color) {
   let colorObject = {};
-  let rgb = colors.getRgb();
+  let rgb = color.rgb();
   colorObject.rgb = {
     red: rgb[0],
     green: rgb[1],
     blue: rgb[2]
   };
-  colorObject.hex = colors.getHex();
+  colorObject.hex = color.hex();
   colorObject.int = rgbToInt(colorObject.rgb.red, colorObject.rgb.green, colorObject.rgb.blue);
   colorObject.xyz = rgbToXyz(colorObject.rgb.red, colorObject.rgb.green, colorObject.rgb.blue);
   return colorObject;
