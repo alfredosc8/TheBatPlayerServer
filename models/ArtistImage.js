@@ -7,6 +7,9 @@ const imgixclient = new ImgixClient("thebatplayer.imgix.net", process.env.IMGIX_
 
 const getColors = require("get-image-colors")
 
+const S = require('string');
+S.extendPrototype();
+
 class ArtistImage {
 
   constructor(lastFMData) {
@@ -27,28 +30,28 @@ class ArtistImage {
     let self = this;
 
     return new Promise((resolve, reject) => {
-      let cacheKey = "color-" + this.url;
+      let cacheKey = "color-v2-" + this.url;
 
-      // cache.get(cacheKey).then(function(color) {
-      //   if (!color) {
-      return self.processColors(self.url, resolve, reject);
-      // }
-
-      //   let colorObject = JSON.parse(color);
-      //   return resolve(colorObject);
-      // });
-
+      cache.get(cacheKey).then(function(color) {
+        if (!color) {
+          return self.processColors(self.url, resolve, reject);
+        }
+        let colorObject = JSON.parse(color);
+        return resolve(colorObject);
+      });
 
     });
   }
 
 
   processColors(url, resolve, reject) {
+    let cacheKey = "color-v2-" + this.url;
 
     getColors(url, function(err, colors) {
       let color = sortColors(colors);
       let colorObject = asObject(color);
-      console.log(colorObject);
+
+      cache.set(cacheKey, JSON.stringify(colorObject));
       return resolve(colorObject);
     });
   }

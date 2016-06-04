@@ -3,6 +3,9 @@
 const Config = require('../config.js');
 const redis = require('redis');
 
+const S = require('string');
+S.extendPrototype();
+
 class Cache {
   constructor() {
     this.connect();
@@ -62,8 +65,7 @@ class Cache {
         return resolve();
       }
 
-      let slugKey = key.slugify();
-      // console.log("Setting " + slugKey);
+      let slugKey = key.slugify().s;
       this.client.set(slugKey, value, 'EX', expiration);
       resolve();
 
@@ -76,8 +78,7 @@ class Cache {
         return resolve(null);
       }
 
-      let slugKey = key.slugify();
-      // console.log("Getting " + slugKey);
+      let slugKey = key.slugify().s;
       this.client.get(slugKey, function(err, val) {
         if (val == "null") {
           val = null
