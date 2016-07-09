@@ -66,7 +66,8 @@ class Cache {
       }
 
       let slugKey = key.slugify().s;
-      this.client.set(slugKey, value, 'EX', expiration);
+      this.client.set(slugKey, value);
+      this.client.expire(slugKey, expiration);
       resolve();
 
     });

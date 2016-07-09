@@ -1,6 +1,6 @@
 "use strict";
 
 var config = {};
-config.cacheDuration = 2592000; // 1 Month
+config.cacheDuration = 604800; // 1 Week
 
 module.exports = config;
