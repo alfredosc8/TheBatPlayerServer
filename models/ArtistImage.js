@@ -110,6 +110,9 @@ class ArtistImage {
 }
 
 function sortColors(colors) {
+  // Limit to top 2 colors
+  colors = [colors[0], colors[1]];
+
   let dominantColor = colors[0];
 
   if (dominantColor.hsi()[2] + dominantColor.hsi()[1] > 0.8) {
@@ -117,7 +120,7 @@ function sortColors(colors) {
   }
 
   colors = colors.sort(function(color1, color2) {
-    return color2.hsi()[2] + color2.hsi()[1] - color1.hsi()[2] + color1.hsi()[1];
+    return ((color2.hsi()[2] / 1.5) + color2.hsi()[1]) - ((color1.hsi()[2] / 1.5) + color1.hsi()[1]);
   });
   let color = colors[0];
 
