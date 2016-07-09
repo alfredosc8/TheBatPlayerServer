@@ -43,11 +43,11 @@ class Cache {
       });
 
       this.client.on('error', function(error) {
-        console.log(error);
+        console.trace(error);
       });
 
     } catch (e) {
-      console.log(e)
+      console.trace(e)
     }
   }
 

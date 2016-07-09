@@ -22,7 +22,7 @@ function getAlbumDetails(artistName, track) {
 
 function makeItunesApiRequest(url, artistName, callback) {
   request(url, {
-    timeout: 1000
+    timeout: 700
   }, function(error, response, body) {
 
     try {
@@ -34,7 +34,7 @@ function makeItunesApiRequest(url, artistName, callback) {
         return callback(null);
       }
     } catch (error) {
-      console.log(error);
+      console.trace(error);
       return callback(null);
     }
 

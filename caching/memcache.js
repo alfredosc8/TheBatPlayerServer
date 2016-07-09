@@ -41,7 +41,7 @@ class Cache {
       console.log("Setting " + slugKey);
       this.client.set(slugKey, value, function(err, val) {
         if (err) {
-          console.log(err);
+          console.trace(err);
         }
 
         resolve();
@@ -74,7 +74,7 @@ class Cache {
     var self = this;
 
     self.client.set("foo", "bar", function(error, success) {
-      console.log(error);
+      console.trace(error);
       console.log(success);
     });
 
@@ -82,7 +82,7 @@ class Cache {
     self.client.get("foo", function(err, value) {
       console.log("Getting test key");
 
-      console.log(err);
+      console.trace(err);
       console.log(value);
 
       if (value) {
