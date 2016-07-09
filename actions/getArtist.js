@@ -9,11 +9,15 @@ function getArtist(artistName) {
     let cacheKey = "artist-" + artistName;
 
     cache.get(cacheKey).then(function(artistDetails) {
+      if (!artistDetails) {
+        return makeNewRequest(artistName, resolve, reject);
+      }
+
       artistDetails = JSON.parse(artistDetails)
       let artist = new Artist(artistDetails);
       return resolve(artist);
     }).catch(function(e) {
-      console.log(e);
+      console.trace(e);
       return makeNewRequest(artistName, resolve, reject);
     });
 
