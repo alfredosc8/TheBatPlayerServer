@@ -26,13 +26,13 @@ urls.push("http://img2-ak.lst.fm/i/u/770x0/e7a5c4240ec34063b073f8f036fadcfd.jpg"
 urls.push("http://img2-ak.lst.fm/i/u/770x0/68faebf0bda84a6e88a4e409cf0f7869.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/df03335f48b349b1bf7feef37849f24d.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/bc73fd0d2a4b456c9366a5a29223cee2.jpg");
+urls.push("http://img2-ak.lst.fm/i/u/770x0/6959af8934a8403299df31fc4a66cf07.jpg");
 urls.push("http://img2-ak.lst.fm/i/u/770x0/869210f9f59b478aaeeb88bf4fc529cb.jpg");
+
 
 var html = "";
 
-var singleUrl = urls[0];
 async.each(urls, function(singleUrl, callback) {
-
   describe("getImageColor " + singleUrl, function() {
     it("Should fetch color of image: " + singleUrl, function(done) {
 
