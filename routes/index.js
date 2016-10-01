@@ -112,11 +112,11 @@ function http_getTrack(req, res) {
 
   getTrack(trackName, artistName).then(function(trackDetails) {
     if (trackDetails == null) {
-      return res.send({
+      return res.json({
         error: "Track data not available"
       });
     }
-    return res.send(trackDetails);
+    return res.json(trackDetails);
   });
 }
 
@@ -128,9 +128,9 @@ function http_nowPlaying(req, res) {
   var url = req.params.url;
 
   getStation(url).then(function(station) {
-    return res.send(station);
+    return res.json(station);
   }).catch(function(error) {
-    return res.send(error);
+    return res.json(error);
   });
 }
 
@@ -147,16 +147,16 @@ function http_getStationMetadata(req, res) {
       fallbackResult.artist = "";
       fallbackResult.song = "";
       fallbackResult.track = ""
-      return res.send(fallbackResult);
+      return res.json(fallbackResult);
     }
     let stationTrack = Utils.createTrackFromTitle(station.title);
 
     getTrack(stationTrack.name, stationTrack.artist).then(function(trackDetails) {
       trackDetails.track = station.title;
-      return res.send(trackDetails);
+      return res.json(trackDetails);
     });
   }).catch(function(error) {
-    return res.send(error);
+    return res.json(error);
   });
 }
 
