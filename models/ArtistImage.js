@@ -62,8 +62,8 @@ class ArtistImage {
       colorQuant: 4,
       sat: -100,
       con: 100,
-      w: 480,
-      h: 270,
+      w: 960,
+      h: 540,
       high: 100,
       shad: -100,
       exp: 2,
@@ -88,7 +88,7 @@ class ArtistImage {
   }
 
   artistUrl(color) {
-    let textureNumber = Math.round(Math.random() * 3);
+    let textureNumber = Math.round(Math.random() * 2);
     let mask = "https://s3-us-west-2.amazonaws.com/batserver-static-assets/shared/imagegen/paper-texture" + textureNumber + ".png";
 
     let imageGenOptions = {
