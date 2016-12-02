@@ -33,6 +33,7 @@ class ApiResult {
       image.backgroundurl = artistData.image.backgroundUrl(color);
       image.url = artistData.image.artistUrl(color);
       image.original = artistData.image.url;
+      image.small = artistData.image.small;
 
       this.image = image;
     }

@@ -24,6 +24,8 @@ class ArtistImage {
     if (imageArray.length > 0) {
       this.url = imageArray[imageArray.length - 1]["#text"];
     }
+
+    this.small = imageArray[0]["#text"];
   }
 
   getColors() {
