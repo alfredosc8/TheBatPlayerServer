@@ -1,5 +1,10 @@
 "use strict";
 
+var fs = require('fs');
+if (fileExists('./.env')) {
+    require('dotenv').config();
+}
+
 const throng = require("throng");
 const logging = require("./utils/logging.js");
 const Metrics = require("./utils/metrics.js");
@@ -73,4 +78,14 @@ function setupCache() {
   const Cache = require("./caching/redis.js");
   const cache = new Cache();
   global.cache = cache;
+}
+
+function fileExists(filePath) {
+    try {
+        return fs
+            .statSync(filePath)
+            .isFile();
+    } catch (err) {
+        return false;
+    }
 }

@@ -22,6 +22,14 @@ function getStation(url) {
 function makeNewRequest(url, resolve, reject) {
   let cacheKey = "nowplaying-" + url;
 
+  let streamSourceMethod = StationDetails.StreamSource.STREAM;
+
+  console.log(url)
+  if (url.indexOf('radionomy.com') !== -1) {
+      console.log('Using radionomy scraping...')
+      streamSourceMethod = StationDetails.StreamSource.RADIONOMY;
+  }
+
   StationDetails.getStationInfo(url, function(error, details) {
     if (error) {
       return reject(error);
@@ -34,7 +42,7 @@ function makeNewRequest(url, resolve, reject) {
     cache.set(cacheKey, JSON.stringify(details), 10); // Cache for 10 seconds
 
     return resolve(details);
-  }, StationDetails.StreamSource.STREAM);
+  }, streamSourceMethod);
 
 }
 
