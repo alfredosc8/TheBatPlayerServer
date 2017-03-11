@@ -5,7 +5,6 @@ if (fileExists('./.env')) {
     require('dotenv').config();
 }
 
-const throng = require("throng");
 const logging = require("./utils/logging.js");
 const Metrics = require("./utils/metrics.js");
 const UserAgentCheck = require("./utils/userAgentCheck.js").userAgentCheck;
@@ -67,11 +66,12 @@ function start(id) {
 }
 
 function enableConcurrency() {
-  var WORKERS = process.env.WEB_CONCURRENCY || 1;
-  throng(start, {
-    workers: WORKERS,
-    lifetime: Infinity
-  });
+    // const throng = require("throng");
+    //
+    // var WORKERS = process.env.WEB_CONCURRENCY || 1;
+    // throng(WORKERS, start);
+
+    start();
 }
 
 function setupCache() {
