@@ -94,7 +94,7 @@ This is not built to be very general purpose.  It uses a couple a handful of spe
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Gabe Kangas
+Copyright (c) 2016 Gabe Kangas
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
