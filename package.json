@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "start": "node --optimize_for_size --max_old_space_size=350 --max_semi_space_size=1 --gc_global --always_compact --gc_interval=100 index.js"
+    "start": "./node_modules/.bin/pm2 start index.js -i max --no-daemon"
   },
   "engines": {
     "node": "5.10.0"
@@ -25,6 +25,7 @@
     "node-dogstatsd": "0.0.6",
     "node-internet-radio": "^0.1.4",
     "node-vibrant": "^2.0.3",
+    "pm2": "^2.4.2",
     "redis": "^2.6.5",
     "string": "^3.3.3",
     "throng": "^4.0.0",
