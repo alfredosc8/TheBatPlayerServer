@@ -3,7 +3,7 @@ The Bat Server
 
 A NodeJS server-side application for providing metadata from a streaming internet radio source.  Currently used for [The Bat Player](https://github.com/gabek/TheBatPlayerRoku) Roku internet radio client.
 
-###**Example Output**
+### **Example Output**
 ```javascript
 {
     "artist": "Phosgore",
@@ -41,10 +41,10 @@ A NodeJS server-side application for providing metadata from a streaming interne
     }
 }
 ```
-###**Notes**
+### **Notes**
 This is not built to be very general purpose.  It uses a couple a handful of specific things such as AWS Elasticache auto-discovery, the Imgx for image generation, and a bunch of analytics and bug reporting for my own use. So if you'd like to assist in generalizing this code because you use it yourself I'd appreciate a Pull Request.
 
-###**Running**
+### **Running**
 1. Copy Config-example.js to Config.js and add your respective keys.
 2. _npm install_
 3. _make test_ to verify everything is working.
@@ -52,7 +52,7 @@ This is not built to be very general purpose.  It uses a couple a handful of spe
 5. _make dev_ to run.
 6. Make a request such as http://localhost:3000/metadata/http%3A%2F%2Fice1.somafm.com%2Fgroovesalad-128.mp3
 
-###**Goals**
+### **Goals**
 1. Centralize the logic required for taking an audio stream and determining the current song.
  * Shoutcast v1 csv metadata.
  * Shoutcast v2 xml metadata.
@@ -71,19 +71,19 @@ This is not built to be very general purpose.  It uses a couple a handful of spe
 4. Pull color information from the artist image for the client to use in customizing each song.
 5. Caching this data centrally so multiple people listening to the same station won't create additional load and so it's quickly available later.
 
-###**Challanges**
+### **Challanges**
 1. There are many different internet radio streaming services out there.  Usually the option of connecting to the actual stream and waiting for some metadata to arrive as a last ditch effort works, but for some services meatadata will just never be available.
 2. Finding the *correct* album for a artist/track combo is far more difficult than it sounds.  The more popular a song, the more versions of the song is available under the same name.  Live, remixes, karaoke, radio edit, extended version, compilations etc.  The correct answer is usually "The oldest release that's not a Live, Single, EP or compilation release."  But some albums don't have available release dates, either.
 3. Different metadata sources have different qualities and quantities of information.  The current approach is to query them all and then try and make some sense out of the results.
 
-###**Tests**
+### **Tests**
 1. There are a handful of integration tests written.
   * Metadata fetching
   * Artist, background and header image generation.
   * Color detection
   * Current song fetching utilizing the different methods.
 
-###**Want to help?**
+### **Want to help?**
 1. File a GitHub issue.
 2. Create a pull request for a feature or bug fix.
 3. Teach me something about Node development I don't know.  This is my first Node app.
@@ -94,7 +94,7 @@ This is not built to be very general purpose.  It uses a couple a handful of spe
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Gabe Kangas
+Copyright (c) 2017 Gabe Kangas
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
