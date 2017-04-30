@@ -5,18 +5,24 @@ function createTrackFromTitle(title) {
 
   var titleArray = [];
 
-  if (title.indexOf(" - ") === -1) {
-    titleArray[0] = title;
-    titleArray[1] = title;
-  } else {
-    titleArray = trackSplit(title, " - ", 1);
+  try {
+      if (title.indexOf(" - ") === -1) {
+          titleArray[0] = title;
+          titleArray[1] = title;
+      } else {
+          titleArray = trackSplit(title, " - ", 1);
+      }
+
+      let track = {};
+      track.artist = titleArray[0];
+      track.name = titleArray[1];
+
+      return track;
+  } catch(error) {
+    console.error(error);
+    return {artist: "", name: ""};
   }
 
-  let track = {};
-  track.artist = titleArray[0];
-  track.name = titleArray[1];
-
-  return track;
 }
 
 function trackSplit(str, separator, limit) {
@@ -30,30 +36,41 @@ function trackSplit(str, separator, limit) {
 }
 
 function fixTrackTitle(trackString) {
-  if (trackString.split(",").length > 1) {
-    var titleArtist = trackString.split(",")[0];
-    var titleSong = trackString.split(",")[1];
+  try {
+      if (trackString.split(",").length > 1) {
+          var titleArtist = trackString.split(",")[0];
+          var titleSong = trackString.split(",")[1];
 
-    // Fix the "The" issue
-    if (trackString.indexOf(", The -") !== -1) {
-      titleSong = trackString.split(",")[1].split(" - ")[1];
-      titleArtist = "The " + titleArtist;
-    }
+          // Fix the "The" issue
+          if (trackString.indexOf(", The -") !== -1) {
+              titleSong = trackString.split(",")[1].split(" - ")[1];
+              titleArtist = "The " + titleArtist;
+          }
 
-    return titleArtist + " - " + titleSong;
-  } else {
-    return trackString;
+          return titleArtist + " - " + titleSong;
+
+      } else {
+          return trackString;
+      }
+  } catch(error) {
+      console.error(error);
+      return trackString;
   }
 }
 
 function fixArtistNameWithoutTrack(trackString) {
   // Fix the "The" issue
-  if (trackString.indexOf(", The") !== -1) {
-    var artist = trackString.split(",")[0];
-    return "The " + artist;
-  } else {
-    return trackString;
-  }
+    try {
+        if (trackString.indexOf(", The") !== -1) {
+            var artist = trackString.split(",")[0];
+            return "The " + artist;
+        } else {
+            return trackString;
+        }
+    } catch(error) {
+        console.error(error);
+        return trackString;
+    }
 }
 
 function sanitize(string) {

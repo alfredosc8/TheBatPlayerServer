@@ -25,7 +25,11 @@ class ArtistImage {
       this.url = imageArray[imageArray.length - 1]["#text"];
     }
 
-    this.small = imageArray[0]["#text"];
+    try {
+        this.small = imageArray[0]["#text"];
+    } catch(error) {
+      console.error(error);
+    }
   }
 
   getColors() {
