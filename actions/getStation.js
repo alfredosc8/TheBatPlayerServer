@@ -24,9 +24,9 @@ function makeNewRequest(url, resolve, reject) {
 
   let streamSourceMethod = StationDetails.StreamSource.STREAM;
 
-  console.log(url)
+  // console.log(url)
   if (url.indexOf('radionomy.com') !== -1) {
-      console.log('Using radionomy scraping...')
+      // console.log('Using radionomy scraping...')
       streamSourceMethod = StationDetails.StreamSource.RADIONOMY;
   }
 

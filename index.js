@@ -8,13 +8,13 @@ if (fileExists('./.env')) {
 const logging = require("./utils/logging.js");
 const Metrics = require("./utils/metrics.js");
 const UserAgentCheck = require("./utils/userAgentCheck.js").userAgentCheck;
+const setupExceptionHandling = require('./utils/exceptionHandling').setupExceptionHandling;
 
 enableConcurrency();
 Metrics.init();
+require("now-logs")('thebatserver');
 
-function start(id) {
-  console.log(`Started worker ${id}`);
-
+function start() {
   process.on('uncaughtException', function(err) {
     console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
     console.error(err.stack)
@@ -23,7 +23,7 @@ function start(id) {
 
   var express = require('express');
   var app = express();
-
+  setupExceptionHandling(app);
   logging.setupLogging(app);
   setupCache();
 

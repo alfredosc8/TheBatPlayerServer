@@ -10,8 +10,8 @@ const getTrackDetails = require("../actions/getTrack.js").getTrack;
 const getStation = require("../actions/getStation.js").getStation;
 
 function getTrack(trackName, artistName) {
-  console.log("Artist: " + artistName)
-  console.log("Track: " + trackName);
+  // console.log("Artist: " + artistName)
+  // console.log("Track: " + trackName);
   let cacheKey = "response-" + artistName + trackName;
 
   return new Promise((resolve, reject) => {
