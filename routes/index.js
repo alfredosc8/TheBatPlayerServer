@@ -128,7 +128,9 @@ function http_nowPlaying(req, res) {
   var url = req.params.url;
 
   getStation(url).then(function(station) {
-    return res.json(station);
+    var trackObject = Utils.createTrackFromTitle(station.title);
+    var populatedStation = Object.assign(station, trackObject);
+      return res.json(populatedStation);
   }).catch(function(error) {
     return res.json(error);
   });
