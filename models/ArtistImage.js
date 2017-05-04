@@ -116,6 +116,14 @@ class ArtistImage {
 }
 
 function sortColors(colors) {
+    if (!colors || colors.length === 0) {
+        return null;
+    }
+
+    if (colors.length === 1) {
+      return colors[0];
+    }
+
   // Limit to top 2 colors
   colors = [colors[0], colors[1]];
 

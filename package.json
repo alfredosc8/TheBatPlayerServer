@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "start": "./node_modules/.bin/pm2 start index.js -i max --no-daemon"
+    "start": "./node_modules/.bin/pm2 start index.js -i 4 --no-daemon"
   },
   "engines": {
     "node": "5.10.0"

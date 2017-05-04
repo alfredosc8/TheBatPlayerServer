@@ -25,6 +25,10 @@ function makeItunesApiRequest(url, artistName, callback) {
     timeout: 700
   }, function(error, response, body) {
 
+    if (!response || response.statusCode !== 200 || !body) {
+      return callback(null)
+    }
+
     try {
       var itunesResults = JSON.parse(body);
       var validResults = filterResultsForArtist(itunesResults.results, artistName);
@@ -34,7 +38,6 @@ function makeItunesApiRequest(url, artistName, callback) {
         return callback(null);
       }
     } catch (error) {
-      console.trace(error);
       return callback(null);
     }
 
