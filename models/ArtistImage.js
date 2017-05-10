@@ -55,10 +55,13 @@ class ArtistImage {
 
     getColors(url, function(err, colors) {
       let color = sortColors(colors);
-      let colorObject = asObject(color);
-
-      cache.set(cacheKey, JSON.stringify(colorObject));
-      return resolve(colorObject);
+      if (color) {
+          let colorObject = asObject(color);
+          cache.set(cacheKey, JSON.stringify(colorObject));
+          return resolve(colorObject);
+      } else {
+        return null;
+      }
     });
   }
 
