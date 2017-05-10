@@ -40,5 +40,8 @@
     "chai-as-promised": "^5.3.0",
     "mocha": "^2.4.5",
     "supertest": "^1.2.0"
+  },
+  "now": {
+    "alias": ["thebatserver.now.sh", "thebatserver.thebatplayer.fm"]
   }
 }
